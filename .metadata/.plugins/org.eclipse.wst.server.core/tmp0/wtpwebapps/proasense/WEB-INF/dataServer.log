@@ -1,0 +1,168 @@
+[21/12/2015 11:01:27:151] GET Request from: 0:0:0:0:0:0:0:1 Request target: /proasense_hella/mould
+[21/12/2015 11:01:27:158] Header: accept */*
+[21/12/2015 11:01:27:172] Header: x-requested-with XMLHttpRequest
+[21/12/2015 11:01:27:206] GET Request from: 0:0:0:0:0:0:0:1 Request target: /proasense_hella/shift
+[21/12/2015 11:01:27:214] Header: accept */*
+[21/12/2015 11:01:27:224] Header: referer http://localhost:8080/proasense/
+[21/12/2015 11:01:27:234] Header: x-requested-with XMLHttpRequest
+[21/12/2015 11:01:27:241] Header: referer http://localhost:8080/proasense/
+[21/12/2015 11:01:27:247] Header: accept-language pt-PT
+[21/12/2015 11:01:27:258] Header: ua-cpu AMD64
+[21/12/2015 11:01:27:265] Header: accept-encoding gzip, deflate
+[21/12/2015 11:01:27:351] Header: accept-language pt-PT
+[21/12/2015 11:01:27:375] Header: ua-cpu AMD64
+[21/12/2015 11:01:27:388] Header: accept-encoding gzip, deflate
+[21/12/2015 11:01:27:395] Header: user-agent Mozilla/5.0 (Windows NT 6.2; Win64; x64; Trident/7.0; rv:11.0) like Gecko
+[21/12/2015 11:01:27:400] Header: host localhost:8080
+[21/12/2015 11:01:27:407] Header: connection Keep-Alive
+[21/12/2015 11:01:27:414] Header: user-agent Mozilla/5.0 (Windows NT 6.2; Win64; x64; Trident/7.0; rv:11.0) like Gecko
+[21/12/2015 11:01:27:423] Header: host localhost:8080
+[21/12/2015 11:01:27:433] Header: connection Keep-Alive
+[21/12/2015 11:01:28:906] SQL Query: SELECT * FROM "mould"
+[21/12/2015 11:01:28:926] SQL Query: SELECT * FROM "shift"
+[21/12/2015 11:01:28:937] [{"id":1,"name":"Shift I"},{"id":2,"name":"Shift II"},{"id":3,"name":"Shift III"}]
+[21/12/2015 11:01:28:945] Response at: 0:0:0:0:0:0:0:1
+[21/12/2015 11:01:28:950] [{"id":1,"product_id":1,"name":"Golf Halogen","code":"254.253-00U011","cycle":60},{"id":2,"product_id":2,"name":"Golf AFS","code":"173.420-01U011","cycle":62},{"id":3,"product_id":3,"name":"Insignia 010","code":"168.857-01U010","cycle":58},{"id":4,"product_id":3,"name":"Insignia 011","code":"168.857-01U011","cycle":58},{"id":5,"product_id":4,"name":"Qashqai P32L MC 010","code":"174454-01U010","cycle":57},{"id":6,"product_id":5,"name":"Qashqai P32L MC 011","code":"271.535-00U010","cycle":60},{"id":7,"product_id":6,"name":"Astra Delta GVC 010","code":"171.572-01U010","cycle":63},{"id":8,"product_id":6,"name":"Astra Delta GVC 011","code":"171.572-01U011","cycle":66},{"id":9,"product_id":6,"name":"Astra Delta GVC 012","code":"171.572-01U012","cycle":69},{"id":10,"product_id":7,"name":"Insignia GMX 350","code":"172.306-01U010","cycle":60},{"id":11,"product_id":8,"name":"Master X62","code":"170.644-01U010","cycle":60},{"id":12,"product_id":9,"name":"Twingo","code":"271.535-00U010","cycle":60},{"id":13,"product_id":10,"name":"Pathfinder","code":"170.090-01U010","cycle":60},{"id":14,"product_id":11,"name":"Renault X10","code":"180.585-01U010","cycle":60},{"id":15,"product_id":12,"name":"Picasso 010","code":"162.979-00U010","cycle":61},{"id":16,"product_id":12,"name":"Picasso 011","code":"162.979-00U011","cycle":61},{"id":17,"product_id":13,"name":"Insignia Nova","code":"178.522-01U010","cycle":61},{"id":18,"product_id":14,"name":"Astra 3300 010","code":"160.201-00U010","cycle":61},{"id":19,"product_id":14,"name":"Astra 3300 011","code":"160.201-00U011","cycle":61},{"id":20,"product_id":14,"name":"Astra 3300 012","code":"160.203-00U010","cycle":61},{"id":21,"product_id":15,"name":"Renault X82","code":"188.716-01U010","cycle":61},{"id":22,"product_id":16,"name":"Edison","code":"190.890-01U010","cycle":62},{"id":23,"product_id":17,"name":"X12","code":"187.829-01U010","cycle":62},{"id":24,"product_id":18,"name":"Mercedes E 413 or.1","code":"166.413-00U010","cycle":62},{"id":25,"product_id":18,"name":"Mercedes E 413 or.2","code":"166.413-00U011","cycle":62},{"id":26,"product_id":19,"name":"Mercedes E AMG 071","code":"166.071-01U010","cycle":29},{"id":27,"product_id":20,"name":"Opel Corsa 2K","code":"195.429-U00U11","cycle":53},{"id":28,"product_id":21,"name":"Porsche","code":null,"cycle":47},{"id":29,"product_id":22,"name":"Lamborghini","code":null,"cycle":null},{"id":30,"product_id":23,"name":"Koleos","code":null,"cycle":null},{"id":31,"product_id":24,"name":"Mercedes ","code":"182.994.01/02","cycle":null},{"id":32,"product_id":25,"name":"BMW","code":"155.031/032-00","cycle":null},{"id":33,"product_id":26,"name":"Clio","code":null,"cycle":null},{"id":34,"product_id":27,"name":"Lancia","code":null,"cycle":null},{"id":35,"product_id":28,"name":"Zaslnoka Mala Siva","code":"193.100-11/12","cycle":null},{"id":36,"product_id":28,"name":"Zaslonka Mala ?rna","code":"193.100-13/14","cycle":null},{"id":37,"product_id":29,"name":"Zaslonka Srednja Siva Špica","code":"193.094-11/12","cycle":null},{"id":38,"product_id":29,"name":"Zaslonka Srednja Siva","code":"193.094-13/14","cycle":null},{"id":39,"product_id":29,"name":"Zaslonka Srednja ?rna Špica","code":"193.094-15/16","cycle":null},{"id":40,"product_id":30,"name":"Zaslonka Velika Siva","code":"193.092-11/12","cycle":null},{"id":41,"product_id":30,"name":"Zaslonka Velika ?rna","code":"193.092-13/14","cycle":null},{"id":42,"product_id":31,"name":"Ohišje X12","code":"188.104-210/220","cycle":null},{"id":43,"product_id":32,"name":"Radomi notranje","code":"199.148-30","cycle":null},{"id":44,"product_id":32,"name":"Radomi zunanje","code":"199.148-40","cycle":null},{"id":45,"product_id":33,"name":"Jaguar 2k","code":null,"cycle":null}]
+[21/12/2015 11:01:28:956] Response at: 0:0:0:0:0:0:0:1
+[21/12/2015 11:01:29:42] GET Request from: 0:0:0:0:0:0:0:1 Request target: /proasense_hella/product
+[21/12/2015 11:01:29:57] Header: accept */*
+[21/12/2015 11:01:29:64] Header: x-requested-with XMLHttpRequest
+[21/12/2015 11:01:29:75] Header: referer http://localhost:8080/proasense/
+[21/12/2015 11:01:29:84] Header: accept-language pt-PT
+[21/12/2015 11:01:29:90] Header: ua-cpu AMD64
+[21/12/2015 11:01:29:99] Header: accept-encoding gzip, deflate
+[21/12/2015 11:01:29:106] GET Request from: 0:0:0:0:0:0:0:1 Request target: /proasense_hella/machine
+[21/12/2015 11:01:29:111] Header: accept */*
+[21/12/2015 11:01:29:117] Header: x-requested-with XMLHttpRequest
+[21/12/2015 11:01:29:123] Header: referer http://localhost:8080/proasense/
+[21/12/2015 11:01:29:130] Header: accept-language pt-PT
+[21/12/2015 11:01:29:136] Header: ua-cpu AMD64
+[21/12/2015 11:01:29:141] Header: accept-encoding gzip, deflate
+[21/12/2015 11:01:29:147] Header: user-agent Mozilla/5.0 (Windows NT 6.2; Win64; x64; Trident/7.0; rv:11.0) like Gecko
+[21/12/2015 11:01:29:153] Header: host localhost:8080
+[21/12/2015 11:01:29:158] Header: connection Keep-Alive
+[21/12/2015 11:01:29:170] SQL Query: SELECT * FROM "machine"
+[21/12/2015 11:01:29:179] [{"id":1,"name":"Km1"},{"id":2,"name":"KM2"},{"id":3,"name":"KM3"},{"id":4,"name":"Engel1"},{"id":5,"name":"Engel2"}]
+[21/12/2015 11:01:29:186] Response at: 0:0:0:0:0:0:0:1
+[21/12/2015 11:01:29:192] Header: user-agent Mozilla/5.0 (Windows NT 6.2; Win64; x64; Trident/7.0; rv:11.0) like Gecko
+[21/12/2015 11:01:29:198] Header: host localhost:8080
+[21/12/2015 11:01:29:203] Header: connection Keep-Alive
+[21/12/2015 11:01:29:232] SQL Query: SELECT * FROM "product"
+[21/12/2015 11:01:29:242] [{"id":1,"name":"Golf Halogen","code":"254.253"},{"id":2,"name":"Golf AFS","code":"173.420"},{"id":3,"name":"Insignia","code":"168.857"},{"id":4,"name":"Qashqai P32L MC 010","code":"174454"},{"id":5,"name":"Qashqai P32L MC 011","code":"271.535"},{"id":6,"name":"Astra Delta GVC","code":"171.572"},{"id":7,"name":"Insignia GMX 350","code":"172.3060"},{"id":8,"name":"Master X62","code":"170.644"},{"id":9,"name":"Twingo","code":"271.535"},{"id":10,"name":"Pathfinder","code":"170.090"},{"id":11,"name":"Renault X10","code":"180.585"},{"id":12,"name":"Picasso","code":"162.979"},{"id":13,"name":"Insignia Nova","code":"178.522"},{"id":14,"name":"Astra 3300","code":"160.201"},{"id":15,"name":"Renault X82","code":"188.716"},{"id":16,"name":"Edison","code":"190.890"},{"id":17,"name":"X12","code":"187.829"},{"id":18,"name":"Mercedes E 413","code":"166.413"},{"id":19,"name":"Mercedes E AMG 071","code":"166.071"},{"id":20,"name":"Opel Corsa 2K","code":"195.429"},{"id":21,"name":"Porsche","code":null},{"id":22,"name":"Lamborghini","code":null},{"id":23,"name":"Koleos","code":null},{"id":24,"name":"Mercedes ","code":"182.994"},{"id":25,"name":"BMW","code":"155.031"},{"id":26,"name":"Clio","code":null},{"id":27,"name":"Lancia","code":null},{"id":28,"name":"Zaslnoka Mala","code":"193.100"},{"id":29,"name":"Zaslonka Srednja","code":"193.094"},{"id":30,"name":"Zaslonka Velika","code":"193.092"},{"id":31,"name":"Ohišje X12","code":"188.104"},{"id":32,"name":"Radomi","code":"199.148"},{"id":33,"name":"Jaguar 2k","code":"155.031"}]
+[21/12/2015 11:01:29:249] Response at: 0:0:0:0:0:0:0:1
+[21/12/2015 11:01:29:349] GET Request from: 0:0:0:0:0:0:0:1 Request target: /proasense_hella/kpi_formula
+[21/12/2015 11:01:29:359] Header: accept */*
+[21/12/2015 11:01:29:366] Header: x-requested-with XMLHttpRequest
+[21/12/2015 11:01:29:373] Header: referer http://localhost:8080/proasense/
+[21/12/2015 11:01:29:379] Header: accept-language pt-PT
+[21/12/2015 11:01:29:386] Header: ua-cpu AMD64
+[21/12/2015 11:01:29:392] Header: accept-encoding gzip, deflate
+[21/12/2015 11:01:29:401] Header: user-agent Mozilla/5.0 (Windows NT 6.2; Win64; x64; Trident/7.0; rv:11.0) like Gecko
+[21/12/2015 11:01:29:407] Header: host localhost:8080
+[21/12/2015 11:01:29:412] GET Request from: 0:0:0:0:0:0:0:1 Request target: /proasense_hella/kpi_target
+[21/12/2015 11:01:29:418] Header: connection Keep-Alive
+[21/12/2015 11:01:29:424] Header: accept */*
+[21/12/2015 11:01:29:431] Header: x-requested-with XMLHttpRequest
+[21/12/2015 11:01:29:438] Header: referer http://localhost:8080/proasense/
+[21/12/2015 11:01:29:446] Header: accept-language pt-PT
+[21/12/2015 11:01:29:453] Header: ua-cpu AMD64
+[21/12/2015 11:01:29:459] Header: accept-encoding gzip, deflate
+[21/12/2015 11:01:29:466] Header: user-agent Mozilla/5.0 (Windows NT 6.2; Win64; x64; Trident/7.0; rv:11.0) like Gecko
+[21/12/2015 11:01:29:472] Header: host localhost:8080
+[21/12/2015 11:01:29:478] Header: connection Keep-Alive
+[21/12/2015 11:01:29:484] SQL Query: SELECT * FROM "kpi_formula"
+[21/12/2015 11:01:29:492] SQL Query: SELECT * FROM "kpi_target"
+[21/12/2015 11:01:29:500] []
+[21/12/2015 11:01:29:506] Response at: 0:0:0:0:0:0:0:1
+[21/12/2015 11:01:29:519] [{"id":1,"kpi_id":4,"term1_kpi_id":3,"term1_sensor_id":null,"operator_1":"/","term2_kpi_id":1,"term2_sensor_id":null,"operator_2":null,"term3_kpi_id":null,"term3_sensor_id":null,"criteria":null},{"id":2,"kpi_id":5,"term1_kpi_id":null,"term1_sensor_id":4,"operator_1":"/","term2_kpi_id":null,"term2_sensor_id":5,"operator_2":null,"term3_kpi_id":null,"term3_sensor_id":null,"criteria":null},{"id":3,"kpi_id":6,"term1_kpi_id":1,"term1_sensor_id":null,"operator_1":"*","term2_kpi_id":null,"term2_sensor_id":6,"operator_2":"/","term3_kpi_id":null,"term3_sensor_id":7,"criteria":null},{"id":4,"kpi_id":7,"term1_kpi_id":2,"term1_sensor_id":null,"operator_1":"/","term2_kpi_id":1,"term2_sensor_id":null,"operator_2":null,"term3_kpi_id":null,"term3_sensor_id":null,"criteria":null},{"id":5,"kpi_id":8,"term1_kpi_id":5,"term1_sensor_id":null,"operator_1":"*","term2_kpi_id":6,"term2_sensor_id":null,"operator_2":"*","term3_kpi_id":7,"term3_sensor_id":null,"criteria":null},{"id":6,"kpi_id":1,"term1_kpi_id":null,"term1_sensor_id":1,"operator_1":null,"term2_kpi_id":null,"term2_sensor_id":null,"operator_2":null,"term3_kpi_id":null,"term3_sensor_id":null,"criteria":null},{"id":7,"kpi_id":2,"term1_kpi_id":null,"term1_sensor_id":2,"operator_1":null,"term2_kpi_id":null,"term2_sensor_id":null,"operator_2":null,"term3_kpi_id":null,"term3_sensor_id":null,"criteria":null},{"id":8,"kpi_id":3,"term1_kpi_id":null,"term1_sensor_id":3,"operator_1":null,"term2_kpi_id":null,"term2_sensor_id":null,"operator_2":null,"term3_kpi_id":null,"term3_sensor_id":null,"criteria":null}]
+[21/12/2015 11:01:29:527] Response at: 0:0:0:0:0:0:0:1
+[21/12/2015 11:01:29:535] GET Request from: 0:0:0:0:0:0:0:1 Request target: /proasense_hella/sensor
+[21/12/2015 11:01:29:541] Header: accept */*
+[21/12/2015 11:01:29:547] Header: x-requested-with XMLHttpRequest
+[21/12/2015 11:01:29:554] Header: referer http://localhost:8080/proasense/
+[21/12/2015 11:01:29:561] Header: accept-language pt-PT
+[21/12/2015 11:01:29:574] Header: ua-cpu AMD64
+[21/12/2015 11:01:29:581] Header: accept-encoding gzip, deflate
+[21/12/2015 11:01:29:588] Header: user-agent Mozilla/5.0 (Windows NT 6.2; Win64; x64; Trident/7.0; rv:11.0) like Gecko
+[21/12/2015 11:01:29:594] Header: host localhost:8080
+[21/12/2015 11:01:29:601] Header: connection Keep-Alive
+[21/12/2015 11:01:29:611] SQL Query: SELECT * FROM "sensor"
+[21/12/2015 11:01:29:618] GET Request from: 0:0:0:0:0:0:0:1 Request target: /proasense_hella/kpi
+[21/12/2015 11:01:29:625] Header: accept */*
+[21/12/2015 11:01:29:631] Header: x-requested-with XMLHttpRequest
+[21/12/2015 11:01:29:637] [{"id":1,"name":"count","sampling_rate":1,"sampling_interval":"hour"},{"id":2,"name":"count good","sampling_rate":1,"sampling_interval":"hour"},{"id":3,"name":"count bad","sampling_rate":1,"sampling_interval":"hour"},{"id":4,"name":"uptime","sampling_rate":1,"sampling_interval":"hour"},{"id":5,"name":"available time","sampling_rate":1,"sampling_interval":"hour"},{"id":6,"name":"ideal cycle time","sampling_rate":1,"sampling_interval":"hour"},{"id":7,"name":"operating time","sampling_rate":1,"sampling_interval":"hour"}]
+[21/12/2015 11:01:29:643] Response at: 0:0:0:0:0:0:0:1
+[21/12/2015 11:01:29:649] Header: referer http://localhost:8080/proasense/
+[21/12/2015 11:01:29:655] Header: accept-language pt-PT
+[21/12/2015 11:01:29:662] Header: ua-cpu AMD64
+[21/12/2015 11:01:29:669] Header: accept-encoding gzip, deflate
+[21/12/2015 11:01:29:676] Header: user-agent Mozilla/5.0 (Windows NT 6.2; Win64; x64; Trident/7.0; rv:11.0) like Gecko
+[21/12/2015 11:01:29:681] Header: host localhost:8080
+[21/12/2015 11:01:29:688] Header: connection Keep-Alive
+[21/12/2015 11:01:29:695] SQL Query: SELECT * FROM "kpi"
+[21/12/2015 11:01:29:705] [{"id":1,"parent_id":null,"name":"Count","description":"Amount of product created. This can be defined per machine, employee, shit or the whole plant.","sampling_rate":1,"sampling_interval":"hour","context_product":true,"context_machine":true,"context_mould":true,"context_shift":true,"calculation_type":"simple","aggregation":6},{"id":2,"parent_id":1,"name":"Good parts","description":"Amount of products produced with acceptable quality.","sampling_rate":1,"sampling_interval":"hour","context_product":true,"context_machine":true,"context_mould":true,"context_shift":true,"calculation_type":"simple","aggregation":6},{"id":3,"parent_id":1,"name":"Scrapped parts","description":"Amount of products produced that are rejected.","sampling_rate":1,"sampling_interval":"hour","context_product":true,"context_machine":true,"context_mould":true,"context_shift":true,"calculation_type":"simple","aggregation":6},{"id":4,"parent_id":null,"name":"Scrap rate","description":"Relation of product inappropriate to sell.","sampling_rate":1,"sampling_interval":"hour","context_product":true,"context_machine":true,"context_mould":true,"context_shift":true,"calculation_type":"composed","aggregation":1},{"id":5,"parent_id":null,"name":"Availability","description":"Percentage of scheduled time that the operation is available to operate.","sampling_rate":1,"sampling_interval":"hour","context_product":false,"context_machine":true,"context_mould":false,"context_shift":true,"calculation_type":"composed","aggregation":1},{"id":6,"parent_id":null,"name":"Performance","description":"Speed at which the operation runs as a percentage of its designed speed.","sampling_rate":1,"sampling_interval":"hour","context_product":false,"context_machine":true,"context_mould":false,"context_shift":true,"calculation_type":"composed","aggregation":1},{"id":7,"parent_id":null,"name":"Quality","description":"Good units produced as a percentage of the total units started.","sampling_rate":1,"sampling_interval":"hour","context_product":true,"context_machine":true,"context_mould":true,"context_shift":true,"calculation_type":"composed","aggregation":1},{"id":8,"parent_id":null,"name":"OEE","description":"Evaluates how effectively an operation is used. Quantifies how well a manufacturing unit performs relative to its designed capacity, during the periods when it is scheduled to run.","sampling_rate":1,"sampling_interval":"hour","context_product":true,"context_machine":true,"context_mould":true,"context_shift":true,"calculation_type":"composed","aggregation":1}]
+[21/12/2015 11:01:29:712] Response at: 0:0:0:0:0:0:0:1
+[21/12/2015 11:01:33:989] POST Request from: 0:0:0:0:0:0:0:1 Request target: /proasense_hella/kpi_formula
+[21/12/2015 11:01:33:999] Header: content-type application/x-www-form-urlencoded; charset=UTF-8
+[21/12/2015 11:01:34:12] Header: accept */*
+[21/12/2015 11:01:34:19] Header: x-requested-with XMLHttpRequest
+[21/12/2015 11:01:34:26] Header: referer http://localhost:8080/proasense/
+[21/12/2015 11:01:34:33] Header: accept-language pt-PT
+[21/12/2015 11:01:34:39] Header: ua-cpu AMD64
+[21/12/2015 11:01:34:48] Header: accept-encoding gzip, deflate
+[21/12/2015 11:01:34:55] Header: user-agent Mozilla/5.0 (Windows NT 6.2; Win64; x64; Trident/7.0; rv:11.0) like Gecko
+[21/12/2015 11:01:34:61] Header: host localhost:8080
+[21/12/2015 11:01:34:69] Header: content-length 218
+[21/12/2015 11:01:34:76] Header: connection Keep-Alive
+[21/12/2015 11:01:34:84] Header: cache-control no-cache
+[21/12/2015 11:01:34:90] Payload: {"type":"UPDATE","data":{"id":1,"kpi_id":4,"term1_kpi_id":3,"term1_sensor_id":null,"operator_1":"/","term2_kpi_id":1,"term2_sensor_id":null,"operator_2":null,"term3_kpi_id":null,"term3_sensor_id":null,"criteria":null}}
+[21/12/2015 11:01:34:109] SQL Query: UPDATE "kpi_formula" SET "term3_kpi_id"=null,"term2_kpi_id"=1,"term2_sensor_id"=null,"term3_sensor_id"=null,"operator_1"='/',"operator_2"=null,"term1_sensor_id"=null,"criteria"=null,"kpi_id"=4,"term1_kpi_id"=3 WHERE "id"=1
+[21/12/2015 11:01:34:133] Response at: 0:0:0:0:0:0:0:1
+[21/12/2015 11:01:34:357] POST Request from: 0:0:0:0:0:0:0:1 Request target: /proasense_hella/kpi
+[21/12/2015 11:01:34:374] Header: content-type application/x-www-form-urlencoded; charset=UTF-8
+[21/12/2015 11:01:34:382] Header: accept */*
+[21/12/2015 11:01:34:390] Header: x-requested-with XMLHttpRequest
+[21/12/2015 11:01:34:398] Header: referer http://localhost:8080/proasense/
+[21/12/2015 11:01:34:405] Header: accept-language pt-PT
+[21/12/2015 11:01:34:417] Header: ua-cpu AMD64
+[21/12/2015 11:01:34:423] Header: accept-encoding gzip, deflate
+[21/12/2015 11:01:34:438] Header: user-agent Mozilla/5.0 (Windows NT 6.2; Win64; x64; Trident/7.0; rv:11.0) like Gecko
+[21/12/2015 11:01:34:444] Header: host localhost:8080
+[21/12/2015 11:01:34:451] Header: content-length 292
+[21/12/2015 11:01:34:459] Header: connection Keep-Alive
+[21/12/2015 11:01:34:468] Header: cache-control no-cache
+[21/12/2015 11:01:34:478] Payload: {"type":"UPDATE","data":{"id":4,"name":"Scrap ratea","description":"Relation of product inappropriate to sell.","sampling_rate":1,"sampling_interval":"hour","context_product":true,"context_machine":true,"context_mould":true,"context_shift":true,"calculation_type":"composed","aggregation":1}}
+[21/12/2015 11:01:34:486] SQL Query: UPDATE "kpi" SET "sampling_rate"=1,"calculation_type"='composed',"context_mould"=true,"name"='Scrap ratea',"context_product"=true,"description"='Relation of product inappropriate to sell.',"aggregation"=1,"context_machine"=true,"context_shift"=true,"sampling_interval"='hour' WHERE "id"=4
+[21/12/2015 11:01:34:494] Response at: 0:0:0:0:0:0:0:1
+[21/12/2015 11:01:38:702] POST Request from: 0:0:0:0:0:0:0:1 Request target: /proasense_hella/kpi_formula
+[21/12/2015 11:01:38:712] Header: content-type application/x-www-form-urlencoded; charset=UTF-8
+[21/12/2015 11:01:38:719] Header: accept */*
+[21/12/2015 11:01:38:730] Header: x-requested-with XMLHttpRequest
+[21/12/2015 11:01:38:738] Header: referer http://localhost:8080/proasense/
+[21/12/2015 11:01:38:745] Header: accept-language pt-PT
+[21/12/2015 11:01:38:752] Header: ua-cpu AMD64
+[21/12/2015 11:01:38:760] Header: accept-encoding gzip, deflate
+[21/12/2015 11:01:38:766] Header: user-agent Mozilla/5.0 (Windows NT 6.2; Win64; x64; Trident/7.0; rv:11.0) like Gecko
+[21/12/2015 11:01:38:774] Header: host localhost:8080
+[21/12/2015 11:01:38:780] Header: content-length 218
+[21/12/2015 11:01:38:787] Header: connection Keep-Alive
+[21/12/2015 11:01:38:794] Header: cache-control no-cache
+[21/12/2015 11:01:38:800] Payload: {"type":"UPDATE","data":{"id":1,"kpi_id":4,"term1_kpi_id":3,"term1_sensor_id":null,"operator_1":"/","term2_kpi_id":1,"term2_sensor_id":null,"operator_2":null,"term3_kpi_id":null,"term3_sensor_id":null,"criteria":null}}
+[21/12/2015 11:01:38:810] SQL Query: UPDATE "kpi_formula" SET "term3_kpi_id"=null,"term2_kpi_id"=1,"term2_sensor_id"=null,"term3_sensor_id"=null,"operator_1"='/',"operator_2"=null,"term1_sensor_id"=null,"criteria"=null,"kpi_id"=4,"term1_kpi_id"=3 WHERE "id"=1
+[21/12/2015 11:01:38:818] Response at: 0:0:0:0:0:0:0:1
+[21/12/2015 11:01:38:926] POST Request from: 0:0:0:0:0:0:0:1 Request target: /proasense_hella/kpi
+[21/12/2015 11:01:38:933] Header: content-type application/x-www-form-urlencoded; charset=UTF-8
+[21/12/2015 11:01:38:940] Header: accept */*
+[21/12/2015 11:01:38:946] Header: x-requested-with XMLHttpRequest
+[21/12/2015 11:01:38:953] Header: referer http://localhost:8080/proasense/
+[21/12/2015 11:01:38:960] Header: accept-language pt-PT
+[21/12/2015 11:01:38:966] Header: ua-cpu AMD64
+[21/12/2015 11:01:38:972] Header: accept-encoding gzip, deflate
+[21/12/2015 11:01:38:979] Header: user-agent Mozilla/5.0 (Windows NT 6.2; Win64; x64; Trident/7.0; rv:11.0) like Gecko
+[21/12/2015 11:01:38:986] Header: host localhost:8080
+[21/12/2015 11:01:38:995] Header: content-length 291
+[21/12/2015 11:01:39:1] Header: connection Keep-Alive
+[21/12/2015 11:01:39:7] Header: cache-control no-cache
+[21/12/2015 11:01:39:14] Payload: {"type":"UPDATE","data":{"id":4,"name":"Scrap rate","description":"Relation of product inappropriate to sell.","sampling_rate":1,"sampling_interval":"hour","context_product":true,"context_machine":true,"context_mould":true,"context_shift":true,"calculation_type":"composed","aggregation":1}}
+[21/12/2015 11:01:39:21] SQL Query: UPDATE "kpi" SET "sampling_rate"=1,"calculation_type"='composed',"context_mould"=true,"name"='Scrap rate',"context_product"=true,"description"='Relation of product inappropriate to sell.',"aggregation"=1,"context_machine"=true,"context_shift"=true,"sampling_interval"='hour' WHERE "id"=4
+[21/12/2015 11:01:39:38] Response at: 0:0:0:0:0:0:0:1

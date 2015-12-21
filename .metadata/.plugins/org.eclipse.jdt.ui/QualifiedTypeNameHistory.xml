@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="javax.servlet.http.HttpServlet"/>
+<fullyQualifiedTypeName name="javax.servlet.ServletContext"/>
+<fullyQualifiedTypeName name="org.omg.CORBA.Request"/>
+<fullyQualifiedTypeName name="dataServer.database.dbobjects.ResultTableElement"/>
+<fullyQualifiedTypeName name="dataServer.database.dbobjects.KpiDataObject"/>
+<fullyQualifiedTypeName name="javax.servlet.annotation.WebServlet"/>
+</qualifiedTypeNameHistroy>
