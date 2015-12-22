@@ -55,8 +55,8 @@ public class HeatMap extends ResultTable {
 				+ " FROM \"kpi_values\" kv"
 				+ "	INNER JOIN \""+varXStr+"\" vx ON \""+varXStr+"_id\" = vx.\"id\""
 				+ " INNER JOIN \""+varYStr+"\" vy ON \""+varYStr+"_id\" = vy.\"id\""
-				+ " WHERE "+getSamplingIntervalWhereClause(super.samplingInterval, startTime)
-				+ " AND \""+contextStr+"_id\" = "+contextElementId
+				+ getSamplingIntervalWhereClause(super.samplingInterval, startTime, true)
+				+ getContextElementWhereClause(super.tableVT, contextStr, contextElementId, false)
 				+ " AND \"kpi_id\" = 3"/*+kpiId*/
 				+ " GROUP BY \"varX\", \"varY\""
 				+ " ORDER BY \"varX\", \"varY\";";
@@ -73,16 +73,16 @@ public class HeatMap extends ResultTable {
 		return query;
 	}
 	
-	private String getSamplingIntervalWhereClause(SamplingInterval granularity, Timestamp time){
-		String result = "";
+	private String getSamplingIntervalWhereClause(SamplingInterval granularity, Timestamp time, boolean mainClause){
+		String result = (mainClause)?" WHERE ":" AND ";
 		switch (granularity){
-		case DAILY: result = "DAY(CAST(kv.\"timestamp\" AS DATE)) = DAY(CAST(TIMESTAMP'"+time+"' AS DATE)) ";
+		case DAILY: result += "DAY(CAST(kv.\"timestamp\" AS DATE)) = DAY(CAST(TIMESTAMP'"+time+"' AS DATE)) ";
 			break;
-		case HOURLY: result = "HOUR(CAST(kv.\"timestamp\" AS TIME)) = HOUR(CAST(TIMESTAMP'"+time+"' AS TIME)) ";
+		case HOURLY: result += "HOUR(CAST(kv.\"timestamp\" AS TIME)) = HOUR(CAST(TIMESTAMP'"+time+"' AS TIME)) ";
 			break;
-		case MONTHLY: result = "MONTH(CAST(kv.\"timestamp\" AS DATE)) = MONTH(CAST(TIMESTAMP'"+time+"' AS DATE)) ";
+		case MONTHLY: result += "MONTH(CAST(kv.\"timestamp\" AS DATE)) = MONTH(CAST(TIMESTAMP'"+time+"' AS DATE)) ";
 			break;
-		case WEEKLY: result = "MONTH(CAST(kv.\"timestamp\" AS DATE)) = MONTH(CAST(TIMESTAMP'"+time+"' AS DATE)) ";
+		case WEEKLY: result += "MONTH(CAST(kv.\"timestamp\" AS DATE)) = MONTH(CAST(TIMESTAMP'"+time+"' AS DATE)) ";
 			break;
 		case MINUTELY: 
 			break;
@@ -97,6 +97,21 @@ public class HeatMap extends ResultTable {
 		return result;
 	}
 	
+	private String getContextElementWhereClause(TableValueType contextualInformation, String contextStr, Integer contextElmentId, boolean mainClause){
+		String result = "";
+		/*
+			+ " AND \""+contextStr+"_id\" = "+contextElementId
+		*/
+		
+		if (contextualInformation != TableValueType.GLOBAL){
+			result = (mainClause)?" WHERE ":" AND ";
+			result += "\""+contextStr+"_id\" = "+contextElementId;
+		}
+		
+
+		return result;
+	}
+
 	public void setHeatMapValues(){
 		Integer xSize = varXUnique.size();
 		Integer ySize = varYUnique.size();

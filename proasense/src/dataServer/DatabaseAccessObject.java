@@ -156,7 +156,7 @@ public class DatabaseAccessObject {
 	public Object getHeatMapData(Integer kpiId, TableValueType contextualInformation, Timestamp startTime, Timestamp endTime,
 			SamplingInterval granularity, String contextName, TableValueType varX, TableValueType varY) {
 		
-		Integer contextElementId = getNameId(contextualInformation.toString(), contextName);
+		Integer contextElementId = (contextualInformation == TableValueType.GLOBAL)?0:getNameId(contextualInformation.toString(), contextName);
 		contextElementId = (contextElementId==0)? 1:contextElementId;
 		
 		HeatMap heatMap = new HeatMap(kpiId, contextualInformation, granularity, startTime, contextElementId, varX, varY);
