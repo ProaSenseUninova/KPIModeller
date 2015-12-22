@@ -43,7 +43,7 @@ public class Main extends HttpServlet
 	String dbPath;
 	DBConfig dbConfig;
 	DatabaseAccessObject dAO;
-	private int test;
+	
 	public static Map<String, String> splitQuery(String query) throws UnsupportedEncodingException {
 	    Map<String, String> query_pairs = new LinkedHashMap<String, String>();
 	    String[] pairs = query.split("&");
