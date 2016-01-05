@@ -53,6 +53,7 @@ public class Main extends HttpServlet
 	    }
 	    return query_pairs;
 	}
+	
 	public void getData(HttpServletResponse response,String dbName,String tableName,Integer idReq,String remoteAddress, String queryString)
 	{
 		try {

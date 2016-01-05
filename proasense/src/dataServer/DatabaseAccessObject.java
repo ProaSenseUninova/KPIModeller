@@ -227,6 +227,7 @@ public class DatabaseAccessObject {
 			case 1:break;
 			case 2:break;
 			case 3: break;
+			case 7:
 			case 4: ArrayList<ResultTable> tempResultTable = getScrapRate(contextualInformation, granularity, startTime, endTime);
 //				String tmpData = "[";
 				String legend = "[";
@@ -258,7 +259,7 @@ public class DatabaseAccessObject {
 				break;
 			case 5:break;
 			case 6:break;
-			case 7:break;
+//			case 7:break;
 			default: break;
 		}
 		return data;

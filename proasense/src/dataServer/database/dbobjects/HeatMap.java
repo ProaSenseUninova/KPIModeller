@@ -25,7 +25,8 @@ public class HeatMap extends ResultTable {
 	/* moment of the point requested in UI*/
 	private Timestamp moment;
 
-	/*name and ID of the context element for which a heatmap is requested. ex: for machine id = 2, this field would have the name of the machine number 2*/
+	/*name and ID of the context element for which a heatmap is requested. 
+	 * ex: for machine id = 2, this field would have the name of the machine number 2 */
 	private String contextElementName;
 	private Integer contextElementId;
 	
@@ -107,7 +108,6 @@ public class HeatMap extends ResultTable {
 			result = (mainClause)?" WHERE ":" AND ";
 			result += "\""+contextStr+"_id\" = "+contextElementId;
 		}
-		
 
 		return result;
 	}
