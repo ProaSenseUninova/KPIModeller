@@ -693,7 +693,7 @@ function Screen2(kpiInfo) {
 				toDelete = false;
 				break;
 			}
-		}
+0		}
 		if (toDelete) {
 			tree.delete_node(oldId);
 			if (arguments.length > 0) {
@@ -933,9 +933,9 @@ function ScreenGraph(kpiInfo) {
 		var graphRadioValue = $('#heatMapTable').find('input:checked').val();
 		var horizontalSet = $('#horizontalSet').val();
 		var verticalSet = $('#verticalSet').val();
-		var heatMapStartTime = (new Date()).getTime() - 3 * 30 * 24 * 60 * 60 * 1000; //3 Months ago
-		var heatMapEndTime = (new Date()).getTime()
-		var heatMapGranularity = $('#granularityHeatMap').val()
+		var heatMapStartTime = (new Date()).getTime() - 3 * 30 * 24 * 60 * 60 * 1000; //3 Months ago 
+		var heatMapEndTime = (new Date()).getTime();
+		var heatMapGranularity = $('#granularityHeatMap').val();
 		$.ajax({
 			url: restAddress + "func/getHeatMapData?kpiId=" + loadedKpi + "&contextualInformation=" + graphContextualInformation + "&varX="+horizontalSet+ "&varY="+verticalSet+"&startTime=" + heatMapStartTime + "&endTime=" + heatMapEndTime + "&granularity=" + heatMapGranularity+"&contextName=Global",
 			type: "GET",
@@ -1119,7 +1119,7 @@ function ScreenGraph(kpiInfo) {
 			})
 			.attr("title", function(d) {
 				$(this).tooltip({
-					content: d.value==null?"No data":'Value: '+d.value,
+					content: d.value==null?"No data":((loadedKpi>=4)?'Value: ' + ((d.value) * 100).toFixed(2) + '%' : 'Value: ' + (d.value)),
 					position: {
 						at: "top-60"
 					},
@@ -1180,7 +1180,7 @@ function ScreenGraph(kpiInfo) {
 		legend.append("text")
 			.attr("class", "mono")
 			.text(function(d) {
-				return "≥ " + Math.round(d);
+				return "≥ " + Math.round(loadedKpi>=4? (d<1?d:1)*100:d)  ;
 			})
 			.attr("x", function(d, i) {
 				return legendElementWidth * factor * i;
@@ -1361,10 +1361,10 @@ function ScreenGraph(kpiInfo) {
 						{
 							legend="Limit<br>";
 						}
-						var value = legend+  (loadedKpi == "4" ? 'Value: ' + parseFloat((singleValue * 100).toFixed(2)) + "%" : 'Value: ' + parseFloat(singleValue.toFixed(3)));
+						var value = legend+  (loadedKpi >= "4" ? 'Value: ' + parseFloat((singleValue * 100).toFixed(2)) + "%" : 'Value: ' + parseFloat(singleValue.toFixed(3)));
 						return value;
 					},
-					percentage:loadedKpi==4?true:false,
+					percentage:loadedKpi>=4?true:false,
 					legend: graphData.legend,
 					labels: graphData.labels,
 					values: scr.graphSeriesValues(graphData.data),
