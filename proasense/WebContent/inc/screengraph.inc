@@ -63,7 +63,7 @@
 			<input type="text" class="inputField" id="toDateChart" value="">
 			<br>
 			<br>
-			<b>Granulatiry:</b>
+			<b>Granularity:</b>
 			<br>
 			<br>
 			<select id="granularityChart" class="box">
@@ -99,8 +99,8 @@
 		<td  width="25%" style="text-align:center">
 			<b>Horizontal set:&emsp;</b>
 			<select id="horizontalSet"> 
-				<option value="product">Product</option>
-				<option selected value="machine">Machine</option>
+				<option selected value="product">Product</option>
+				<option value="machine">Machine</option>
 				<option value="shift">Shift</option>
 				<option value="mould">Mould</option>
 			</select>
@@ -122,14 +122,14 @@
 			<input type="text" class="inputField" id="toDateHeatMap" value="">
 			<br>
 			<br>
-			<b>Granulatiry:</b>
+			<b>Granularity:</b>
 			<br>
 			<br>
 			<select id="granularityHeatMap" class="box">
 				<option value="hourly">Hourly</option>
 				<option value="daily">Daily</option>
 				<option value="weekly">Weekly</option>
-				<option value="monthly">Monthly</option>
+				<option selected value="monthly">Monthly</option>
 			</select>
 		</td>
 	</tr>
