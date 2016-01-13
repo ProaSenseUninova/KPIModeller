@@ -1032,7 +1032,21 @@ function ScreenGraph(kpiInfo) {
 		this.heatMapData = heatMapData;
 		var xLabelLength =  heatMapData.xLabels.length 
 		var factor =xLabelLength/ 6 < 0.2 ? 0.2:xLabelLength/6 ;
-		
+		var data=[];
+
+		for(var i=0;i<heatMapData.data.length;i++)
+		{
+			var value = 0;
+			if(loadedKpi>=4)
+			{
+				value=parseFloat((heatMapData.data[i].value*100).toFixed(2));
+			}
+			else
+			{
+				value=heatMapData.data[i].value;
+			}
+			data.push({value:value,varX:heatMapData.data[i].varX,varY:heatMapData.data[i].varY})
+		}		
 		$('#heatMap').empty();
 		$('#heatMap').width(0);
 		var containerWidth = $('#heatMapTable').find('td').eq(4).width();
@@ -1092,13 +1106,13 @@ function ScreenGraph(kpiInfo) {
 			});
 
 		var colorScale = d3.scale.quantile()
-			.domain([0, buckets - 1, d3.max(heatMapData.data, function(d) {
+			.domain([0, buckets - 1, d3.max(data, function(d) {
 				return d.value;
 			})])
 			.range(colors);
 
 		var cards = svg.selectAll(".hour")
-			.data(heatMapData.data, function(d) {
+			.data(data, function(d) {
 				return d.varY + ':' + d.varX;
 			});
 
@@ -1119,7 +1133,7 @@ function ScreenGraph(kpiInfo) {
 			})
 			.attr("title", function(d) {
 				$(this).tooltip({
-					content: d.value==null?"No data":((loadedKpi>=4)?'Value: ' + ((d.value) * 100).toFixed(2) + '%' : 'Value: ' + (d.value)),
+					content: d.value==null?"No data":((loadedKpi>=4)?'Value: ' + (d.value).toFixed(2) + '%' : 'Value: ' + (d.value)),
 					position: {
 						at: "top-60"
 					},
@@ -1180,7 +1194,7 @@ function ScreenGraph(kpiInfo) {
 		legend.append("text")
 			.attr("class", "mono")
 			.text(function(d) {
-				return "≥ " + Math.round(loadedKpi>=4? (d<1?d:1)*100:d)  ;
+				return "≥ " + Math.round(d)  ;
 			})
 			.attr("x", function(d, i) {
 				return legendElementWidth * factor * i;
