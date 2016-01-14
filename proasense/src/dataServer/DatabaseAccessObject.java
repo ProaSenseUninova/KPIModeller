@@ -227,7 +227,9 @@ public class DatabaseAccessObject {
 		 switch (kpiId){
 			case 1:
 			case 2:
-			case 3: break;
+			case 3: 
+			case 7: tempResultTable = getKpiValue(kpiId, contextualInformation, granularity, startTime, endTime); 
+			break;
 			case 4: tempResultTable = getScrapRate(contextualInformation, granularity, startTime, endTime);
 			
 				String legend = "[";
@@ -258,8 +260,6 @@ public class DatabaseAccessObject {
 				break;
 			case 5: break;
 			case 6: break;
-			case 7: tempResultTable = getKpiValue(kpiId, contextualInformation, granularity, startTime, endTime); 
-				break;
 			default: break;
 		} 
 				
@@ -345,7 +345,7 @@ public class DatabaseAccessObject {
 			e.printStackTrace();
 		}		
 		
-		dBUtil.closeConnection();		
+		dBUtil.closeConnection();
 		return resultTable;
 	}
 	

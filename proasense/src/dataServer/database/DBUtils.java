@@ -25,6 +25,7 @@ public class DBUtils {
 	private DBConfig dbConfig = null;
 	private String dbName;
 	private Integer totalConnections = 0;
+	private Integer queryExecuting = 0;
 	
 	public DBUtils() {
 		// TODO Auto-generated constructor stub
@@ -101,10 +102,16 @@ public class DBUtils {
 	public boolean closeConnection(){
 		try {
 			_log.saveToFile("<Connection> Trying to close connection to: "+dbName);
-			if ( (dbConnection != null) || (!dbConnection.isClosed()) ) {
+			_log.saveToFile("<Connection>"+ "dbConnection null?"+(dbConnection == null)+"\n"
+					  + "dbConnection closed?"+(dbConnection.isClosed())+"\n"
+					  + "Queries still executing? queryExecuting = "+queryExecuting );
+			if ( (dbConnection != null && !dbConnection.isClosed() && queryExecuting<=0)  ) {
 					dbConnection.close();
-					_log.saveToFile("<Connection> closed of db: "+dbName);
+					_log.saveToFile("<Connection> connection closed to db: "+dbName);
 				}
+			else{
+				_log.saveToFile("<Connection> connection still being used: "+dbName);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -114,13 +121,19 @@ public class DBUtils {
 	public ResultSet processQuery(String query){
 		Statement s;
 		ResultSet r = null;
+		queryExecuting++;
 		try {
-			_log.saveToFile("<DBUtils processing query> "+query+"</DBUtils>");
+			_log.saveToFile("<DBUtils> processing query "+query+"</DBUtils>");
+			if (dbConnection.isClosed() && (queryExecuting>0)){
+				openConnection(dbName);
+				_log.saveToFile("<DBUtils> connection opened during processQuery method</DBUtils>");
+			}
 			s = dbConnection.createStatement();
 			r = s.executeQuery(query);
-			_log.saveToFile("<DBUtils> query finished processing> "+query+"</DBUtils>");
+			queryExecuting--;
+			_log.saveToFile("<DBUtils> query finished processing (#"+queryExecuting+" query(ies) executing)-> \n"+query+"</DBUtils>");
 		} catch (SQLException e) {
-			_log.saveToFile("<DBUtils> query not processed> "+e.getMessage()+"\n"+query+"</DBUtils>");
+			_log.saveToFile("<DBUtils> query not processed -> "+e.getMessage()+"\n"+query+"</DBUtils>");
 			e.printStackTrace();
 		}
 		return r;
