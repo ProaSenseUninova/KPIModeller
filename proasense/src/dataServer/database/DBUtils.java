@@ -74,6 +74,7 @@ public class DBUtils {
 			if ((dbConnection == null) || (dbConnection.isClosed())){
 				dbConnection = getConnection(dbConfig, dbName);
 				result = true;
+				_log.saveToFile("<Connection> <v1> opened to: "+dbName);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -88,6 +89,7 @@ public class DBUtils {
 			if ( ((dbConnection == null) || (dbConnection.isClosed())) || (dbConfig == null)){
 				dbConnection = getConnection(dbConfig, dbName);
 				result = true;
+				_log.saveToFile("<Connection> <v2> opened to: "+dbName);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -98,8 +100,11 @@ public class DBUtils {
 	
 	public boolean closeConnection(){
 		try {
-			if ( (dbConnection != null) || (!dbConnection.isClosed()) )
-				dbConnection.close();
+			_log.saveToFile("<Connection> Trying to close connection to: "+dbName);
+			if ( (dbConnection != null) || (!dbConnection.isClosed()) ) {
+					dbConnection.close();
+					_log.saveToFile("<Connection> closed of db: "+dbName);
+				}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -110,9 +115,12 @@ public class DBUtils {
 		Statement s;
 		ResultSet r = null;
 		try {
+			_log.saveToFile("<DBUtils processing query> "+query+"</DBUtils>");
 			s = dbConnection.createStatement();
 			r = s.executeQuery(query);
+			_log.saveToFile("<DBUtils> query finished processing> "+query+"</DBUtils>");
 		} catch (SQLException e) {
+			_log.saveToFile("<DBUtils> query not processed> "+e.getMessage()+"\n"+query+"</DBUtils>");
 			e.printStackTrace();
 		}
 		return r;
@@ -123,12 +131,14 @@ public class DBUtils {
 //		ResultSet r = null;
 
 		try {
+			_log.saveToFile("<DBUtils> processing BATCH query ");
 			s = dbConnection.createStatement();
 			for (String query : batchQuery) {
 				s.addBatch(query);
 			}
 			
 			int[] n = s.executeBatch();
+			_log.saveToFile("<DBUtils> finished processing BATCH query ");
 //			if (n >= 0){
 //				
 //			}

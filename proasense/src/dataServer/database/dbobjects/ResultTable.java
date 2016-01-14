@@ -155,8 +155,72 @@ public class ResultTable {
 		return query;
 	}
 	
+	public String getResultTableQueryString(Integer kpi, Timestamp startTime, Timestamp endTime, SamplingInterval sI, boolean isGlobal, TableValueType tVtype){
+		String query = "";
+		String sIstr = getSamplingIntervalNumber(sI);
+		if (isGlobal) {
+		/* ** template for global ** */
+		query = "SELECT 'Global', kv.\"timestamp\" date1, \"value\" value "
+				+ "	FROM \"kpi_values\" kv"
+				+ " WHERE \"granularity_id\" = "+sIstr
+				+ " AND kv.\"timestamp\" BETWEEN TIMESTAMP('"+startTime+"') AND TIMESTAMP('"+endTime+"')"
+				+ " AND \"kpi_id\" = "+kpi+ " "
+				+ " AND \"machine_id\" IS NULL" 
+				+ " AND \"product_id\" IS NULL "
+				+ " AND \"mould_id\" IS NULL"
+				+ " AND \"shift_id\" IS NULL"
+				+ " ORDER BY date1;";
+		}
+		else {
+			String contextName = getContextName(tVtype);
+			/* ** template for per context ** */
+			query = "SELECT ct.\"name\", kv.\"timestamp\" date1, SUM(\"value\") value "
+					+ " FROM \"kpi_values\" kv "
+					+ " LEFT OUTER JOIN \""+contextName+"\" ct ON \""+contextName+"_id\"=ct.\"id\" "
+					+ " WHERE \"kpi_id\" = "+kpi+" "
+					+ " AND \"granularity_id\" = "+sIstr+" "
+					+ " AND kv.\"timestamp\" BETWEEN TIMESTAMP('"+startTime+"') AND TIMESTAMP('"+endTime+"')"
+					+ " AND \""+contextName+"_id\" IS NOT NULL "
+					+ " GROUP BY date1, ct.\"name\" "
+					+ " ORDER BY date1;";
+		}
+		
+		return query;
+	}
 
 	
+	private String getContextName(TableValueType tVtype) {
+		KpiDataObject kpiDO = null;
+		switch (tVtype){
+			case MACHINE: kpiDO = new Machine();
+				break;
+			case MOULD: kpiDO = new Mould();
+				break;
+			case PRODUCT: kpiDO = new Product();
+				break;
+			case SENSOR: kpiDO = new Sensor();
+				break;
+			case SHIFT: kpiDO = new Shift();
+				break;
+		}
+		return kpiDO.tableName;
+	}
+
+	private String getSamplingIntervalNumber(SamplingInterval sI) {
+		String number = "";
+		switch (sI){
+			case MONTHLY: number = "1";
+				break;
+			case WEEKLY:  number = "2";
+				break;		
+			case DAILY:   number = "3";
+				break;
+			case HOURLY:  number = "4";
+				break;
+		}
+		return number;
+	}
+
 	private String getTableValueType(){
 		return tableVT.toString();
 	}
