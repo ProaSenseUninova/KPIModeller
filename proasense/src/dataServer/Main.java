@@ -192,6 +192,7 @@ public class Main extends HttpServlet
 			
 			_log.saveToFile(labels.toString());
 			_log.saveToFile(labelsTimeStamp.toString());
+			_log.saveToFile(title.toString());
 			
 			obj.put("data", data);
 			obj.put("legend", legend);
@@ -208,6 +209,7 @@ public class Main extends HttpServlet
 			return "";
 		}
 	}
+	
 	public Object getRealTimeKpis(Map<String,String> requestData)
 	{
 		try
@@ -280,12 +282,15 @@ public class Main extends HttpServlet
 			Object data = dAO.getHeatMapData(kpiId, tableValueType, startTime, endTime, samplingInterval, contextName, varX, varY);
 			Object yLabels = dAO.getHeatMapYLabels();
 			Object xLabels = dAO.getHeatMapXLabels();
-//			Object title = dAO.getTitle(kpiId);
-			Object title = "Scrapped parts";
+			String varXStr = varX.equals(TableValueType.NONE)?"":"per "+varX.toString().toLowerCase();
+			String varYStr = varY.equals(TableValueType.NONE)?"":"per "+varY.toString().toLowerCase();
+			Object title = dAO.getTitle(kpiId) + " " + varYStr + " " + varXStr + " of " 
+						 + contextName + " for " + dAO.getLabelName(samplingInterval, startTime.toString()).toString().toLowerCase();
+
 			obj.put("data", data);
 			obj.put("xLabels", xLabels);
 			obj.put("yLabels", yLabels);
-			obj.put("title", title+" per shift per product");
+			obj.put("title", title);
 			return obj;
 		}
 		catch(Exception e)
@@ -623,5 +628,6 @@ public class Main extends HttpServlet
 		  dbConfig = new DBConfig("jdbc:hsqldb:file:"+dbPath, "", "SA", "");
 		  dAO = new DatabaseAccessObject(dbPath,logPath);
 		  _log = LoggingSystem.getLog(logPath);
+		  System.out.println("LogSystem configured in: "+logPath);
 	  }
 }
