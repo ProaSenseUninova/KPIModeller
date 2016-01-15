@@ -224,7 +224,7 @@ public class DatabaseAccessObject {
 		ArrayList<ResultTable> tempResultTable = null;
 		
 //		setTitle(kpiId);
-		 switch (kpiId){
+/*		 switch (kpiId){
 			case 1:
 			case 2:
 			case 3: 
@@ -262,8 +262,9 @@ public class DatabaseAccessObject {
 			case 6: break;
 			default: break;
 		} 
-				
-		// tempResultTable = getKpiValue(kpiId, contextualInformation, granularity, startTime, endTime);
+		*/		
+		//
+		tempResultTable = getKpiValue(kpiId, contextualInformation, granularity, startTime, endTime);
 		
 		String legend = "[";
 		String[] tempDataStr = new String[tempResultTable.size()];
@@ -294,7 +295,10 @@ public class DatabaseAccessObject {
 		return data;
 	}
 
-
+	/*
+	 * @deprecated {@link #getKpiValue()} instead.
+	 * */
+	@Deprecated
 	public ArrayList<ResultTable> getScrapRate(TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime){
 		ArrayList<ResultTable> alrt = new ArrayList<ResultTable>();
 		alrt.add(getOneScrapRate(TableValueType.GLOBAL, granularity, startTime, endTime));
@@ -311,6 +315,11 @@ public class DatabaseAccessObject {
 		return alrt;
 	}
 	
+	/* 
+	 * 
+	 * @deprecated use {@link #getOneKpiValue()} instead.
+	 * */
+	@Deprecated
 	public ResultTable getOneScrapRate(TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime, Integer id){
 		ResultTable resultTable = new ResultTable(contextualInformation, granularity);
 		String query = resultTable.getResultTableQueryString(id, startTime, endTime);
@@ -349,6 +358,11 @@ public class DatabaseAccessObject {
 		return resultTable;
 	}
 	
+	/*
+	 * 
+	 *  @deprecated use {@link #getOneKpiValue()} instead.
+	 *  */
+	@Deprecated
 	public ResultTable getOneScrapRate(TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime){
 		ResultTable resultTable = new ResultTable(contextualInformation, granularity);
 		String query = resultTable.getResultTableQueryString(startTime, endTime);
@@ -394,11 +408,11 @@ public class DatabaseAccessObject {
 	
 	public ArrayList<ResultTable> getKpiValue(Integer kpi, TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime){
 		ArrayList<ResultTable> alrt = new ArrayList<ResultTable>();
-		alrt.add(getOneKpiValue(kpi, startTime, endTime, granularity, true, TableValueType.GLOBAL));
+		alrt.add(getOneKpiValue(kpi, startTime, endTime, granularity, true, TableValueType.GLOBAL, null));
 		if (!contextualInformation.equals(TableValueType.GLOBAL)){
 			Integer numTableElements = getMaxId(contextualInformation.toString().toLowerCase());
 			for (int k = 1; k<=numTableElements;k++){
-				ResultTable tbResult = getOneKpiValue(kpi, startTime, endTime, granularity, false, contextualInformation);
+				ResultTable tbResult = getOneKpiValue(kpi, startTime, endTime, granularity, false, contextualInformation, k);
 				if (tbResult.resultsRows.size() != 0)
 					alrt.add(tbResult);
 			}
@@ -408,10 +422,10 @@ public class DatabaseAccessObject {
 		return alrt;
 	}
 		
-	public ResultTable getOneKpiValue(Integer kpi, Timestamp startTime, Timestamp endTime, SamplingInterval granularity, boolean isGlobal, TableValueType contextualInformation){
+	public ResultTable getOneKpiValue(Integer kpi, Timestamp startTime, Timestamp endTime, SamplingInterval granularity, boolean isGlobal, TableValueType contextualInformation, Integer contextId){
 		ResultTable resultTable = new ResultTable(contextualInformation, granularity);
 		//String query = resultTable.getResultTableQueryString(startTime, endTime);
-		String query = resultTable.getResultTableQueryString(kpi, startTime, endTime, granularity, isGlobal, contextualInformation);
+		String query = resultTable.getResultTableQueryString(kpi, startTime, endTime, granularity, isGlobal, contextualInformation, contextId);
 		
 		dBUtil.openConnection(dbName);
 		log.saveToFile("<Processing query>"+query);

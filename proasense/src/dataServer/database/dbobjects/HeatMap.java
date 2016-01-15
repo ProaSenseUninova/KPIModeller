@@ -52,40 +52,20 @@ public class HeatMap extends ResultTable {
 		String varXStr = varXtype.toString().toLowerCase();
 		String varYStr = varYtype.toString().toLowerCase();
 		
-		String query 	= "SELECT vx.\"name\" as \"varX\", vy.\"name\" as \"varY\", "+getAgregation(kpiId)+"(\"value\") as \"value\""
+		String query 	= "SELECT vx.\"name\" as \"varX\", vy.\"name\" as \"varY\", "+super.getAgregation(kpiId)+"(\"value\") as \"value\""
 				+ " FROM \"kpi_values\" kv"
 				+ "	INNER JOIN \""+varXStr+"\" vx ON \""+varXStr+"_id\" = vx.\"id\""
 				+ " INNER JOIN \""+varYStr+"\" vy ON \""+varYStr+"_id\" = vy.\"id\""
 				+ getSamplingIntervalWhereClause(super.samplingInterval, startTime, true)
 				+ getContextElementWhereClause(super.tableVT, contextStr, contextElementId, false)
-				+ " AND \"kpi_id\" = "+kpiId/*+3*/
-				+ /*getGranularityIDClause(kpiId)*/" AND \"granularity_id\" IS NOT NULL"
+				+ " AND \"kpi_id\" = "+kpiId
+				+ " AND \"granularity_id\" IS NOT NULL"
 				+ " GROUP BY \"varX\", \"varY\""
 				+ " ORDER BY \"varX\", \"varY\";";
 		
-//		query 	= "SELECT pd.\"name\" as \"varX\", sfht.\"name\" as \"varY\", COUNT(*) as \"value\""
-//				+ " FROM \"kpi_values\" kv"
-//				+ "	INNER JOIN \"product\" pd ON \"product_id\" = pd.\"id\""
-//				+ " INNER JOIN \"shift\" sfht ON \"shift_id\" = sfht.\"id\""
-//				+ " WHERE MONTH(CAST(kv.\"timestamp\" AS DATE)) = /* MONTH(CAST(kv.\"timestamp\" AS DATE)) */2"
-//				+ " AND \"machine_id\" = 1"
-//				+ " AND \"kpi_id\" = 3"
-//				+ " GROUP BY \"varX\", \"varY\""
-//				+ " ORDER BY \"varX\", \"varY\";";
 		return query;
 	}
-	
-	private String getAgregation(Integer kpi){
-		String result = "";
 		
-		if (kpi>3)
-			result = "AVG";
-		else 
-			result = "SUM";
-		
-		return result;
-	}
-	
 	private String getSamplingIntervalWhereClause(SamplingInterval granularity, Timestamp time, boolean mainClause){
 		String result = (mainClause)?" WHERE ":" AND ";
 		switch (granularity){
@@ -112,9 +92,6 @@ public class HeatMap extends ResultTable {
 	
 	private String getContextElementWhereClause(TableValueType contextualInformation, String contextStr, Integer contextElmentId, boolean mainClause){
 		String result = "";
-		/*
-			+ " AND \""+contextStr+"_id\" = "+contextElementId
-		*/
 		
 		if (contextualInformation != TableValueType.GLOBAL){
 			result = (mainClause)?" WHERE ":" AND ";

@@ -114,6 +114,11 @@ public class ResultTable {
 		return result;
 	}
 	
+	/** *
+	 * 
+	 * @deprecated use {@link ResultTable#getResultTableQueryString(Integer, Timestamp, Timestamp, SamplingInterval, boolean, TableValueType, Integer)} instead.
+	 * */
+	@Deprecated
 	public String getResultTableQueryString(Integer id, Timestamp startTime, Timestamp endTime){
 		String time;
 		if ( (startTime == null) && (endTime == null) ){
@@ -137,6 +142,11 @@ public class ResultTable {
 		return query;
 	}
 	
+	/** *
+	 * 
+	 * @deprecated use {@link ResultTable#getResultTableQueryString(Integer, Timestamp, Timestamp, SamplingInterval, boolean, TableValueType, Integer)} instead.
+	 * */
+	@Deprecated
 	public String getResultTableQueryString(Timestamp startTime, Timestamp endTime){
 		String time;
 		if ( (startTime == null) && (endTime == null) ){
@@ -155,7 +165,7 @@ public class ResultTable {
 		return query;
 	}
 	
-	public String getResultTableQueryString(Integer kpi, Timestamp startTime, Timestamp endTime, SamplingInterval sI, boolean isGlobal, TableValueType tVtype){
+	public String getResultTableQueryString(Integer kpi, Timestamp startTime, Timestamp endTime, SamplingInterval sI, boolean isGlobal, TableValueType tVtype, Integer contextId){
 		String query = "";
 		String sIstr = getSamplingIntervalNumber(sI);
 		if (isGlobal) {
@@ -174,13 +184,14 @@ public class ResultTable {
 		else {
 			String contextName = getContextName(tVtype);
 			/* ** template for per context ** */
-			query = "SELECT ct.\"name\", kv.\"timestamp\" date1, SUM(\"value\") value "
+			query = "SELECT ct.\"name\", kv.\"timestamp\" date1, "+getAgregation(kpi)+"(\"value\") value "
 					+ " FROM \"kpi_values\" kv "
 					+ " LEFT OUTER JOIN \""+contextName+"\" ct ON \""+contextName+"_id\"=ct.\"id\" "
 					+ " WHERE \"kpi_id\" = "+kpi+" "
 					+ " AND \"granularity_id\" = "+sIstr+" "
 					+ " AND kv.\"timestamp\" BETWEEN TIMESTAMP('"+startTime+"') AND TIMESTAMP('"+endTime+"')"
 					+ " AND \""+contextName+"_id\" IS NOT NULL "
+					+ " AND ct.\"id\" = "+contextId+" "
 					+ " GROUP BY date1, ct.\"name\" "
 					+ " ORDER BY date1;";
 		}
@@ -189,6 +200,18 @@ public class ResultTable {
 	}
 
 	
+	protected String getAgregation(Integer kpi){
+		String result = "";
+		
+		if (kpi>3)
+			result = "AVG";
+		else 
+			result = "SUM";
+		
+		return result;
+	}
+	
+
 	private String getContextName(TableValueType tVtype) {
 		KpiDataObject kpiDO = null;
 		switch (tVtype){
