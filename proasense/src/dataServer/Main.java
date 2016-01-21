@@ -178,13 +178,19 @@ public class Main extends HttpServlet
 			endTime = new Timestamp(Long.parseLong(requestData.get("endTime")));
 		}
 		
+		Integer contextValueId = null;
+		String contextValueIdStr = requestData.get("contextValueId");
+		if ( contextValueIdStr != null){
+			contextValueId = Integer.parseInt(requestData.get("contextValueId"));	
+		}
+		
 		
 		try
 		{
 			JSONParser parser = new JSONParser();
 			JSONObject obj = new JSONObject();
 			
-			Object data = dAO.getData(kpiId, tableValueType, samplingInterval, startTime, endTime);
+			Object data = dAO.getData(kpiId, tableValueType, samplingInterval, startTime, endTime, contextValueId);
 			Object legend = dAO.getLegends();
 			Object labels = dAO.getXLabels(samplingInterval);
 			Object labelsTimeStamp = dAO.getXLabelsTimeStamp();
@@ -252,8 +258,10 @@ public class Main extends HttpServlet
 		String endTimeStr = requestData.get("endTime");
 		
 		if ( ( startTimeStr != null ) && ( endTimeStr != null))  {
+			writeLogMsg("requestData startTime:"+requestData.get("startTime"));
 			startTime = new Timestamp(Long.parseLong(requestData.get("startTime")));
 			endTime = new Timestamp(Long.parseLong(requestData.get("endTime")));
+			writeLogMsg("after startTime long parse:"+startTime);
 		}
 
 		SamplingInterval samplingInterval = SamplingInterval.valueOf(getParamValueOf(requestData.get("granularity").toUpperCase()));
@@ -286,6 +294,8 @@ public class Main extends HttpServlet
 			String varYStr = varY.equals(TableValueType.NONE)?"":"per "+varY.toString().toLowerCase();
 			Object title = dAO.getTitle(kpiId) + " " + varYStr + " " + varXStr + " of " 
 						 + contextName + " for " + dAO.getLabelName(samplingInterval, startTime.toString()).toString().toLowerCase();
+			writeLogMsg("HeatMap title: "+title);
+			
 
 			obj.put("data", data);
 			obj.put("xLabels", xLabels);

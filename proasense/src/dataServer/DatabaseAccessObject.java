@@ -119,6 +119,10 @@ public class DatabaseAccessObject {
 		return id;
 	}
 	
+	public long getMaxDate(String tableName){
+		return 0;
+	}
+	
 	private ArrayList<String> prepareInsertQuery(ArrayList<KpiDataObject> buffer){
 		// create insert query string
 
@@ -218,53 +222,12 @@ public class DatabaseAccessObject {
 	}
 	
 
-	public Object getData(Integer kpiId, TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime){
+	public Object getData(Integer kpiId, TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime, Integer contextValueId){
 		Object data = null;
 		JSONParser parser = new JSONParser();
 		ArrayList<ResultTable> tempResultTable = null;
 		
-//		setTitle(kpiId);
-/*		 switch (kpiId){
-			case 1:
-			case 2:
-			case 3: 
-			case 7: tempResultTable = getKpiValue(kpiId, contextualInformation, granularity, startTime, endTime); 
-			break;
-			case 4: tempResultTable = getScrapRate(contextualInformation, granularity, startTime, endTime);
-			
-				String legend = "[";
-				String[] tempDataStr = new String[tempResultTable.size()];
-				Integer pos = -1;
-				for (ResultTable rt : tempResultTable){
-
-					if (rt.resultsRows.size() != 0) {
-						legend += rt.toJsonObjectLegend()+",";
-						tempDataStr[++pos] = rt.toJSonObject(rt.columnQty, _refRows).toString();
-					}
-				}
-
-				legend = legend.substring(0, legend.length()-1);
-				legend +="]";
-				try {
-					log.saveToFile("<Values>"+Arrays.toString(tempDataStr)+"</Values>");
-					log.saveToFile("<Legends>"+legend+"</Legends>");
-
-					data = parser.parse(Arrays.toString(tempDataStr));
-					_legends = parser.parse(legend);
-				} catch (ParseException e) {
-					e.printStackTrace();
-					log.saveToFile("<Error parsing results kpiId="+kpiId+" contextualInformation="+contextualInformation.toString()
-							+" granularity="+granularity+" startTime="+startTime+" endTime="+endTime+"> "+e.getMessage()+" </Error parsing results>");
-				}
-				
-				break;
-			case 5: break;
-			case 6: break;
-			default: break;
-		} 
-		*/		
-		//
-		tempResultTable = getKpiValue(kpiId, contextualInformation, granularity, startTime, endTime);
+		tempResultTable = getKpiValue(kpiId, contextualInformation, granularity, startTime, endTime, contextValueId);
 		
 		String legend = "[";
 		String[] tempDataStr = new String[tempResultTable.size()];
@@ -406,15 +369,22 @@ public class DatabaseAccessObject {
 		return resultTable;
 	}
 	
-	public ArrayList<ResultTable> getKpiValue(Integer kpi, TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime){
+	public ArrayList<ResultTable> getKpiValue(Integer kpi, TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime, Integer contextValueId){
 		ArrayList<ResultTable> alrt = new ArrayList<ResultTable>();
-		alrt.add(getOneKpiValue(kpi, startTime, endTime, granularity, true, TableValueType.GLOBAL, null));
+		alrt.add(getOneKpiValue(kpi, startTime, endTime, granularity, true, TableValueType.GLOBAL, null, null));
 		if (!contextualInformation.equals(TableValueType.GLOBAL)){
-			Integer numTableElements = getMaxId(contextualInformation.toString().toLowerCase());
-			for (int k = 1; k<=numTableElements;k++){
-				ResultTable tbResult = getOneKpiValue(kpi, startTime, endTime, granularity, false, contextualInformation, k);
+			if (contextValueId !=0 ){
+				ResultTable tbResult = getOneKpiValue(kpi, startTime, endTime, granularity, false, contextualInformation, contextValueId, contextValueId);
 				if (tbResult.resultsRows.size() != 0)
 					alrt.add(tbResult);
+			}
+			else {
+				Integer numTableElements = getMaxId(contextualInformation.toString().toLowerCase());
+				for (int k = 1; k<=numTableElements;k++){
+					ResultTable tbResult = getOneKpiValue(kpi, startTime, endTime, granularity, false, contextualInformation, k, contextValueId);
+					if (tbResult.resultsRows.size() != 0)
+						alrt.add(tbResult);
+				}
 			}
 				
 		}
@@ -422,10 +392,10 @@ public class DatabaseAccessObject {
 		return alrt;
 	}
 		
-	public ResultTable getOneKpiValue(Integer kpi, Timestamp startTime, Timestamp endTime, SamplingInterval granularity, boolean isGlobal, TableValueType contextualInformation, Integer contextId){
+	public ResultTable getOneKpiValue(Integer kpi, Timestamp startTime, Timestamp endTime, SamplingInterval granularity, boolean isGlobal, TableValueType contextualInformation, Integer contextId, Integer contextValueId){
 		ResultTable resultTable = new ResultTable(contextualInformation, granularity);
 		//String query = resultTable.getResultTableQueryString(startTime, endTime);
-		String query = resultTable.getResultTableQueryString(kpi, startTime, endTime, granularity, isGlobal, contextualInformation, contextId);
+		String query = resultTable.getResultTableQueryString(kpi, startTime, endTime, granularity, isGlobal, contextualInformation, contextId, contextValueId);
 		
 		dBUtil.openConnection(dbName);
 		log.saveToFile("<Processing query>"+query);
@@ -461,7 +431,8 @@ public class DatabaseAccessObject {
 		
 		dBUtil.closeConnection();
 		
-		initializeValueRefQtyVector(resultTable.resultsRows);
+		if (!_valueRefQtyFlag)
+			initializeValueRefQtyVector(resultTable.resultsRows);
 		
 		return resultTable;
 	}
@@ -501,6 +472,7 @@ public class DatabaseAccessObject {
 	
 	public String getLabelName(SamplingInterval granularity, String element){
 		String labelName ="";
+		log.saveToFile("getLabelName method: element->"+element);
 		switch (granularity) {
 		case HOURLY: labelName = (new SimpleDateFormat("HH'h' dd MMM")).format(Timestamp.valueOf(element));
 			break;
@@ -515,6 +487,7 @@ public class DatabaseAccessObject {
 		default:
 			break;
 		}
+		log.saveToFile("getLabelName method: labelName->"+labelName);
 		return labelName;
 		
 	}

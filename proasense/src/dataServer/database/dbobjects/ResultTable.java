@@ -165,7 +165,7 @@ public class ResultTable {
 		return query;
 	}
 	
-	public String getResultTableQueryString(Integer kpi, Timestamp startTime, Timestamp endTime, SamplingInterval sI, boolean isGlobal, TableValueType tVtype, Integer contextId){
+	public String getResultTableQueryString(Integer kpi, Timestamp startTime, Timestamp endTime, SamplingInterval sI, boolean isGlobal, TableValueType tVtype, Integer contextId, Integer contextValueId){
 		String query = "";
 		String sIstr = getSamplingIntervalNumber(sI);
 		if (isGlobal) {
@@ -183,6 +183,7 @@ public class ResultTable {
 		}
 		else {
 			String contextName = getContextName(tVtype);
+			String contextValueIdWhereClause = getContextValueIdWhereClause(contextValueId, contextName);
 			/* ** template for per context ** */
 			query = "SELECT ct.\"name\", kv.\"timestamp\" date1, "+getAgregation(kpi)+"(\"value\") value "
 					+ " FROM \"kpi_values\" kv "
@@ -192,6 +193,7 @@ public class ResultTable {
 					+ " AND kv.\"timestamp\" BETWEEN TIMESTAMP('"+startTime+"') AND TIMESTAMP('"+endTime+"')"
 					+ " AND \""+contextName+"_id\" IS NOT NULL "
 					+ " AND ct.\"id\" = "+contextId+" "
+					+ contextValueIdWhereClause
 					+ " GROUP BY date1, ct.\"name\" "
 					+ " ORDER BY date1;";
 		}
@@ -200,6 +202,14 @@ public class ResultTable {
 	}
 
 	
+	private String getContextValueIdWhereClause(Integer contextValueId, String contextName) {
+		String result = "";
+		if (!contextValueId.equals(null) && contextValueId != 0){
+			result = " AND \""+contextName+"_id\" = " + contextValueId;
+		}
+		return result;
+	}
+
 	protected String getAgregation(Integer kpi){
 		String result = "";
 		
@@ -282,7 +292,8 @@ public class ResultTable {
 					break;
 				}
 			}
-			tempStr[refPos] = resultsRows.get(i).toJSonObject(column).toString();
+			if (refPos != -1)
+				tempStr[refPos] = resultsRows.get(i).toJSonObject(column).toString();
 		}
 		
 		
