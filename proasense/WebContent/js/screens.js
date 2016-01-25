@@ -774,6 +774,7 @@ function ScreenGraph(kpiInfo) {
 		var secondContextValueStr = "";
 		if (secondContextValue != null)
 			secondContextValueStr = "&secondContext="+secondContextValue;
+		
 		//scr.initializeGraph(this.testGraphData);
 		$.ajax({
 			url: restAddress + "func/getGraphData?kpiId=" + loadedKpi + 
@@ -812,7 +813,10 @@ function ScreenGraph(kpiInfo) {
 			success: function(heatMapData) {
 				scr.initializeHeatMap(heatMapData)
 			}
-		});	
+		});
+		$('#fromDateHeatMap').handleDtpicker('setDate',heatMapStartTime);
+		$('#toDateHeatMap').handleDtpicker('setDate',heatMapEndTime);
+		$('#granularityHeatMap').val(heatMapGranularity);
 		
 	}
 	this.connect = function() {
@@ -979,7 +983,8 @@ function ScreenGraph(kpiInfo) {
 				"onHide": function(handler) {}
 			},
 			firstGraphDate);
-
+		updateDates();
+		
 		$('#toDateChart').appendDtpicker({
 				"dateOnly": true,
 				"onShow": function(handler) {},
@@ -1728,4 +1733,8 @@ function clearContextLists(){
 	document.getElementById("contextShiftSelectList").innerHTML = "";
 	document.getElementById("contextMouldSelectList").innerHTML = "";
 
+}
+
+function updateDates(){
+	$('#fromDateChart').datepicker( "setDate", "10/12/2012" );
 }
