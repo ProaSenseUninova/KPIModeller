@@ -165,7 +165,7 @@ public class ResultTable {
 		return query;
 	}
 	
-	public String getResultTableQueryString(Integer kpi, Timestamp startTime, Timestamp endTime, SamplingInterval sI, boolean isGlobal, TableValueType tVtype, Integer contextId, Integer contextValueId){
+	public String getResultTableQueryString(Integer kpi, Timestamp startTime, Timestamp endTime, SamplingInterval sI, boolean isGlobal, TableValueType tVtype, Integer contextId, Integer contextValueId, TableValueType secondContext){
 		String query = "";
 		String sIstr = getSamplingIntervalNumber(sI);
 		if (isGlobal) {
@@ -182,20 +182,41 @@ public class ResultTable {
 				+ " ORDER BY date1;";
 		}
 		else {
-			String contextName = getContextName(tVtype);
-			String contextValueIdWhereClause = getContextValueIdWhereClause(contextValueId, contextName);
-			/* ** template for per context ** */
-			query = "SELECT ct.\"name\", kv.\"timestamp\" date1, "+getAgregation(kpi)+"(\"value\") value "
-					+ " FROM \"kpi_values\" kv "
-					+ " LEFT OUTER JOIN \""+contextName+"\" ct ON \""+contextName+"_id\"=ct.\"id\" "
-					+ " WHERE \"kpi_id\" = "+kpi+" "
-					+ " AND \"granularity_id\" = "+sIstr+" "
-					+ " AND kv.\"timestamp\" BETWEEN TIMESTAMP('"+startTime+"') AND TIMESTAMP('"+endTime+"')"
-					+ " AND \""+contextName+"_id\" IS NOT NULL "
-					+ " AND ct.\"id\" = "+contextId+" "
-					+ contextValueIdWhereClause
-					+ " GROUP BY date1, ct.\"name\" "
-					+ " ORDER BY date1;";
+			if (secondContext == TableValueType.NONE) {
+				String contextName = getContextName(tVtype);
+				String contextValueIdWhereClause = getContextValueIdWhereClause(contextValueId, contextName);
+				/* ** template for per context ** */
+				query = "SELECT ct.\"name\", kv.\"timestamp\" date1, "+getAgregation(kpi)+"(\"value\") value "
+						+ " FROM \"kpi_values\" kv "
+						+ " LEFT OUTER JOIN \""+contextName+"\" ct ON \""+contextName+"_id\"=ct.\"id\" "
+						+ " WHERE \"kpi_id\" = "+kpi+" "
+						+ " AND \"granularity_id\" = "+sIstr+" "
+						+ " AND kv.\"timestamp\" BETWEEN TIMESTAMP('"+startTime+"') AND TIMESTAMP('"+endTime+"')"
+						+ " AND \""+contextName+"_id\" IS NOT NULL "
+						+ " AND ct.\"id\" = "+contextId+" "
+						+ contextValueIdWhereClause
+						+ " GROUP BY date1, ct.\"name\" "
+						+ " ORDER BY date1;";
+				
+			}
+			else{
+				String contextName = getContextName(tVtype);
+				String secondContextName = getContextName(secondContext);
+				String contextValueIdWhereClause = getContextValueIdWhereClause(contextValueId, contextName);
+				/* ** template for per context ** */
+				query = "SELECT ct.\"name\", kv.\"timestamp\" date1, "+getAgregation(kpi)+"(\"value\") value "
+						+ " FROM \"kpi_values\" kv "
+						+ " LEFT OUTER JOIN \""+secondContextName+"\" ct ON \""+secondContextName+"_id\"=ct.\"id\" "
+						+ " WHERE \"kpi_id\" = "+kpi+" "
+						+ " AND \"granularity_id\" = "+sIstr+" "
+						+ " AND kv.\"timestamp\" BETWEEN TIMESTAMP('"+startTime+"') AND TIMESTAMP('"+endTime+"')"
+						+ " AND \""+contextName+"_id\" IS NOT NULL "
+						+ " AND ct.\"id\" = "+contextId+" "
+						+ contextValueIdWhereClause
+						+ " GROUP BY date1, ct.\"name\" "
+						+ " ORDER BY date1;";
+				
+			}
 		}
 		
 		return query;

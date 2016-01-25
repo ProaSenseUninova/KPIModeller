@@ -26,26 +26,38 @@
 	<tr>
 		<form id="chartSelector" action="">
 			<td data-cInfo="context_global">
-				<label onclick="insertContextSelectList()"><input type="radio" checked name="type" value="Global"> Global</label>
+				<label onclick="insertContextSelectList()">
+					<input type="radio" checked name="type" value="Global"> Global
+				</label>
 				<br>
 			</td>
 			<td data-cInfo="context_product">
-				<label onclick="insertContextSelectList(1)"><input type="radio" name="type" value="product"> Product </label>
+				<label onclick="insertContextSelectList(1)">
+					<input type="radio" name="type" value="product"> Product 
+				</label>
 				<span id="contextProductSelectList"></span>
-				<label onchange="addMoreContext()" ><input type="checkbox" name="more" value="product"> + </label>
-				<br /> <span id="Product2ndContextSelectList"></span>
+				<span id="secContextProductSelectList"></span>
 			</td>
 			<td data-cInfo="context_machine">
-				<label onclick="insertContextSelectList(2)"><input type="radio" name="type" value="machine"> Machine </label>
-				<span id="contextMachineSelectList"></span>
+				<label onclick="insertContextSelectList(2)">
+					<input type="radio" name="type" value="machine"> Machine 
+				</label>
+					<span id="contextMachineSelectList"></span>
+					<span id="secContextMachineSelectList"></span>
 			</td>
 			<td data-cInfo="context_shift">
-				<label onclick="insertContextSelectList(3)"><input type="radio" name="type" value="shift"> Shift </label>
+				<label onclick="insertContextSelectList(3)">
+					<input type="radio" name="type" value="shift"> Shift 
+				</label>
 				<span id="contextShiftSelectList"></span>
+				<span id="secContextShiftSelectList"></span>
 			</td>
 			<td data-cInfo="context_mould">
-				<label onclick="insertContextSelectList(4)"><input type="radio" name="type" value="mould"> Mould </label>
+				<label onclick="insertContextSelectList(4)">
+					<input type="radio" name="type" value="mould"> Mould 
+				</label>
 				<span id="contextMouldSelectList"></span>
+				<span id="secContextMouldSelectList"></span>
 			</td>
 		</form>
 	</tr>

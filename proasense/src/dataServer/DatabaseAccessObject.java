@@ -222,12 +222,12 @@ public class DatabaseAccessObject {
 	}
 	
 
-	public Object getData(Integer kpiId, TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime, Integer contextValueId){
+	public Object getData(Integer kpiId, TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime, Integer contextValueId, TableValueType secondContext){
 		Object data = null;
 		JSONParser parser = new JSONParser();
 		ArrayList<ResultTable> tempResultTable = null;
 		
-		tempResultTable = getKpiValue(kpiId, contextualInformation, granularity, startTime, endTime, contextValueId);
+		tempResultTable = getKpiValue(kpiId, contextualInformation, granularity, startTime, endTime, contextValueId, secondContext);
 		
 		String legend = "[";
 		String[] tempDataStr = new String[tempResultTable.size()];
@@ -369,19 +369,23 @@ public class DatabaseAccessObject {
 		return resultTable;
 	}
 	
-	public ArrayList<ResultTable> getKpiValue(Integer kpi, TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime, Integer contextValueId){
+	public ArrayList<ResultTable> getKpiValue(Integer kpi, TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime, Integer contextValueId, TableValueType secondContext){
 		ArrayList<ResultTable> alrt = new ArrayList<ResultTable>();
-		alrt.add(getOneKpiValue(kpi, startTime, endTime, granularity, true, TableValueType.GLOBAL, null, null));
+		alrt.add(getOneKpiValue(kpi, startTime, endTime, granularity, true, TableValueType.GLOBAL, null, null, TableValueType.NONE));
 		if (!contextualInformation.equals(TableValueType.GLOBAL)){
-			if (contextValueId !=0 ){
-				ResultTable tbResult = getOneKpiValue(kpi, startTime, endTime, granularity, false, contextualInformation, contextValueId, contextValueId);
+			if ((contextValueId !=0 ) && (secondContext == TableValueType.NONE) ){
+				ResultTable tbResult = getOneKpiValue(kpi, startTime, endTime, granularity, false, contextualInformation, contextValueId, contextValueId, TableValueType.NONE);
 				if (tbResult.resultsRows.size() != 0)
 					alrt.add(tbResult);
 			}
 			else {
-				Integer numTableElements = getMaxId(contextualInformation.toString().toLowerCase());
+				Integer numTableElements = 0;
+				if (secondContext == TableValueType.NONE)
+					numTableElements = getMaxId(contextualInformation.toString().toLowerCase());
+				else
+					numTableElements = getMaxId(secondContext.toString().toLowerCase());
 				for (int k = 1; k<=numTableElements;k++){
-					ResultTable tbResult = getOneKpiValue(kpi, startTime, endTime, granularity, false, contextualInformation, k, contextValueId);
+					ResultTable tbResult = getOneKpiValue(kpi, startTime, endTime, granularity, false, contextualInformation, k, contextValueId, secondContext);
 					if (tbResult.resultsRows.size() != 0)
 						alrt.add(tbResult);
 				}
@@ -392,10 +396,10 @@ public class DatabaseAccessObject {
 		return alrt;
 	}
 		
-	public ResultTable getOneKpiValue(Integer kpi, Timestamp startTime, Timestamp endTime, SamplingInterval granularity, boolean isGlobal, TableValueType contextualInformation, Integer contextId, Integer contextValueId){
+	public ResultTable getOneKpiValue(Integer kpi, Timestamp startTime, Timestamp endTime, SamplingInterval granularity, boolean isGlobal, TableValueType contextualInformation, Integer contextId, Integer contextValueId, TableValueType secondContextualInformation){
 		ResultTable resultTable = new ResultTable(contextualInformation, granularity);
 		//String query = resultTable.getResultTableQueryString(startTime, endTime);
-		String query = resultTable.getResultTableQueryString(kpi, startTime, endTime, granularity, isGlobal, contextualInformation, contextId, contextValueId);
+		String query = resultTable.getResultTableQueryString(kpi, startTime, endTime, granularity, isGlobal, contextualInformation, contextId, contextValueId, secondContextualInformation);
 		
 		dBUtil.openConnection(dbName);
 		log.saveToFile("<Processing query>"+query);

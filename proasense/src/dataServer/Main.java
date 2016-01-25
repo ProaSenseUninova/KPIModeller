@@ -184,13 +184,19 @@ public class Main extends HttpServlet
 			contextValueId = Integer.parseInt(requestData.get("contextValueId"));	
 		}
 		
+		String secondContextStr = requestData.get("secondContext");
+		TableValueType secondContext = TableValueType.NONE; 
+		if ( secondContextStr != null){
+			secondContext = TableValueType.valueOf(getParamValueOf(requestData.get("secondContext").toUpperCase()));	
+		}
+		
 		
 		try
 		{
 			JSONParser parser = new JSONParser();
 			JSONObject obj = new JSONObject();
 			
-			Object data = dAO.getData(kpiId, tableValueType, samplingInterval, startTime, endTime, contextValueId);
+			Object data = dAO.getData(kpiId, tableValueType, samplingInterval, startTime, endTime, contextValueId, secondContext);
 			Object legend = dAO.getLegends();
 			Object labels = dAO.getXLabels(samplingInterval);
 			Object labelsTimeStamp = dAO.getXLabelsTimeStamp();

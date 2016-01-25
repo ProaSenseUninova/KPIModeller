@@ -770,6 +770,10 @@ function ScreenGraph(kpiInfo) {
 		var graphEndTime = $('#toDateChart').handleDtpicker('getDate').getTime();
 		var graphGranularity = $('#granularityChart').val();
 		var contextValueId = $('#context_select_list').val();
+		var secondContextValue = $('#second_context_select_listID').val();
+		var secondContextValueStr = "";
+		if (secondContextValue != null)
+			secondContextValueStr = "&secondContext="+secondContextValue;
 		//scr.initializeGraph(this.testGraphData);
 		$.ajax({
 			url: restAddress + "func/getGraphData?kpiId=" + loadedKpi + 
@@ -777,7 +781,8 @@ function ScreenGraph(kpiInfo) {
 								"&startTime=" + graphStartTime + 
 								"&endTime=" + graphEndTime + 
  								"&granularity=" + graphGranularity + 
-								"&contextValueId=" + contextValueId,
+								"&contextValueId=" + contextValueId +
+								secondContextValueStr,
 			type: "GET",
 			success: function(graphData) {
 				scr.initializeGraph(graphData);
@@ -1621,11 +1626,10 @@ function ScreenQuery() {
 }
 
 function insertContextSelectList() {
-	document.getElementById("contextProductSelectList").innerHTML = "";
-	document.getElementById("contextMachineSelectList").innerHTML = "";	
-	document.getElementById("contextShiftSelectList").innerHTML = "";
-	document.getElementById("contextMouldSelectList").innerHTML = "";
-	var openHTML =  "<select id=\"context_select_list\" size=\"1\">" +
+	clearContextLists();	
+	clearSecContextsLists();
+	
+	var openHTML =  "<select id=\"context_select_list\" size=\"1\" onchange=\"addMoreContext("+arguments[0]+")\">" +
 					"<option value=\"0\">All</option>";
 	var closeHTML = "</select>";
 	var elementId = "";
@@ -1647,11 +1651,76 @@ function insertContextSelectList() {
 		break;
 		default:break;
 	}
-	for (var i = 0; i<contextArr.length;i++) {
-		content += "<option value=\""+contextArr[i].id+"\">"+contextArr[i].name+"</option>";
-		
-	}
-	if (elementId != "")
+
+	if (elementId != ""){
+		for (var i = 0; i<contextArr.length;i++) {
+			content += "<option value=\""+contextArr[i].id+"\">"+contextArr[i].name+"</option>";
+			
+		}
 		document.getElementById(elementId).innerHTML = openHTML + content + closeHTML;
+	}
+}
+
+function addMoreContext(){
+	var contextSelectList = document.getElementById("context_select_list").value;
+	if (contextSelectList == 0){
+		clearSecContextsLists();
+	}
+	else {
+		var contextName = "";
+		var elementId = "";
+
+		switch (arguments[0]){
+		case 1: contextName = "product";
+				elementId = "secContextProductSelectList";
+				break;
+		case 2: contextName = "machine";
+				elementId = "secContextMachineSelectList";
+				break;
+		case 3: contextName = "shift";
+				elementId = "secContextShiftSelectList";
+				break;
+		case 4: contextName = "mould";
+				elementId = "secContextMouldSelectList";
+				break;
+		default:break;
+		}
+		
+		var contextList = document.getElementById("verticalSet").cloneNode(true);
+		contextList.id = "second_context_select_listID"; 
+
+		for (var ct = 0; ct<contextList.childNodes.length; ct++){
+			if (contextList.childNodes[ct].value == contextName){
+				contextList.childNodes[ct].remove();
+				break;
+			}
+		}
+		if (elementId != ""){
+			var noneOp = document.createElement("option");
+			noneOp.setAttribute("selected","selected");
+			noneOp.setAttribute("value","none");
+			noneOp.innerHTML = "None";
+			
+			contextList.appendChild(noneOp);
+
+			document.getElementById(elementId).innerHTML = "+"+contextList.outerHTML;
+		}
+	}
 	
+}
+
+function clearSecContextsLists(){
+	document.getElementById("secContextProductSelectList").innerHTML = "";
+	document.getElementById("secContextMachineSelectList").innerHTML = "";
+	document.getElementById("secContextShiftSelectList").innerHTML = "";
+	document.getElementById("secContextMouldSelectList").innerHTML = "";
+
+}
+
+function clearContextLists(){
+	document.getElementById("contextProductSelectList").innerHTML = "";
+	document.getElementById("contextMachineSelectList").innerHTML = "";	
+	document.getElementById("contextShiftSelectList").innerHTML = "";
+	document.getElementById("contextMouldSelectList").innerHTML = "";
+
 }
