@@ -812,7 +812,8 @@ function ScreenGraph(kpiInfo) {
 			success: function(heatMapData) {
 				scr.initializeHeatMap(heatMapData)
 			}
-		});
+		});	
+		
 	}
 	this.connect = function() {
 		if (this.socket !== undefined) {
@@ -957,8 +958,8 @@ function ScreenGraph(kpiInfo) {
 		var graphRadioValue = $('#heatMapTable').find('input:checked').val();
 		var horizontalSet = $('#horizontalSet').val();
 		var verticalSet = $('#verticalSet').val();
-		var firstHeatDate = new Date(2015, 4, 31);
-		var secondHeatDate = new Date(2015, 4, 31);
+		var firstHeatDate = new Date(2015, 3, 31);
+		var secondHeatDate = new Date(2015, 3, 31);
 		// var heatMapStartTime = (new Date(2015, 4, 31)).getTime();
 		var heatMapStartTime = firstHeatDate.getTime();
 		// var heatMapEndTime = (new Date(2015, 4, 31)).getTime();
@@ -1265,10 +1266,11 @@ function ScreenGraph(kpiInfo) {
 				},
 				series: {
 					serie1: {
+						fill:true,
 						color: "#7CB5EC"
 					},
 					serie2: {
-						color: "#000000"
+						color: "#FF2020"
 					},
 					serie3: {
 						color: "#90ED7D"
@@ -1277,27 +1279,30 @@ function ScreenGraph(kpiInfo) {
 						color: "#F7A35C"
 					},
 					serie5: {
-						color: "#8085E9"
+						color: "#C0C0C0"
 					},
 					serie6: {
-						color: "#CC0000"
+						color: "#8085E9"
 					},
 					serie7: {
 						color: "#009999"
 					},
 					serie8: {
-						color: "#9900CC"
+						color: "#000000"
 					},
 					serie9: {
 						color: "#F5007B"
 					},
 					serie10: {
-						color: "#0000EB"
+						color: "#9900CC"
 					},
 					serie11: {
 						color: "#EBEB00"
 					},
 					serie12: {
+						color: "#0000EB"
+					},					
+					serie13: {
 						color: "#A0A0A0"
 					},					
 
@@ -1470,7 +1475,7 @@ function ScreenGraph(kpiInfo) {
 				color: "#7CB5EC"
 			},
 			serie2: {
-				color: "#000000"
+				color: "#FF2020"
 			},
 			serie3: {
 				color: "#90ED7D"
@@ -1479,7 +1484,7 @@ function ScreenGraph(kpiInfo) {
 				color: "#F7A35C"
 			},
 			serie5: {
-				color: "#8085E9"
+				color: "#C0C0C0"
 			},
 
 
