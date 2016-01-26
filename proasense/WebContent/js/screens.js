@@ -795,11 +795,10 @@ function ScreenGraph(kpiInfo) {
 		var horizontalSet = $('#horizontalSet').val();
 		var verticalSet = $('#verticalSet').val();
 		var heatMapStartTime = startDate!==undefined?startDate:$('#fromDateHeatMap').handleDtpicker('getDate').getTime();
-		// var heatMapStartTime = startDate!==undefined?startDate:$('#fromDateChart').handleDtpicker('getDate').getTime();
 		var heatMapEndTime = endDate!==undefined?endDate:$('#toDateHeatMap').handleDtpicker('getDate').getTime();
-		// var heatMapEndTime = endDate!==undefined?endDate:$('#toDateChart').handleDtpicker('getDate').getTime();
 		var contextName = legend!==undefined?legend:'Global';
 		var heatMapGranularity = legend!==undefined?$('#granularityChart').val():$('#granularityHeatMap').val()
+
 		$.ajax({
 			url: restAddress + "func/getHeatMapData?kpiId=" + loadedKpi +
 								"&contextualInformation="+scr.graphContextualInformation+ 
@@ -936,13 +935,10 @@ function ScreenGraph(kpiInfo) {
 
 		
 		var graphContextualInformation = $('#graphTable').find('input:checked').val();
-
 		var firstGraphDate = new Date(2014, 11, 31);
 		var secondGraphDate = new Date(2015, 4, 31);
-		// var graphStartTime = (new Date(2014, 11, 31)).getTime();
 		var graphStartTime = firstGraphDate.getTime();
 		this.startYear=(new Date(graphStartTime)).getFullYear();
-		// var graphEndTime = (new Date(2015, 4, 31)).getTime();
 		var graphEndTime = secondGraphDate.getTime();
 		var graphGranularity = $('#granularityChart').val();
 		$('#graphButton').on('click', function(event) {
@@ -951,9 +947,14 @@ function ScreenGraph(kpiInfo) {
 		$('#heatMapButton').on('click', function(event) {
 			scr.updateHeatMap();
 		});
+		
 		//this.initializeGraph(this.testGraphData,true);
 		$.ajax({
-			url: restAddress + "func/getGraphData?kpiId=" + loadedKpi + "&contextualInformation=" + graphContextualInformation + "&granularity=" + graphGranularity + "&startTime=" + graphStartTime + "&endTime=" + graphEndTime,
+			url: restAddress + "func/getGraphData?kpiId=" + loadedKpi + 
+							   "&contextualInformation=" + graphContextualInformation + 
+							   "&granularity=" + graphGranularity + 
+							   "&startTime=" + graphStartTime + 
+							   "&endTime=" + graphEndTime,
 			type: "GET",
 			success: function(graphData) {
 				scr.initializeGraph(graphData);
@@ -964,13 +965,19 @@ function ScreenGraph(kpiInfo) {
 		var verticalSet = $('#verticalSet').val();
 		var firstHeatDate = new Date(2015, 3, 31);
 		var secondHeatDate = new Date(2015, 3, 31);
-		// var heatMapStartTime = (new Date(2015, 4, 31)).getTime();
 		var heatMapStartTime = firstHeatDate.getTime();
-		// var heatMapEndTime = (new Date(2015, 4, 31)).getTime();
 		var heatMapEndTime = secondHeatDate.getTime();
 		var heatMapGranularity = $('#granularityHeatMap').val();
+
 		$.ajax({
-			url: restAddress + "func/getHeatMapData?kpiId=" + loadedKpi + "&contextualInformation=" + graphContextualInformation + "&varX="+horizontalSet+ "&varY="+verticalSet+"&startTime=" + heatMapStartTime + "&endTime=" + heatMapEndTime + "&granularity=" + heatMapGranularity+"&contextName=Global",
+			url: restAddress + "func/getHeatMapData?kpiId=" + loadedKpi + 
+							   "&contextualInformation=" + graphContextualInformation + 
+							   "&varX="+horizontalSet + 
+							   "&varY="+verticalSet +
+							   "&startTime=" + heatMapStartTime + 
+							   "&endTime=" + heatMapEndTime + 
+							   "&granularity=" + heatMapGranularity +
+							   "&contextName=Global",
 			type: "GET",
 			success: function(heatMapData) {
 				scr.initializeHeatMap(heatMapData)
@@ -983,7 +990,6 @@ function ScreenGraph(kpiInfo) {
 				"onHide": function(handler) {}
 			},
 			firstGraphDate);
-		updateDates();
 		
 		$('#toDateChart').appendDtpicker({
 				"dateOnly": true,
@@ -1735,6 +1741,3 @@ function clearContextLists(){
 
 }
 
-function updateDates(){
-	$('#fromDateChart').datepicker( "setDate", "10/12/2012" );
-}
