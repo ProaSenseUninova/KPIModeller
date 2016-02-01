@@ -18,15 +18,27 @@
 		</tr>
 		<tr>
 			<td>
-				Calculation</option>
+				Calculation </option> 
 			</td>
 			<td colspan=5>
-				<select id="calculationType" class="box grey">
+				<select id="calculationType" class="box grey" onchange="addKpiNumberSupport()" >
 					<option value="" disabled selected hidden>Calculation Type</option>
 					<option value="simple">Simple Measure</option>
 					<option value="aggregate">Aggregate Measure</option>
 					<option value="composed">Composed Measure</option>
 				</select>
+		        <select id="numberSupport" class="box grey" onchange="addKpiNumberSupportFormat()" disabled="true">
+		          	<option value="" disabled selected hidden>Number Type</option>
+		          	<option value="numeric">Numeric</option>
+		          	<option value="boolean">Boolean</option>
+		          	<option value="text">Text</option>
+		          	<option value="date">Date</option>
+		          	<option value="category">Category</option>
+		        </select>
+		        <select id="numberSupportFormat" style="visibility: hidden">
+		        	<option value="decimal">Decimal</option>
+		    	    <option value="percentage" selected>Percentage</option>
+		        </select>
 			</td>
 
 
@@ -200,13 +212,11 @@
 			</td>
 		</tr>
 		<!--<tr>
-<td width="15%">&nbsp</td>
-<td width="37%">&nbsp</td>
-<td width="10%">&nbsp</td>
-<td width="">&nbsp</td>
-
-
-</tr>		-->
+				<td width="15%">&nbsp</td>
+				<td width="37%">&nbsp</td>
+				<td width="10%">&nbsp</td>
+				<td width="">&nbsp</td>
+			</tr>		-->
 		<br>
 	</tbody>
 </table>

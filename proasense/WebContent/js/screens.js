@@ -368,6 +368,10 @@ function Screen1(elInfo) {
 			kpi.calculation_type = $('#calculationType').val();
 			kpi.sampling_rate = parseInt($('#samplingRate').val());
 			kpi.sampling_interval = $('#samplingInterval').val();
+			
+			kpi.number_support = $('#numberSupport').val();
+			kpi.number_support_format = $('#numberSupportFormat').val();
+			
 			var context = $('#contextualInformation :input');
 			for (var i = 0; i < context.length; i++) {
 				kpi[context[i].value] = context[i].checked;
@@ -413,7 +417,11 @@ function Screen1(elInfo) {
 			});
 
 		} else {
-			if ($('#calculationType').val() != null && $('#samplingInterval').val() != null && $('#name').val() != "" && $('#description').val() != "") {
+			if ( ($('#calculationType').val() != null) 
+					&& ($('#numberSupport').val() != null) 
+					&& ($('#samplingInterval').val() != null) 
+					&& ($('#name').val() != "") 
+					&& ($('#description').val() != "") ) {
 				var newKpi = {};
 				var newKpiFormula = {};
 				newKpiFormula.term1_sensor_id = null;
@@ -424,7 +432,7 @@ function Screen1(elInfo) {
 				newKpiFormula.term3_kpi_id = null;
 				newKpiFormula.term3_sensor_id = null;
 				newKpiFormula.criteria = null;
-
+				
 				newKpi.parent_id = newParentId;
 				newKpi.name = $('#name').val();
 				newKpi.description = $('#description').val();
@@ -437,6 +445,10 @@ function Screen1(elInfo) {
 				newKpi.context_shift = chk[2].checked;
 				newKpi.context_mould = chk[3].checked;
 				newKpi.calculation_type = $('#calculationType').val();
+				
+				newKpi.number_support = $('#numberSupport').val();
+				newKpi.number_support_format = $('#numberSupportFormat').val();
+				
 				newKpiFormula = this.getKpiFormula(newKpi, newKpiFormula);
 
 				$('html').block({
@@ -1069,20 +1081,30 @@ function ScreenGraph(kpiInfo) {
 		var xLabelLength =  heatMapData.xLabels.length 
 		var factor =xLabelLength/ 6 < 0.2 ? 0.2:xLabelLength/6 ;
 		var data=[];
+		var maxValue = -1;
 
 		for(var i=0;i<heatMapData.data.length;i++)
 		{
+			var varX = heatMapData.data[i].varX;
+			var varY = heatMapData.data[i].varY;
 			var value = 0;
-			if(loadedKpi>=4)
-			{
+			
+			if((loadedKpiNumberFormat=='PERCENTAGE') && (heatMapData.data[i].value != null) ) {
 				value=parseFloat((heatMapData.data[i].value*100).toFixed(2));
 			}
-			else
-			{
+			else {
 				value=heatMapData.data[i].value;
 			}
+			if (value != null)
+				if (value > maxValue)
+					maxValue = value;
+			
 			data.push({value:value,varX:heatMapData.data[i].varX,varY:heatMapData.data[i].varY})
-		}		
+		}
+		var factorTemp = maxValue/6;
+		console.log("Max value: "+maxValue+"; factorTemp: " + factorTemp);
+		
+		
 		$('#heatMap').empty();
 		$('#heatMap').width(0);
 		var containerWidth = $('#heatMapTable').find('td').eq(4).width();
@@ -1153,7 +1175,7 @@ function ScreenGraph(kpiInfo) {
 			});
 
 		cards.append("title");
-
+		
 		cards.enter().append("rect")
 			.attr("varX", function(d) {
 				return d.varX
@@ -1169,7 +1191,10 @@ function ScreenGraph(kpiInfo) {
 			})
 			.attr("title", function(d) {
 				$(this).tooltip({
-					content: d.value==null?"No data":((loadedKpi>=4)?'Value: ' + (d.value).toFixed(2) + '%' : 'Value: ' + (d.value)),
+					content: kpiFormatValueString(loadedKpiNumberFormat, d.value, true, false)
+						/*d.value==null?"No data":((loadedKpi>=4)?
+							'Value: ' + (d.value).toFixed(2) + '%' : 
+							'Value: ' + (d.value))*/,
 					position: {
 						at: "top-60"
 					},
@@ -1230,9 +1255,10 @@ function ScreenGraph(kpiInfo) {
 		legend.append("text")
 			.attr("class", "mono")
 			.text(function(d) {
-				return "≥ " + Math.round(d)  ;
+					return "≥ " + Math.round(d)  ;
 			})
 			.attr("x", function(d, i) {
+				console.log("Heatmap x value: "+d);
 				return legendElementWidth * factor * i;
 			})
 			.attr("y", height + gridHeight - 80);
@@ -1407,18 +1433,19 @@ function ScreenGraph(kpiInfo) {
 					tooltips: function(serieId, valueIndex, allValues, singleValue) {
 						var legend="";
 						
-						if(valueIndex.startsWith("serie"))
-						{
+						if(valueIndex.startsWith("serie")) {
 							legend=this.legend[valueIndex.substring(5,valueIndex.length)-1]+"<br>";
 						}
-						else
-						{
+						else {
 							legend="Limit<br>";
 						}
-						var value = legend+  (loadedKpi >= "4" ? 'Value: ' + parseFloat((singleValue * 100).toFixed(2)) + "%" : 'Value: ' + parseFloat(singleValue.toFixed(3)));
+						var value = legend+  /*(loadedKpi >= "4" ? 
+								'Value: ' + parseFloat((singleValue * 100).toFixed(2)) + "%" : 
+								'Value: ' + parseFloat(singleValue.toFixed(3)));*/
+								kpiFormatValueString(loadedKpiNumberFormat, singleValue, true, true);
 						return value;
 					},
-					percentage:loadedKpi>=4?true:false,
+					percentage:isPercentage(loadedKpiNumberFormat)/*loadedKpi>=4?true:false,false*/,
 					legend: graphData.legend,
 					labels: graphData.labels,
 					values: scr.graphSeriesValues(graphData.data),
@@ -1722,7 +1749,6 @@ function addMoreContext(){
 			document.getElementById(elementId).innerHTML = "+"+contextList.outerHTML;
 		}
 	}
-	
 }
 
 function clearSecContextsLists(){
@@ -1738,6 +1764,67 @@ function clearContextLists(){
 	document.getElementById("contextMachineSelectList").innerHTML = "";	
 	document.getElementById("contextShiftSelectList").innerHTML = "";
 	document.getElementById("contextMouldSelectList").innerHTML = "";
-
 }
 
+function addKpiNumberSupport(){
+	var calculationTypeVal = document.getElementById("calculationType").value;
+
+	if (calculationTypeVal == "simple"){
+		document.getElementById("numberSupport").style.color = "#000000";
+		document.getElementById("numberSupport").disabled = false;
+	} else {
+		document.getElementById("numberSupport").value = "numeric";
+		document.getElementById("numberSupport").style.color = "#808080";
+		document.getElementById("numberSupport").disabled = true;
+		document.getElementById("numberSupportFormat").style.visibility = "visible";
+	}
+}
+
+function addKpiNumberSupportFormat(){
+	var kpiNumberSupportVal = document.getElementById("numberSupport").value;
+	
+	if (kpiNumberSupportVal == "numeric"){
+		document.getElementById("numberSupportFormat").style.visibility = "visible";
+	} else {
+		document.getElementById("numberSupportFormat").style.visibility = "hidden";
+	}
+}
+
+function kpiFormatValueString(kpiNumberSupportFormat, value, label, multiply100){
+	var result = "";
+	console.log("Before:kpiNumberSupportFormat: "+kpiNumberSupportFormat +
+			";Value: " + value +
+			";With Label: "+label + 
+			";Result: " + result);
+	
+	if ((kpiNumberSupportFormat == '')||(value == null)){
+		result = "No data";
+	} else if (kpiNumberSupportFormat == 'PERCENTAGE'){
+		//if (value.contains("%"))
+			if (multiply100)
+				result = ""+(value*100).toFixed(2)+"%";
+			else
+				result = ""+value.toFixed(2)+"%";
+	} else if (kpiNumberSupportFormat == 'DECIMAL'){
+		if ( (eval(value)>0) && (eval(value)<1))
+			result = ""+value.toFixed(3);
+		else
+			result = ""+value;
+	}
+	if ( (label == true) && (value != null) ) {
+		result = "Value: "+result;
+	}
+	console.log("After: kpiNumberSupportFormat: "+kpiNumberSupportFormat +
+			";Value: " + value +
+			";With Label: "+label + 
+			";Result: " + result);
+	return result;
+}
+
+function isPercentage(kpiToEval){
+	if (kpiToEval == 'PERCENTAGE'){
+		return true;
+	} else 
+		return false;
+	
+}

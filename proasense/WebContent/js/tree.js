@@ -57,6 +57,7 @@ var shifts = [];
 var moulds = [];
 var machines = [];
 var loadedKpi = "";
+var loadedKpiNumberFormat = "";
 var newParentId = null
 
 function cloneKpis(kpis) {
@@ -212,6 +213,7 @@ window.onload = function() {
 			var isInArea = data.event.offsetX < ($('#' + data.node.id).find('a').width() - 47);
 			if (data.event.offsetX < ($('#' + data.node.id).find('a').width() - 47) && data.event.target.classList[0] != "glyphicon") {
 				loadedKpi = data.node.id;
+				loadedKpiNumberFormat = getKpiNumberSupportFormat(loadedKpi);
 				scrGraph.openScreen(data.node.id);
 			}
 		})
@@ -297,4 +299,8 @@ function editEl() {
 		//tree.edit(data.node,elName.substring(0,elName.indexOf(delEditBtn)));
 		$('#KPITree').unbind(e);
 	});
+}
+
+function getKpiNumberSupportFormat(kpiInfoId){
+	return kpiInfo[kpiInfoId-1].number_support_format;
 }
