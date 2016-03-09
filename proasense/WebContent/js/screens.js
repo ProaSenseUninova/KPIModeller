@@ -645,10 +645,9 @@ function Screen2(kpiInfo) {
 							scr.delTargetInfo(e.currentTarget);
 						})
 						$.notify('New target added', 'success');
-					} 
-//					else {
-//						$.notify("Violation of primary key constraint.");
-//					}
+					} else {
+						$.notify("Violation of primary key constraint.");
+					}
 
 				}
 			});

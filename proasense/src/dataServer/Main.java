@@ -204,6 +204,7 @@ public class Main extends HttpServlet
 		
 		try
 		{
+			writeLogMsg("Requesting <" + samplingInterval.toString().toLowerCase() + "> data from <" + startTime.toString() + "> to <" + endTime.toString() + "> for <KPI = " + kpiId + ">.");
 			writeLogMsg("--------------- START GRAPH DATA ----------------------");
 			JSONParser parser = new JSONParser();
 			JSONObject obj = new JSONObject();
@@ -379,6 +380,12 @@ public class Main extends HttpServlet
 				{
 					query=query+",";
 				}
+			}
+			int first = query.indexOf("''");
+			if ( first> 0 ){
+				int second = query.substring(first+2).indexOf("''");
+				if (second == -1)
+					query = query.replace("''", "null");
 			}
 			
 			Connection c = DriverManager.getConnection(dbConfig.jdbcURL+dbName, dbConfig.userName, dbConfig.password);
