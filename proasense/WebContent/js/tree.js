@@ -242,7 +242,7 @@ window.onload = function() {
 				loadedKpi = data.node.id;
 				loadedKpiNumberFormat = getKpiNumberSupportFormat(loadedKpi);
 				scrGraph.openScreen(data.node.id);
-				document.getElementById("targetLinkId").onclick="openTarget();";
+//				document.getElementById("targetLinkId").onclick="openTarget();";
 			}
 		})
 		.on('create_node.jstree', function(e, data) {
@@ -354,5 +354,11 @@ function editEl() {
 }
 
 function getKpiNumberSupportFormat(kpiInfoId){
-	return kpiInfo[kpiInfoId-1].number_support_format;
+	for (var i = 0; i<kpiInfo.length;i++){
+		if (kpiInfoId == kpiInfo[i].id)
+			return kpiInfo[i].number_support_format;
+	}
+	return "PERCENTAGE";
+		
+//	return kpiInfo[kpiInfoId-1].number_support_format;
 }
