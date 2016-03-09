@@ -86,12 +86,23 @@ public class Main extends HttpServlet
 				Connection c = DriverManager.getConnection(dbConfig.jdbcURL+dbName, dbConfig.userName, dbConfig.password);
 				Statement s =  c.createStatement();
 				String query = "SELECT * FROM \""+tableName+"\"";
-				if(idReq!=null)
-				{
-					writeLogMsg(tableName);
-					query=query+" WHERE \"id\"="+idReq;
+				
+				if(tableName.equals("kpi")) {
+					query += " WHERE \"active\" = true ";
+					if(idReq!=null)
+					{
+						writeLogMsg(tableName);
+						query+= " AND \"id\"="+idReq;
+					}
 				}
-	
+				else {
+					if(idReq!=null)
+					{
+						writeLogMsg(tableName);
+						query+= " WHERE \"id\"="+idReq;
+					}
+				}
+
 				writeLogMsg("SQL Query: "+query);
 				
 				
@@ -193,6 +204,7 @@ public class Main extends HttpServlet
 		
 		try
 		{
+			writeLogMsg("--------------- START GRAPH DATA ----------------------");
 			JSONParser parser = new JSONParser();
 			JSONObject obj = new JSONObject();
 			
@@ -202,9 +214,12 @@ public class Main extends HttpServlet
 			Object labelsTimeStamp = dAO.getXLabelsTimeStamp();
 			Object title = dAO.getTitle(kpiId);
 			
-			_log.saveToFile(labels.toString());
-			_log.saveToFile(labelsTimeStamp.toString());
-			_log.saveToFile(title.toString());
+			writeLogMsg("--------------- GRAPH DATA ----------------------------");
+			writeLogMsg("Data: "+data.toString());
+			writeLogMsg("Labels: "+labels.toString());
+			writeLogMsg("Labels Time Stamp: "+labelsTimeStamp.toString());
+			writeLogMsg("Title: "+title.toString());
+			writeLogMsg("--------------- END GRAPH DATA ------------------------");
 			
 			obj.put("data", data);
 			obj.put("legend", legend);
@@ -292,6 +307,8 @@ public class Main extends HttpServlet
 		{
 			JSONObject obj = new JSONObject();
 			JSONParser parser = new JSONParser();
+
+			writeLogMsg("---------- START HEATMAP DATA -------------------------");
 			
 			Object data = dAO.getHeatMapData(kpiId, tableValueType, startTime, endTime, samplingInterval, contextName, varX, varY);
 			Object yLabels = dAO.getHeatMapYLabels();
@@ -302,6 +319,12 @@ public class Main extends HttpServlet
 						 + contextName + " for " + dAO.getLabelName(samplingInterval, startTime.toString()).toString().toLowerCase();
 			writeLogMsg("HeatMap title: "+title);
 			
+			writeLogMsg("---------- HEATMAP DATA -------------------------------");
+			writeLogMsg("Data: "+data.toString());
+			writeLogMsg("xLabels: "+xLabels.toString());
+			writeLogMsg("yLabels: "+yLabels.toString());
+			writeLogMsg("Title: "+title.toString());
+			writeLogMsg("---------- END HEATMAP DATA ---------------------------");
 
 			obj.put("data", data);
 			obj.put("xLabels", xLabels);
@@ -622,7 +645,10 @@ public class Main extends HttpServlet
 	  public void doGet(HttpServletRequest request,
 	                    HttpServletResponse response)
 	      throws ServletException, IOException {
-
+		writeLogMsg("------------------ doGet ---------------");
+		writeReceivedHeadersToLog(request);
+		writeLogMsg("------------- end of doGet -------------");
+		
 	    handle(request.getPathInfo(),request,response);
 	
 	  }
@@ -631,6 +657,10 @@ public class Main extends HttpServlet
 	  public void doPost(HttpServletRequest request,
 	                    HttpServletResponse response)
 	      throws ServletException, IOException {
+
+		writeLogMsg("------------------ doPost ---------------");
+		writeReceivedHeadersToLog(request);
+		writeLogMsg("------------- end of doPost -------------");
 
 
 	    handle(request.getPathInfo(),request,response);

@@ -58,7 +58,7 @@ var moulds = [];
 var machines = [];
 var loadedKpi = "";
 var loadedKpiNumberFormat = "";
-var newParentId = null
+var newParentId = null;
 
 function cloneKpis(kpis) {
 	var tmpKpis = [];
@@ -115,13 +115,39 @@ function getKpi(id) {
 	return {};
 }
 
+//window.onload = function(){
+//	
+//}
+
+//var sessioncustom=false;
+//var mainpagewrapperhtml;
+//var loginpagewrapperhtml;
+
+//var Session = {    id : '${pageContext.session.id}',
+//			     user : '${pageContext.request.remoteUser}'
+//			  };
+//
+//function setCookie(name,value,expires,path,domain,secure) {
+//    var cookieString = name + "=" +escape(value) +
+//       ( (expires) ? ";expires=" + expires.toGMTString() : "") +
+//       ( (path) ? ";path=" + path : "") +
+//       ( (domain) ? ";domain=" + domain : "") +
+//       ( (secure) ? ";secure" : "");
+//    document.cookie = cookieString;
+//}
+
 window.onload = function() {
+//	setCookie('JSESSIONID',Session.id);
+	
 	if (!restAddress.endsWith('/')) {
 		restAddress = restAddress + '/';
 	}
 	$.ajax({
 		url: restAddress + 'proasense_hella/mould',
 		type: 'GET',
+//		xhrFields: {
+//		      withCredentials: true
+//		   },		
 		success: function(data) {
 			moulds = data
 		}
@@ -193,6 +219,7 @@ window.onload = function() {
 	activeScreen = screen1;
 	scrGraph = new ScreenGraph();
 	scrQuery = new ScreenQuery();
+	
 	$('#KPITree').on('close_node.jstree', function(e, data) {
 			if (data.node.id == 'OEEId') {
 				var tree = $("#KPITree").jstree(true);
@@ -215,6 +242,7 @@ window.onload = function() {
 				loadedKpi = data.node.id;
 				loadedKpiNumberFormat = getKpiNumberSupportFormat(loadedKpi);
 				scrGraph.openScreen(data.node.id);
+				document.getElementById("targetLinkId").onclick="openTarget();";
 			}
 		})
 		.on('create_node.jstree', function(e, data) {
@@ -248,9 +276,33 @@ window.onload = function() {
 			},
 
 		});
+	
+//	mainpagewrapperhtml = document.getElementById('main-page-wrapper').innerHTML;
+//	loginpagewrapperhtml = document.getElementById('login-page').innerHTML;
+//	this.login();
 };
 
 
+function login(){
+	if (sessioncustom) {
+		document.getElementById('main-page-wrapper').innerHTML = mainpagewrapperhtml;
+		document.getElementById('login-page').innerHTML = "";
+		document.body.style.backgroundColor = "white";
+	}
+	else {
+		document.getElementById('main-page-wrapper').innerHTML = "";
+		document.getElementById('login-page').innerHTML = loginpagewrapperhtml;
+		document.body.style.backgroundColor = "#d9534f";
+	} 
+};
+
+function authorize(username, password){
+	if ((username=="admin") && (password == "123456"))
+		sessioncustom = true;
+	else
+		sessioncustom = false;
+	this.login();
+}
 
 function addEl(root) {
 	if (root) {

@@ -66,7 +66,7 @@
 			<div id="chartTitle"></div>
 			<div id="chart"></div>
 		</td>
-		<td style="border:0px solid black;vertical-align:top;width:150px">
+		<td class="td-dataselectionbox" >
 			<b>period covered:</b>
 			<br>
 			<br> From:
@@ -80,7 +80,7 @@
 			<b>Granularity:</b>
 			<br>
 			<br>
-			<select id="granularityChart" class="box">
+			<select id="granularityChart" class="box btn btn-primary form-control granularityBoxes">
 				<option value="hourly">Hourly</option>
 				<option value="daily">Daily</option>
 				<option value="weekly">Weekly</option>
@@ -103,7 +103,7 @@
 		<td width="25%">&nbsp;</td>
 		<td  width="25%" style="text-align:center">
 			<b>Vertical set:&emsp;</b>
-			<select id="verticalSet"> 
+			<select id="verticalSet" class="form-control form-control-custom"> 
 				<option value="product">Product</option>
 				<option value="machine">Machine</option>
 				<option selected value="shift">Shift</option>
@@ -112,7 +112,7 @@
 		</td>
 		<td  width="25%" style="text-align:center">
 			<b>Horizontal set:&emsp;</b>
-			<select id="horizontalSet"> 
+			<select id="horizontalSet" class="form-control form-control-custom"> 
 				<option selected value="product">Product</option>
 				<option value="machine">Machine</option>
 				<option value="shift">Shift</option>
@@ -125,7 +125,7 @@
 			<div id="heatMapTitle"></div>
 			<div id="heatMap" class="heatmap"></div>
 		</td>
-		<td style="border:0px solid black;vertical-align:top;width:150px">
+		<td class="td-dataselectionbox" >
 			<b>period covered:</b>
 			<br>
 			<br> From:
@@ -139,7 +139,7 @@
 			<b>Granularity:</b>
 			<br>
 			<br>
-			<select id="granularityHeatMap" class="box">
+			<select id="granularityHeatMap" class="box btn btn-primary form-control granularityBoxes">
 				<option value="hourly">Hourly</option>
 				<option value="daily">Daily</option>
 				<option value="weekly">Weekly</option>

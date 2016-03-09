@@ -1,3 +1,5 @@
+
+
 function openKPI() {
 	scrQuery.closeScreen();
 	$('.headerSelector').find('a').eq(0).attr('class', 'selected');
@@ -30,7 +32,6 @@ function openQuery() {
 	scrQuery.openScreen();
 
 }
-
 
 function Screen1(elInfo) {
 	this.elInfo = elInfo
@@ -644,9 +645,10 @@ function Screen2(kpiInfo) {
 							scr.delTargetInfo(e.currentTarget);
 						})
 						$.notify('New target added', 'success');
-					} else {
-						$.notify("Violation of primary key constraint.");
-					}
+					} 
+//					else {
+//						$.notify("Violation of primary key constraint.");
+//					}
 
 				}
 			});
@@ -705,7 +707,7 @@ function Screen2(kpiInfo) {
 				toDelete = false;
 				break;
 			}
-0		}
+		}
 		if (toDelete) {
 			tree.delete_node(oldId);
 			if (arguments.length > 0) {
@@ -719,6 +721,8 @@ function Screen2(kpiInfo) {
 
 }
 
+var originalVerticalSet;
+var originalHorizontalSet;
 
 function ScreenGraph(kpiInfo) {
 	this.testGraphData = JSON.parse('{"data":[' + '[3,4,1,6,4,8,null,8,6,3],' + '[7,3,9,2,4,5,9,3,4,5],' + '[2,5,6,2,14,6,7,6,3,9]],' + '"subTitle":"Source: use case data",' + '"legend":["A","B","C"],' + '"title":"Availability",' + '"labels":["December","January","February","March","April","May"]}');
@@ -772,7 +776,7 @@ function ScreenGraph(kpiInfo) {
 
 	this.graphContextualInformation="Global";
 
-	this.graphGranularity = "monthly"
+	this.graphGranularity = "monthly";
 
 	this.updateGraph = function() {
 		this.graphContextualInformation = $('#graphTable').find('input:checked').val();
@@ -781,7 +785,12 @@ function ScreenGraph(kpiInfo) {
 		this.startYear=(new Date(graphStartTime)).getFullYear();
 		var graphEndTime = $('#toDateChart').handleDtpicker('getDate').getTime();
 		var graphGranularity = $('#granularityChart').val();
+		
 		var contextValueId = $('#context_select_list').val();
+		var contextValueIdStr = "";
+		if (contextValueId != null) 
+			contextValueIdStr = "&contextValueId="+contextValueId;
+				
 		var secondContextValue = $('#second_context_select_listID').val();
 		var secondContextValueStr = "";
 		if (secondContextValue != null)
@@ -794,7 +803,7 @@ function ScreenGraph(kpiInfo) {
 								"&startTime=" + graphStartTime + 
 								"&endTime=" + graphEndTime + 
  								"&granularity=" + graphGranularity + 
-								"&contextValueId=" + contextValueId +
+								contextValueIdStr +
 								secondContextValueStr,
 			type: "GET",
 			success: function(graphData) {
@@ -947,8 +956,8 @@ function ScreenGraph(kpiInfo) {
 
 		
 		var graphContextualInformation = $('#graphTable').find('input:checked').val();
-		var firstGraphDate = new Date(2014, 11, 31);
-		var secondGraphDate = new Date(2015, 4, 31);
+		var firstGraphDate = new Date(2014, 12, 1);
+		var secondGraphDate = new Date(2015, 5, 1);
 		var graphStartTime = firstGraphDate.getTime();
 		this.startYear=(new Date(graphStartTime)).getFullYear();
 		var graphEndTime = secondGraphDate.getTime();
@@ -980,7 +989,8 @@ function ScreenGraph(kpiInfo) {
 		var heatMapStartTime = firstHeatDate.getTime();
 		var heatMapEndTime = secondHeatDate.getTime();
 		var heatMapGranularity = $('#granularityHeatMap').val();
-
+		
+		// request for HeatMap data when opening the page
 		$.ajax({
 			url: restAddress + "func/getHeatMapData?kpiId=" + loadedKpi + 
 							   "&contextualInformation=" + graphContextualInformation + 
@@ -989,6 +999,7 @@ function ScreenGraph(kpiInfo) {
 							   "&startTime=" + heatMapStartTime + 
 							   "&endTime=" + heatMapEndTime + 
 							   "&granularity=" + heatMapGranularity +
+							   /* ContextName when page is opening is Global */
 							   "&contextName=Global",
 			type: "GET",
 			success: function(heatMapData) {
@@ -1258,7 +1269,6 @@ function ScreenGraph(kpiInfo) {
 					return "≥ " + Math.round(d)  ;
 			})
 			.attr("x", function(d, i) {
-				console.log("Heatmap x value: "+d);
 				return legendElementWidth * factor * i;
 			})
 			.attr("y", height + gridHeight - 80);
@@ -1285,6 +1295,7 @@ function ScreenGraph(kpiInfo) {
 
 	this.initializeGraph = function(graphData) {
 		this.graphData = graphData;
+		console.log("Initializing graph with graphData = "+JSON.stringify(graphData));
 		if (graphData.data != null) {
 			// KPI Chart
 			var len = graphData.data.length;
@@ -1554,9 +1565,7 @@ function ScreenGraph(kpiInfo) {
 			}
 		}
 	};
-
 }
-
 
 function ScreenQuery() {
 	var scr = this;
@@ -1668,33 +1677,76 @@ function ScreenQuery() {
 	}
 }
 
+var dropdownclass = "class=\"btn btn-primary form-control form-control-custom\"";
+
+var originalVerticalSetLoaded = true;
+var originalHorizontalSetLoaded = true;
+var originalVerticalSet;
+var originalHorizontalSet;
+
+function loadOriginalContextSets(){
+	if (originalHorizontalSetLoaded && originalVerticalSetLoaded){
+		originalVerticalSet = document.getElementById("verticalSet").cloneNode(true);
+		originalVerticalSetLoaded = false;
+		console.log("Original vertical set id (in loadOriginalContextSets): "+originalVerticalSet.id);
+		
+		originalHorizontalSet = document.getElementById("horizontalSet").cloneNode(true);
+		originalHorizontalSetLoaded = false;
+		console.log("Original vertical set id (in loadOriginalContextSets): "+originalHorizontalSet.id);
+	}
+}
+
 function insertContextSelectList() {
 	clearContextLists();	
 	clearSecContextsLists();
-	
-	var openHTML =  "<select id=\"context_select_list\" size=\"1\" onchange=\"addMoreContext("+arguments[0]+")\">" +
+	loadOriginalContextSets();
+
+	// btn btn-primary form-control form-control-custom 
+	var openHTML =  "<select id=\"context_select_list\" "+dropdownclass+" size=\"1\" onchange=\"addMoreContext("+arguments[0]+")\">" +
 					"<option value=\"0\">All</option>";
 	var closeHTML = "</select>";
 	var elementId = "";
 	var content = "";
 	var contextArr;
 	
+	console.log("Original vertical set id (before): "+originalVerticalSet.id);
+	console.log("Original horizontal set id (before): "+originalHorizontalSet.id);
+	
+	
 	switch (arguments[0]) {
 		case 1: elementId =  "contextProductSelectList";
 				contextArr = products;
+				document.getElementById("verticalSet").outerHTML = removeOneContext("product", originalVerticalSet.cloneNode(true)).outerHTML;
+				document.getElementById("verticalSet").selected
+				document.getElementById("horizontalSet").outerHTML = removeOneContext("product", originalHorizontalSet.cloneNode(true)).outerHTML;
 		break;
 		case 2: elementId = "contextMachineSelectList";
 				contextArr = machines;
+				document.getElementById("verticalSet").outerHTML = removeOneContext("machine", originalVerticalSet.cloneNode(true)).outerHTML;
+				document.getElementById("horizontalSet").outerHTML = removeOneContext("machine", originalHorizontalSet.cloneNode(true)).outerHTML;
 		break;
 		case 3: elementId = "contextShiftSelectList";
 				contextArr = shifts;
+				document.getElementById("verticalSet").outerHTML = removeOneContext("shift", originalVerticalSet.cloneNode(true)).outerHTML;
+				document.getElementById("horizontalSet").outerHTML = removeOneContext("shift", originalHorizontalSet.cloneNode(true)).outerHTML;
 		break;
 		case 4: elementId = "contextMouldSelectList";
 				contextArr = moulds;
+				document.getElementById("verticalSet").outerHTML = removeOneContext("mould", originalVerticalSet.cloneNode(true)).outerHTML;
+				document.getElementById("horizontalSet").outerHTML = removeOneContext("mould", originalHorizontalSet.cloneNode(true)).outerHTML;
 		break;
-		default:break;
+		default:
+			document.getElementById("verticalSet").outerHTML = originalVerticalSet.outerHTML;
+			document.getElementById("horizontalSet").outerHTML = originalHorizontalSet.outerHTML;
+			break;
 	}
-
+	
+	document.getElementById("verticalSet").selectedIndex  = "1";
+	document.getElementById("horizontalSet").selectedIndex  = "0";
+	
+	console.log("Original vertical set id (after): "+originalVerticalSet.id);
+	console.log("Original horizontal set id (after): "+originalHorizontalSet.id);
+	
 	if (elementId != ""){
 		for (var i = 0; i<contextArr.length;i++) {
 			content += "<option value=\""+contextArr[i].id+"\">"+contextArr[i].name+"</option>";
@@ -1704,8 +1756,10 @@ function insertContextSelectList() {
 	}
 }
 
+
 function addMoreContext(){
 	var contextSelectList = document.getElementById("context_select_list").value;
+	
 	if (contextSelectList == 0){
 		clearSecContextsLists();
 	}
@@ -1729,19 +1783,18 @@ function addMoreContext(){
 		default:break;
 		}
 		
-		var contextList = document.getElementById("verticalSet").cloneNode(true);
-		contextList.id = "second_context_select_listID"; 
+		var contextList = originalVerticalSet.cloneNode(true);
+		contextList.id = "second_context_select_listID";
 
-		for (var ct = 0; ct<contextList.childNodes.length; ct++){
-			if (contextList.childNodes[ct].value == contextName){
-				contextList.childNodes[ct].remove();
-				break;
-			}
-		}
+		contextList.setAttribute ("class", "btn btn-primary form-control form-control-custom");
+
+		contextList = removeOneContext(contextName, contextList);
+		
 		if (elementId != ""){
 			var noneOp = document.createElement("option");
 			noneOp.setAttribute("selected","selected");
 			noneOp.setAttribute("value","none");
+//			
 			noneOp.innerHTML = "None";
 			
 			contextList.appendChild(noneOp);
@@ -1749,6 +1802,18 @@ function addMoreContext(){
 			document.getElementById(elementId).innerHTML = "+"+contextList.outerHTML;
 		}
 	}
+}
+
+
+
+function removeOneContext(contextName, contextList){
+	for (var ct = 0; ct<contextList.childNodes.length; ct++){
+		if (contextList.childNodes[ct].value == contextName){
+			contextList.childNodes[ct].remove();
+			break;
+		}
+	}
+	return contextList;
 }
 
 function clearSecContextsLists(){
@@ -1792,10 +1857,10 @@ function addKpiNumberSupportFormat(){
 
 function kpiFormatValueString(kpiNumberSupportFormat, value, label, multiply100){
 	var result = "";
-	console.log("Before:kpiNumberSupportFormat: "+kpiNumberSupportFormat +
-			";Value: " + value +
-			";With Label: "+label + 
-			";Result: " + result);
+//	console.log("Before:kpiNumberSupportFormat: "+kpiNumberSupportFormat +
+//			";Value: " + value +
+//			";With Label: "+label + 
+//			";Result: " + result);
 	
 	if ((kpiNumberSupportFormat == '')||(value == null)){
 		result = "No data";
@@ -1814,12 +1879,13 @@ function kpiFormatValueString(kpiNumberSupportFormat, value, label, multiply100)
 	if ( (label == true) && (value != null) ) {
 		result = "Value: "+result;
 	}
-	console.log("After: kpiNumberSupportFormat: "+kpiNumberSupportFormat +
-			";Value: " + value +
-			";With Label: "+label + 
-			";Result: " + result);
+//	console.log("After: kpiNumberSupportFormat: "+kpiNumberSupportFormat +
+//			";Value: " + value +
+//			";With Label: "+label + 
+//			";Result: " + result);
 	return result;
 }
+
 
 function isPercentage(kpiToEval){
 	if (kpiToEval == 'PERCENTAGE'){

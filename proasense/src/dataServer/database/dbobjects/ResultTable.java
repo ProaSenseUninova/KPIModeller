@@ -313,8 +313,10 @@ public class ResultTable {
 					break;
 				}
 			}
-			if (refPos != -1)
+			if (refPos != -1){
 				tempStr[refPos] = resultsRows.get(i).toJSonObject(column).toString();
+				refPos = -1;
+			}
 		}
 		
 		

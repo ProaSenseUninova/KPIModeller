@@ -226,6 +226,8 @@ public class DatabaseAccessObject {
 		Object data = null;
 		JSONParser parser = new JSONParser();
 		ArrayList<ResultTable> tempResultTable = null;
+
+		_valueRefQtyFlag = false;
 		
 		tempResultTable = getKpiValue(kpiId, contextualInformation, granularity, startTime, endTime, contextValueId, secondContext);
 		

@@ -41,8 +41,8 @@
 	border-spacing: 0;
 	border-collapse: collapse;
 }
-.inputField{
-	width:100px;
+.inputField {
+	width:150px;
 	margin-bottom: 5px;
 }
 .progress span{
@@ -164,9 +164,9 @@
 {
 	display:none;
 }
-.box{
-	width:150px;
-}
+/* .box{ */
+/* 	width:150px; */
+/* } */
 .thEl
 {
 	color:#808080;
@@ -175,7 +175,7 @@
 	color:#808080;
 }
 .box option:not(:disabled){
-	color:black;
+	color:white;
 }
 
 .nav-tabs {
@@ -185,3 +185,30 @@
 .hiddenRow{
 	display:none
 }
+
+
+.granularityBoxes  {
+	width: 65%;
+}
+
+
+.form-control-custom {
+/*    /* min-width: 0; */
+/*     width: auto; */
+    display: inline;
+    max-width: 30%;
+/*     background-color: navy; */
+}
+
+.form-control-custom option {
+	text-align:left;
+}
+
+.td-dataselectionbox {
+	border:0px solid black;
+	vertical-align:top;
+	width:150px
+}
+
+
+
