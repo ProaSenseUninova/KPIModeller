@@ -646,7 +646,7 @@ function Screen2(kpiInfo) {
 						})
 						$.notify('New target added', 'success');
 					} else {
-						$.notify("Violation of primary key constraint.");
+						$.notify("Violation of primary key constraint.\n Hint:Check bounds");
 					}
 
 				}
@@ -796,19 +796,32 @@ function ScreenGraph(kpiInfo) {
 			secondContextValueStr = "&secondContext="+secondContextValue;
 		
 		//scr.initializeGraph(this.testGraphData);
-		$.ajax({
-			url: restAddress + "func/getGraphData?kpiId=" + loadedKpi + 
-								"&contextualInformation=" + this.graphContextualInformation + 
-								"&startTime=" + graphStartTime + 
-								"&endTime=" + graphEndTime + 
- 								"&granularity=" + graphGranularity + 
-								contextValueIdStr +
-								secondContextValueStr,
-			type: "GET",
-			success: function(graphData) {
-				scr.initializeGraph(graphData);
-			},
-		});
+//		if(isDatetimeOk(graphStartTime, graphEndTime)){
+		if (graphStartTime >= graphEndTime){
+			var message = '';
+			if (graphStartTime > graphEndTime){
+					message = '"FROM" date cannot be later than "TO" date.\nPlease choose valid dates and press update again.';
+				} else {
+					message = '"FROM" and "TO" date & times cannot be equal.\nPlease choose valid dates and press update again.';
+				}
+			$.notify(message, {
+				'autoHideDelay': 10000
+				});
+		} else {
+			$.ajax({
+				url: restAddress + "func/getGraphData?kpiId=" + loadedKpi + 
+									"&contextualInformation=" + this.graphContextualInformation + 
+									"&startTime=" + graphStartTime + 
+									"&endTime=" + graphEndTime + 
+	 								"&granularity=" + graphGranularity + 
+									contextValueIdStr +
+									secondContextValueStr,
+				type: "GET",
+				success: function(graphData) {
+					scr.initializeGraph(graphData);
+				},
+			});
+		}
 	}
 	this.updateHeatMap = function(startDate,endDate,legend) {
 		var graphRadioValue = $('#heatMapTable').find('input:checked').val();
@@ -819,23 +832,35 @@ function ScreenGraph(kpiInfo) {
 		var contextName = legend!==undefined?legend:'Global';
 		var heatMapGranularity = legend!==undefined?$('#granularityChart').val():$('#granularityHeatMap').val()
 
-		$.ajax({
-			url: restAddress + "func/getHeatMapData?kpiId=" + loadedKpi +
-								"&contextualInformation="+scr.graphContextualInformation+ 
-								"&varX="+horizontalSet+
-								"&varY="+verticalSet+ 
-								"&startTime=" + heatMapStartTime + 
-								"&endTime=" + heatMapEndTime + 
-								"&granularity=" + heatMapGranularity+
-								"&contextName="+contextName,
-			type: "GET",
-			success: function(heatMapData) {
-				scr.initializeHeatMap(heatMapData)
-			}
-		});
-		$('#fromDateHeatMap').handleDtpicker('setDate',heatMapStartTime);
-		$('#toDateHeatMap').handleDtpicker('setDate',heatMapEndTime);
-		$('#granularityHeatMap').val(heatMapGranularity);
+		if (heatMapStartTime >= heatMapEndTime){
+			var message = '';
+			if (heatMapStartTime > heatMapEndTime){
+					message = '"FROM" date cannot be later than "TO" date.\nPlease choose valid dates and press update again.';
+				} else {
+					message = '"FROM" and "TO" date & times cannot be equal.\nPlease choose valid dates and press update again.';
+				}
+			$.notify(message, {
+				'autoHideDelay': 10000
+				});
+		} else {
+			$.ajax({
+				url: restAddress + "func/getHeatMapData?kpiId=" + loadedKpi +
+									"&contextualInformation="+scr.graphContextualInformation+ 
+									"&varX="+horizontalSet+
+									"&varY="+verticalSet+ 
+									"&startTime=" + heatMapStartTime + 
+									"&endTime=" + heatMapEndTime + 
+									"&granularity=" + heatMapGranularity+
+									"&contextName="+contextName,
+				type: "GET",
+				success: function(heatMapData) {
+					scr.initializeHeatMap(heatMapData)
+				}
+			});
+			$('#fromDateHeatMap').handleDtpicker('setDate',heatMapStartTime);
+			$('#toDateHeatMap').handleDtpicker('setDate',heatMapEndTime);
+			$('#granularityHeatMap').val(heatMapGranularity);
+		}
 		
 	}
 	this.connect = function() {
@@ -1007,27 +1032,31 @@ function ScreenGraph(kpiInfo) {
 		});
 
 		$('#fromDateChart').appendDtpicker({
-				"dateOnly": true,
-				"onShow": function(handler) {},
-				"onHide": function(handler) {}
+				"dateOnly": false,
+				"closeOnSelected": true,
+				"onShow": function(handler){},
+				"onHide": function(handler){},
 			},
 			firstGraphDate);
 		
 		$('#toDateChart').appendDtpicker({
-				"dateOnly": true,
+				"dateOnly": false,
+				"closeOnSelected": true,
 				"onShow": function(handler) {},
-				"onHide": function(handler) {}
+				"onHide": function(handler) {},
 			},
 			secondGraphDate);
 		$('#fromDateHeatMap').appendDtpicker({
-				"dateOnly": true,
+				"dateOnly": false,
+				"closeOnSelected": true,
 				"onShow": function(handler) {},
 				"onHide": function(handler) {}
 			},
 			firstHeatDate);
 
 		$('#toDateHeatMap').appendDtpicker({
-				"dateOnly": true,
+				"dateOnly": false,
+				"closeOnSelected": true,
 				"onShow": function(handler) {},
 				"onHide": function(handler) {}
 			},
@@ -1295,6 +1324,7 @@ function ScreenGraph(kpiInfo) {
 	this.initializeGraph = function(graphData) {
 		this.graphData = graphData;
 		console.log("Initializing graph with graphData = "+JSON.stringify(graphData));
+		console.log("Label count is = " + JSON.stringify(graphData.labels.length) + " - Point count = " + JSON.stringify(graphData.data[0].length));
 		if (graphData.data != null) {
 			// KPI Chart
 			var len = graphData.data.length;
@@ -1440,15 +1470,24 @@ function ScreenGraph(kpiInfo) {
 				$("#chart").chart("clear");
 				$("#chart").chart({
 					template: "line_basic_1",
-					tooltips: function(serieId, valueIndex, allValues, singleValue) {
+					tooltips: function(serieId, lineIndex, valueIndex, singleValue) {
 						var legend="";
 						
-						if(valueIndex.startsWith("serie")) {
-							legend=this.legend[valueIndex.substring(5,valueIndex.length)-1]+"<br>";
+						console.log("Graph data (labels): "+JSON.stringify(graphData.labels));
+						console.log("Graph data (legends): "+JSON.stringify(graphData.legend));
+						
+						console.log("serieId: " + serieId + "\n valueIndex: " + lineIndex + "\n allValues: "+ valueIndex + "\n singleValue: " + singleValue);
+						
+						if(lineIndex.startsWith("serie")) {
+							legend=this.legend[lineIndex.substring(5,lineIndex.length)-1]+"<br>";
 						}
 						else {
-							legend="Limit<br>";
+							legend="Target<br>";
 						}
+						console.log("graphData.labels[valueIndex<"+valueIndex+">]: " + JSON.stringify(graphData.labels[valueIndex]));
+						console.log("This.labels[valueIndex<"+valueIndex+">]: " + JSON.stringify(this.labels[valueIndex]));
+						
+						legend+="Date: "+graphData.labels[valueIndex]+"<br>";
 						var value = legend+  /*(loadedKpi >= "4" ? 
 								'Value: ' + parseFloat((singleValue * 100).toFixed(2)) + "%" : 
 								'Value: ' + parseFloat(singleValue.toFixed(3)));*/
@@ -1463,7 +1502,7 @@ function ScreenGraph(kpiInfo) {
 					defaultSeries: {
 						tooltip: {
 							width: 100,
-							height: 40,
+							height: 60,
 							contentStyle: {
 								"text-align": "center"
 							}
@@ -1893,3 +1932,4 @@ function isPercentage(kpiToEval){
 		return false;
 	
 }
+

@@ -209,7 +209,9 @@ public class Main extends HttpServlet
 			JSONParser parser = new JSONParser();
 			JSONObject obj = new JSONObject();
 			
+//			writeLogMsg("--------------- START GRAPH DATA --- data method start -------------------");
 			Object data = dAO.getData(kpiId, tableValueType, samplingInterval, startTime, endTime, contextValueId, secondContext);
+//			writeLogMsg("--------------- START GRAPH DATA --- data method over -------------------");
 			Object legend = dAO.getLegends();
 			Object labels = dAO.getXLabels(samplingInterval);
 			Object labelsTimeStamp = dAO.getXLabelsTimeStamp();
@@ -381,6 +383,8 @@ public class Main extends HttpServlet
 					query=query+",";
 				}
 			}
+			
+			
 			int first = query.indexOf("''");
 			if ( first> 0 ){
 				int second = query.substring(first+2).indexOf("''");
