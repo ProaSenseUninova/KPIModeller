@@ -619,12 +619,12 @@ function Screen2(kpiInfo) {
 						var newTgId = response.insertId[0];
 						var newTgObj = JSON.parse(query)[0];
 						newTgObj.id = newTgId;
-						if (newTgObj.lower_bound == "") {
-							newTgObj.lower_bound = 0;
-						}
-						if (newTgObj.upper_bound == "") {
-							newTgObj.upper_bound = 0;
-						}
+//						if (newTgObj.lower_bound == "") {
+//							newTgObj.lower_bound = 0;
+//						}
+//						if (newTgObj.upper_bound == "") {
+//							newTgObj.upper_bound = 0;
+//						}
 						kpiTargets.push(newTgObj);
 						var rows = $('#targetList').find('tr');
 						var toAppend = '<tr>'
@@ -636,7 +636,7 @@ function Screen2(kpiInfo) {
 						for (var j = 0; j < rows.length ; j++) {
 							toAppend = toAppend + '<td>' + rows.eq(j).find('select option:selected').text() + '</td>';
 						}
-						toAppend = toAppend + '<td>'+ (lowerBoundBox == '' ? 0 : lowerBoundBox) + '</td><td>' + (upperBoundBox == '' ? 0 : upperBoundBox) +  '</td><td width="25px" data-id=' + newTgId + ' style="cursor:pointer" align="center" title="Delete element" ><span class="glyphicon glyphicon-minus" style="color:#333333" aria-hidden="true"></span></td></tr>';
+						toAppend = toAppend + '<td>'+ (lowerBoundBox == '' ? '-' : lowerBoundBox) + '</td><td>' + (upperBoundBox == '' ? '-' : upperBoundBox) +  '</td><td width="25px" data-id=' + newTgId + ' style="cursor:pointer" align="center" title="Delete element" ><span class="glyphicon glyphicon-minus" style="color:#333333" aria-hidden="true"></span></td></tr>';
 						$('#targetTable').append(toAppend);
 
 
@@ -796,15 +796,10 @@ function ScreenGraph(kpiInfo) {
 			secondContextValueStr = "&secondContext="+secondContextValue;
 		
 		//scr.initializeGraph(this.testGraphData);
-//		if(isDatetimeOk(graphStartTime, graphEndTime)){
-		if (graphStartTime >= graphEndTime){
-			var message = '';
-			if (graphStartTime > graphEndTime){
-					message = '"FROM" date cannot be later than "TO" date.\nPlease choose valid dates and press update again.';
-				} else {
-					message = '"FROM" and "TO" date & times cannot be equal.\nPlease choose valid dates and press update again.';
-				}
-			$.notify(message, {
+		var evaluation = isDatetimeOk(graphGranularity, graphStartTime, graphEndTime);
+		if(!evaluation.isDateTimeOk){
+//		if (graphStartTime >= graphEndTime){
+			$.notify(evaluation.message, {
 				'autoHideDelay': 10000
 				});
 		} else {
@@ -822,6 +817,20 @@ function ScreenGraph(kpiInfo) {
 				},
 			});
 		}
+
+//		var evaluation = isInGranularity(graphGranularity, graphStartTime, graphEndTime);
+//		console.log("Evaluation granularity/date protection result is in chosen granularity ("+graphGranularity+"):"+evaluation.isInGranularity);
+
+//		if (evaluation.isInGranularity){
+//			$.notify(evaluation.message, 'success', {
+//				'autoHideDelay': 10000
+//				});
+//			
+//		} else {
+//			$.notify(evaluation.message, {
+//				'autoHideDelay': 10000
+//				});
+//		}
 	}
 	this.updateHeatMap = function(startDate,endDate,legend) {
 		var graphRadioValue = $('#heatMapTable').find('input:checked').val();
@@ -980,8 +989,8 @@ function ScreenGraph(kpiInfo) {
 
 		
 		var graphContextualInformation = $('#graphTable').find('input:checked').val();
-		var firstGraphDate = new Date(2014, 12, 1);
-		var secondGraphDate = new Date(2015, 5, 1);
+		var firstGraphDate = new Date(2014, 11, 1, 0, 0, 0, 0);
+		var secondGraphDate = new Date(2015, 4, 31, 23, 59, 59, 9);
 		var graphStartTime = firstGraphDate.getTime();
 		this.startYear=(new Date(graphStartTime)).getFullYear();
 		var graphEndTime = secondGraphDate.getTime();
@@ -1008,8 +1017,8 @@ function ScreenGraph(kpiInfo) {
 		var graphRadioValue = $('#heatMapTable').find('input:checked').val();
 		var horizontalSet = $('#horizontalSet').val();
 		var verticalSet = $('#verticalSet').val();
-		var firstHeatDate = new Date(2015, 3, 31);
-		var secondHeatDate = new Date(2015, 3, 31);
+		var firstHeatDate = new Date(2015, 4, 1, 0, 0, 0, 0); 
+		var secondHeatDate = new Date(2015, 4, 31, 23, 59, 59, 9);
 		var heatMapStartTime = firstHeatDate.getTime();
 		var heatMapEndTime = secondHeatDate.getTime();
 		var heatMapGranularity = $('#granularityHeatMap').val();
@@ -1034,21 +1043,25 @@ function ScreenGraph(kpiInfo) {
 		$('#fromDateChart').appendDtpicker({
 				"dateOnly": false,
 				"closeOnSelected": true,
+				"todayButton": false,
 				"onShow": function(handler){},
-				"onHide": function(handler){},
-			},
-			firstGraphDate);
+				"onHide": function(handler){}
+			}, firstGraphDate
+			);
+		
 		
 		$('#toDateChart').appendDtpicker({
 				"dateOnly": false,
 				"closeOnSelected": true,
+				"todayButton": false,
 				"onShow": function(handler) {},
-				"onHide": function(handler) {},
+				"onHide": function(handler) {}
 			},
 			secondGraphDate);
 		$('#fromDateHeatMap').appendDtpicker({
 				"dateOnly": false,
 				"closeOnSelected": true,
+				"todayButton": false,
 				"onShow": function(handler) {},
 				"onHide": function(handler) {}
 			},
@@ -1057,10 +1070,12 @@ function ScreenGraph(kpiInfo) {
 		$('#toDateHeatMap').appendDtpicker({
 				"dateOnly": false,
 				"closeOnSelected": true,
+				"todayButton": false,
 				"onShow": function(handler) {},
 				"onHide": function(handler) {}
 			},
 			secondHeatDate);
+		
 
 		this.gage = new JustGage({
 			id: "gauge",
@@ -1933,3 +1948,140 @@ function isPercentage(kpiToEval){
 	
 }
 
+function timeDifference(initialDate,finalDate) {
+//    var difference = finalDate.getTime() - initialDate.getTime();
+    var difference = finalDate - initialDate;
+    var result = difference;
+    console.log("Difference numeric value: "+ difference);
+    
+    var daysDifference = Math.floor(difference/1000/60/60/24);
+    difference -= daysDifference*1000*60*60*24;
+
+    var hoursDifference = Math.floor(difference/1000/60/60);
+    difference -= hoursDifference*1000*60*60;
+
+    var minutesDifference = Math.floor(difference/1000/60);
+    difference -= minutesDifference*1000*60;
+
+    var secondsDifference = Math.floor(difference/1000);
+
+    console.log('difference = ' + daysDifference + ' day/s ' 
+    						    + hoursDifference + ' hour/s ' 
+    						    + minutesDifference + ' minute/s ' 
+    						    + secondsDifference + ' second/s ');
+    
+    return result;
+};
+
+
+function isInGranularity(granularity, initialDate, finalDate){
+	var response = true;
+	var message = '';
+	switch (granularity){
+		// the timestamp numeric value for 1 hour is 1000*60*60=3600000
+		case 'hourly':
+			var minutes = new Date(initialDate).getMinutes();
+			if (timeDifference(initialDate, finalDate) < 3600000){
+				message = 'Incorrect value for Date & time. \n';
+				response = false;
+			} else {
+				if (minutes !=0){
+					message = 'Please choose the beginning of an hour (ex:03:00 or 22:00).';
+					response = false;
+				} else {
+					response = true;
+				}
+			}
+			break;
+		// the timestamp numeric value for 1 day is 1000*60*60*24=86400000
+		case 'daily': 
+			var hours = new Date(initialDate).getHours();
+			var minutes = new Date(initialDate).getMinutes();
+			if (timeDifference(initialDate, finalDate) < 86400000){
+				message = 'Incorrect value for Date & time. \nPlease choose a period larger than 1 day.';
+				response = false;
+			} else {
+				if ((hours != 0) || (minutes !=0)){
+					message = 'Please choose the beginning of a day (00:00).';
+					response = false;
+				} else {
+					response = true;
+				}
+			}
+			break;
+		// the timestamp numeric value for 1 week is 1000*60*60*24*7=604800000
+		case 'weekly':
+			var weekday = new Date(initialDate).getDay();
+			if (timeDifference(initialDate, finalDate) < 604800000){
+				message = 'Incorrect value for Date & time. \nPlease choose a period larger than 1 week.';
+				response = false;
+			} else {
+				if (weekday != 1) {
+					message = 'Please choose the beginning of a week (monday).';
+					response = false;
+				} else {
+					response = true;
+				}
+			}
+			break;
+		// the timestamp numeric value for 1 month is 1000*60*60*24*7*30=2592000000
+			// verify 30 days months, 31 days months and february
+		case 'monthly':
+			var month = new Date(initialDate).getMonth();
+			var day = new Date(initialDate).getDate();
+			var monthDays = getMonthDays(month);
+			if (timeDifference(initialDate, finalDate) < 86400000*monthDays){
+				message = 'Incorrect value for Date & time. \nPlease choose a period larger than 1 month.';
+				response = false;
+			} else {
+				if (day != 1) {
+					message = 'Please choose the beginning of a month.';
+					response = false;
+				} else {
+					response = true;
+				}
+			}
+			break;
+		default: break;
+	}
+	return {isInGranularity:response,
+			message:message};
+}
+
+function isDatetimeOk(granularity, graphStartTime, graphEndTime) {
+	// check 1 - From date & time more recent than to date & time and same day & time
+	// check 2 - From date & time more recent than to date & time
+	// check 3 - Date & time date interval larger than chosen granularity
+	// check 4 - From date & time needs to start at first element of granularity (first day of month, first day of week, etc)
+	var message = '';
+	var resultDtTmOk = true;
+	
+	if (graphStartTime >= graphEndTime){
+		resultDtTmOk = false;
+		if (graphStartTime > graphEndTime){
+				message = '"FROM" date cannot be later than "TO" date.\nPlease choose valid dates and press update again.';
+			} else {
+				message = '"FROM" and "TO" date & times cannot be equal.\nPlease choose valid dates and press update again.';
+			}
+	} else {
+		var evaluation = isInGranularity(granularity, graphStartTime, graphEndTime);
+		if (!evaluation.isInGranularity){
+			resultDtTmOk = false;
+			message = evaluation.message;
+		}
+	}
+	
+	return { isDateTimeOk : resultDtTmOk,
+			 message: message
+	};
+
+}
+
+function getMonthDays(month){
+//	var monthDays = (month == 2)? 28: ((month % 2 == 0)&&(month<7))?30:0;
+	if (month == 1)
+		return 28;
+	if ( ((month % 2 == 0)&&(month<7)) || ((month % 2 != 0)&&(month>=7)) )
+		return 31;
+	return 30;
+}
