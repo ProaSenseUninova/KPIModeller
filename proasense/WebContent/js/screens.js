@@ -34,8 +34,8 @@ function openQuery() {
 }
 
 function Screen1(elInfo) {
+//	window.alert("screen 1 initialization");
 	this.elInfo = elInfo
-
 	var scr = this;
 
 	$.get("inc/screen1.inc", function(content) {
@@ -43,15 +43,20 @@ function Screen1(elInfo) {
 	});
 
 	this.saveBtn = function() {
+//		window.alert("screen 1 - this.kpiSensor1");
 		this.saveLoadedElement();
 	}
+//	window.alert("screen 1 - OK");
 
 
 	this.cancelBtn = function() {
+//		window.alert("screen 1 - this.kpiSensor1");
 		this.closeScreen();
 	}
+//	window.alert("screen 1 - OK");
 
 	this.selectBoxes = function(e) {
+//		window.alert("screen 1 - this.kpiSensor1");
 		$('.elRow').css('display', 'none');
 		$('.elAggRow').css('display', 'none');
 		if ($('#calculationType').val() == 'aggregate' && $('#kpiSensor1').val() != null) {
@@ -65,7 +70,9 @@ function Screen1(elInfo) {
 		$('.composed').css('display', 'none')
 		$('.' + e.currentTarget.value).css('display', 'table-row');
 	}
+//	window.alert("screen 1 - OK");
 	this.kpiSensor1 = function() {
+//		window.alert("screen 1 - this.kpiSensor1");
 		$('.elAggRow').css('display', 'table-row');
 		if ($('#kpiSensor1').val() == 'sensor') {
 			$('#selectSensor2').css('display', 'inline-block');
@@ -75,6 +82,7 @@ function Screen1(elInfo) {
 			$('#selectKpi1').css('display', 'inline-block');
 		}
 	}
+//	window.alert("screen 1 - OK");
 	this.kpiSensor = function() {
 		$('.elRow').css('display', 'table-row');
 		var kpiSensors = $('.kpiSensor');
@@ -88,6 +96,7 @@ function Screen1(elInfo) {
 			}
 		}
 	}
+//	window.alert("screen 1 - OK");
 	this.loadSensors = function() {
 		var tmpVal = [];
 		for (var i = 0; i < $('.sensorBox').length; i++) {
@@ -101,6 +110,7 @@ function Screen1(elInfo) {
 			$('.sensorBox').eq(i).val(tmpVal[i]);
 		}
 	}
+//	window.alert("screen 1 - OK also");
 	this.loadKpis = function() {
 		var tmpVal = [];
 		for (var i = 0; i < $('.kpiBox').length; i++) {
@@ -115,6 +125,7 @@ function Screen1(elInfo) {
 		}
 	}
 
+//	window.alert("screen 1 - OK");
 	this.checkConstraints = function(id) {
 		for (var i = 0; i < kpiFormulas.length; i++) {
 			if (kpiFormulas[i].kpi_id == id) {
@@ -127,6 +138,7 @@ function Screen1(elInfo) {
 		return false;
 	}
 
+//	window.alert("screen 1 - OK");
 
 	this.openScreen = function() {
 
@@ -152,6 +164,7 @@ function Screen1(elInfo) {
 			this.loadElData(loadedKpi)
 		} else {}
 	}
+//	window.alert("screen 1 - OK 2");
 	this.thirdElement = function() {
 		var els = $('.thEl');
 		if ($('#op2').val() == 'none') {
@@ -167,6 +180,7 @@ function Screen1(elInfo) {
 			}
 		}
 	}
+//	window.alert("screen 1 - OK");
 
 	this.closeScreen = function() {
 		this.changeLoadedKpi();
@@ -174,6 +188,7 @@ function Screen1(elInfo) {
 		$('.content').html('');
 	}
 
+//	window.alert("screen 1 - OK 3");
 	this.updateField = function(id, value) {
 		$('#' + id).val(value);
 		if (value !== null) {
@@ -181,6 +196,7 @@ function Screen1(elInfo) {
 		}
 	}
 
+//	window.alert("screen 1 - OK 4");
 	this.loadElData = function(elId) {
 		for (var i = 0; i < this.kpiInfo.length; i++) {
 			if (this.kpiInfo[i].id == elId) {
@@ -273,6 +289,9 @@ function Screen1(elInfo) {
 		}
 		return false;
 	}
+	
+//	window.alert("screen 1 - OK");
+	
 	this.changeLoadedKpi = function(elId) /***/ {
 		var oldId = loadedKpi;
 		loadedKpi = arguments.length > 0 ? elId : "";
@@ -294,6 +313,7 @@ function Screen1(elInfo) {
 			}
 		}
 	}
+//	window.alert("screen 1 - OK");
 	this.getKpiFormula = function(kpi, kpiFormula) {
 		if (kpi.calculation_type == 'simple') {
 			kpiFormula.term1_sensor_id = parseInt($('#selectSensor1').val());
@@ -328,6 +348,7 @@ function Screen1(elInfo) {
 		}
 		return kpiFormula;
 	}
+//	window.alert("screen 1 - OK lsdjs");
 	this.saveLoadedElement = function() {
 		var kpi = {};
 		var kpiFormula = {};
@@ -506,6 +527,7 @@ function Screen1(elInfo) {
 }
 
 function Screen2(kpiInfo) {
+//	window.alert("screen 2 initialization");
 	this.kpiInfo = kpiInfo;
 
 	var scr = this;
@@ -724,6 +746,7 @@ var originalVerticalSet;
 var originalHorizontalSet;
 
 function ScreenGraph(kpiInfo) {
+//	window.alert("ScreenGraph initialization");
 	this.testGraphData = JSON.parse('{"data":[' + '[3,4,1,6,4,8,null,8,6,3],' + '[7,3,9,2,4,5,9,3,4,5],' + '[2,5,6,2,14,6,7,6,3,9]],' + '"subTitle":"Source: use case data",' + '"legend":["A","B","C"],' + '"title":"Availability",' + '"labels":["December","January","February","March","April","May"]}');
 	this.kpiInfo = kpiInfo;
 	var scr = this;
@@ -798,11 +821,11 @@ function ScreenGraph(kpiInfo) {
 		//scr.initializeGraph(this.testGraphData);
 		var evaluation = isDatetimeOk(graphGranularity, graphStartTime, graphEndTime);
 		if(!evaluation.isDateTimeOk){
-//		if (graphStartTime >= graphEndTime){
 			$.notify(evaluation.message, {
 				'autoHideDelay': 10000
 				});
 		} else {
+			var checked = $('input:checked').slice(0,5).first().val();
 			$.ajax({
 				url: restAddress + "func/getGraphData?kpiId=" + loadedKpi + 
 									"&contextualInformation=" + this.graphContextualInformation + 
@@ -813,24 +836,11 @@ function ScreenGraph(kpiInfo) {
 									secondContextValueStr,
 				type: "GET",
 				success: function(graphData) {
-					scr.initializeGraph(graphData);
+					scr.initializeGraph(graphData,checked);
 				},
 			});
 		}
 
-//		var evaluation = isInGranularity(graphGranularity, graphStartTime, graphEndTime);
-//		console.log("Evaluation granularity/date protection result is in chosen granularity ("+graphGranularity+"):"+evaluation.isInGranularity);
-
-//		if (evaluation.isInGranularity){
-//			$.notify(evaluation.message, 'success', {
-//				'autoHideDelay': 10000
-//				});
-//			
-//		} else {
-//			$.notify(evaluation.message, {
-//				'autoHideDelay': 10000
-//				});
-//		}
 	}
 	this.updateHeatMap = function(startDate,endDate,legend) {
 		var graphRadioValue = $('#heatMapTable').find('input:checked').val();
@@ -841,14 +851,9 @@ function ScreenGraph(kpiInfo) {
 		var contextName = legend!==undefined?legend:'Global';
 		var heatMapGranularity = legend!==undefined?$('#granularityChart').val():$('#granularityHeatMap').val()
 
-		if (heatMapStartTime >= heatMapEndTime){
-			var message = '';
-			if (heatMapStartTime > heatMapEndTime){
-					message = '"FROM" date cannot be later than "TO" date.\nPlease choose valid dates and press update again.';
-				} else {
-					message = '"FROM" and "TO" date & times cannot be equal.\nPlease choose valid dates and press update again.';
-				}
-			$.notify(message, {
+		var evaluation = isDatetimeOk(heatMapGranularity, heatMapStartTime, heatMapEndTime);
+		if(!evaluation.isDateTimeOk){
+			$.notify(evaluation.message, {
 				'autoHideDelay': 10000
 				});
 		} else {
@@ -997,12 +1002,14 @@ function ScreenGraph(kpiInfo) {
 		var graphGranularity = $('#granularityChart').val();
 		$('#graphButton').on('click', function(event) {
 			scr.updateGraph();
+//			scr.updateHeatMap();
 		});
 		$('#heatMapButton').on('click', function(event) {
 			scr.updateHeatMap();
 		});
 		
 		//this.initializeGraph(this.testGraphData,true);
+		var checked = $('input:checked').slice(0,5).first().val();
 		$.ajax({
 			url: restAddress + "func/getGraphData?kpiId=" + loadedKpi + 
 							   "&contextualInformation=" + graphContextualInformation + 
@@ -1011,14 +1018,15 @@ function ScreenGraph(kpiInfo) {
 							   "&endTime=" + graphEndTime,
 			type: "GET",
 			success: function(graphData) {
-				scr.initializeGraph(graphData);
+				scr.initializeGraph(graphData,checked);
 			},
 		});
 		var graphRadioValue = $('#heatMapTable').find('input:checked').val();
 		var horizontalSet = $('#horizontalSet').val();
 		var verticalSet = $('#verticalSet').val();
 		var firstHeatDate = new Date(2015, 4, 1, 0, 0, 0, 0); 
-		var secondHeatDate = new Date(2015, 4, 31, 23, 59, 59, 9);
+		var secondHeatDate = new Date(2015, 5, 1, 0, 0, 0, 0);
+//		var secondHeatDate = new Date(2015, 4, 31, 23, 59, 59, 9);
 		var heatMapStartTime = firstHeatDate.getTime();
 		var heatMapEndTime = secondHeatDate.getTime();
 		var heatMapGranularity = $('#granularityHeatMap').val();
@@ -1336,7 +1344,7 @@ function ScreenGraph(kpiInfo) {
 		$('#heatMapTitle').html('<h4>' + heatMapData.title + '</h4>' + (heatMapData.subTitle !== undefined ? '<h5>' + heatMapData.subTitle + '</h5>' : ''));
 	}
 
-	this.initializeGraph = function(graphData) {
+	this.initializeGraph = function(graphData,checked) {
 		this.graphData = graphData;
 		console.log("Initializing graph with graphData = "+JSON.stringify(graphData));
 		console.log("Label count is = " + JSON.stringify(graphData.labels.length) + " - Point count = " + JSON.stringify(graphData.data[0].length));
@@ -1478,8 +1486,54 @@ function ScreenGraph(kpiInfo) {
 				{
 					if(loadedKpi==kpiTargets[i].kpi_id)
 					{
-						limits.push(kpiTargets[i].lower_bound);
-						limits.push(kpiTargets[i].upper_bound);
+						var contextObj = [];
+						var color =  null;
+						var id = null;
+						if(checked!="Global")
+						{
+							id = kpiTargets[i][checked+'_id'];
+							contextObj = eval(checked+"s");
+							var name = null;
+							if(id!=null)
+							{							
+								for(var j=0;j<contextObj.length;j++)
+								{
+									if(contextObj[j].id==id)
+									{
+										name = contextObj[j].name;
+										break;
+									}									
+								}
+							}
+							if(name!=null)
+							{
+								for(var j=0;j<graphData.legend.length;j++)
+								{
+									if(name==graphData.legend[j])
+									{
+										color = $.elycharts.templates["line_basic_1"].series["serie"+(j+1)].color;
+										break;
+									}
+								}
+							}
+						}
+						if((id==null && checked!="Global" )|| (id!=null && color!=null) || (checked=="Global" && kpiTargets[i].product_id== null &&kpiTargets[i].shift_id== null && kpiTargets[i].mould== null && kpiTargets[i].machine_id== null)){
+							if(kpiTargets[i].lower_bound!=null && kpiTargets[i].lower_bound!="")
+							{
+								var obj={};
+								obj.color = color==null?$.elycharts.templates["line_basic_1"].series.serie1.color:color;
+								obj.value = kpiTargets[i].lower_bound
+								limits.push(obj);
+							}
+							
+							if(kpiTargets[i].upper_bound!=null && kpiTargets[i].upper_bound!="")
+							{
+								var obj={};
+								obj.color = color==null?$.elycharts.templates["line_basic_1"].series.serie1.color:color;
+								obj.value = kpiTargets[i].upper_bound
+								limits.push(obj);
+							}
+						}
 					}
 				}
 				$("#chart").chart("clear");
@@ -1621,6 +1675,7 @@ function ScreenGraph(kpiInfo) {
 }
 
 function ScreenQuery() {
+//	window.alert("ScreenGraph initialization");
 	var scr = this;
 
 	this.baseUrl = '/storage-reader/query';
@@ -1948,33 +2003,38 @@ function isPercentage(kpiToEval){
 	
 }
 
-function timeDifference(initialDate,finalDate) {
-//    var difference = finalDate.getTime() - initialDate.getTime();
-    var difference = finalDate - initialDate;
-    var result = difference;
-    console.log("Difference numeric value: "+ difference);
-    
-    var daysDifference = Math.floor(difference/1000/60/60/24);
-    difference -= daysDifference*1000*60*60*24;
+function isDatetimeOk(granularity, graphStartTime, graphEndTime) {
+	// check 1 - From date & time more recent than to date & time and same day & time
+	// check 2 - From date & time more recent than to date & time
+	// check 3 - Date & time date interval larger than chosen granularity
+	// check 4 - From date & time needs to start at first element of granularity (first day of month, first day of week, etc)
+	var message = '';
+	var resultDtTmOk = true;
+	
+	if (graphStartTime >= graphEndTime){
+		resultDtTmOk = false;
+		if (graphStartTime > graphEndTime){
+				message = '"FROM" date cannot be later than "TO" date.\nPlease choose valid dates and press update again.';
+			} else {
+				message = 'Date & times cannot be equal.\nPlease choose valid dates and press update again.';
+			}
+	} else {
+		var evaluation = isInGranularity(granularity, graphStartTime, graphEndTime);
+		if (!evaluation.isInGranularity){
+			resultDtTmOk = false;
+			message = evaluation.message;
+		}
+	}
+	
+	return { isDateTimeOk : resultDtTmOk,
+			 message: message
+	};
 
-    var hoursDifference = Math.floor(difference/1000/60/60);
-    difference -= hoursDifference*1000*60*60;
-
-    var minutesDifference = Math.floor(difference/1000/60);
-    difference -= minutesDifference*1000*60;
-
-    var secondsDifference = Math.floor(difference/1000);
-
-    console.log('difference = ' + daysDifference + ' day/s ' 
-    						    + hoursDifference + ' hour/s ' 
-    						    + minutesDifference + ' minute/s ' 
-    						    + secondsDifference + ' second/s ');
-    
-    return result;
-};
+}
 
 
 function isInGranularity(granularity, initialDate, finalDate){
+	// if needed, subtract (-60000) to right value in time difference to finish period one minute before
 	var response = true;
 	var message = '';
 	switch (granularity){
@@ -1982,7 +2042,7 @@ function isInGranularity(granularity, initialDate, finalDate){
 		case 'hourly':
 			var minutes = new Date(initialDate).getMinutes();
 			if (timeDifference(initialDate, finalDate) < 3600000){
-				message = 'Incorrect value for Date & time. \n';
+				message = 'Incorrect value for Date & time. \nPlease choose a time frame larger than 1 hour.';
 				response = false;
 			} else {
 				if (minutes !=0){
@@ -1998,7 +2058,7 @@ function isInGranularity(granularity, initialDate, finalDate){
 			var hours = new Date(initialDate).getHours();
 			var minutes = new Date(initialDate).getMinutes();
 			if (timeDifference(initialDate, finalDate) < 86400000){
-				message = 'Incorrect value for Date & time. \nPlease choose a period larger than 1 day.';
+				message = 'Incorrect value for Date & time. \nPlease choose a time frame larger than 1 day.';
 				response = false;
 			} else {
 				if ((hours != 0) || (minutes !=0)){
@@ -2013,7 +2073,7 @@ function isInGranularity(granularity, initialDate, finalDate){
 		case 'weekly':
 			var weekday = new Date(initialDate).getDay();
 			if (timeDifference(initialDate, finalDate) < 604800000){
-				message = 'Incorrect value for Date & time. \nPlease choose a period larger than 1 week.';
+				message = 'Incorrect value for Date & time. \nPlease choose a time frame larger than 1 week.';
 				response = false;
 			} else {
 				if (weekday != 1) {
@@ -2024,14 +2084,14 @@ function isInGranularity(granularity, initialDate, finalDate){
 				}
 			}
 			break;
-		// the timestamp numeric value for 1 month is 1000*60*60*24*7*30=2592000000
+		// the timestamp numeric value for 1 month is 1000*60*60*24*30=2592000000
 			// verify 30 days months, 31 days months and february
 		case 'monthly':
 			var month = new Date(initialDate).getMonth();
 			var day = new Date(initialDate).getDate();
 			var monthDays = getMonthDays(month);
 			if (timeDifference(initialDate, finalDate) < 86400000*monthDays){
-				message = 'Incorrect value for Date & time. \nPlease choose a period larger than 1 month.';
+				message = 'Incorrect value for Date & time. \nPlease choose a time frame larger than 1 month.';
 				response = false;
 			} else {
 				if (day != 1) {
@@ -2048,33 +2108,29 @@ function isInGranularity(granularity, initialDate, finalDate){
 			message:message};
 }
 
-function isDatetimeOk(granularity, graphStartTime, graphEndTime) {
-	// check 1 - From date & time more recent than to date & time and same day & time
-	// check 2 - From date & time more recent than to date & time
-	// check 3 - Date & time date interval larger than chosen granularity
-	// check 4 - From date & time needs to start at first element of granularity (first day of month, first day of week, etc)
-	var message = '';
-	var resultDtTmOk = true;
-	
-	if (graphStartTime >= graphEndTime){
-		resultDtTmOk = false;
-		if (graphStartTime > graphEndTime){
-				message = '"FROM" date cannot be later than "TO" date.\nPlease choose valid dates and press update again.';
-			} else {
-				message = '"FROM" and "TO" date & times cannot be equal.\nPlease choose valid dates and press update again.';
-			}
-	} else {
-		var evaluation = isInGranularity(granularity, graphStartTime, graphEndTime);
-		if (!evaluation.isInGranularity){
-			resultDtTmOk = false;
-			message = evaluation.message;
-		}
-	}
-	
-	return { isDateTimeOk : resultDtTmOk,
-			 message: message
-	};
+function timeDifference(initialDate,finalDate) {
+//  var difference = finalDate.getTime() - initialDate.getTime();
+  var difference = finalDate - initialDate;
+  var result = difference;
+  console.log("Difference numeric value: "+ difference);
+  
+  var daysDifference = Math.floor(difference/1000/60/60/24);
+  difference -= daysDifference*1000*60*60*24;
 
+  var hoursDifference = Math.floor(difference/1000/60/60);
+  difference -= hoursDifference*1000*60*60;
+
+  var minutesDifference = Math.floor(difference/1000/60);
+  difference -= minutesDifference*1000*60;
+
+  var secondsDifference = Math.floor(difference/1000);
+
+  console.log('difference = ' + daysDifference + ' day/s ' 
+  						    + hoursDifference + ' hour/s ' 
+  						    + minutesDifference + ' minute/s ' 
+  						    + secondsDifference + ' second/s ');
+  
+  return result;
 }
 
 function getMonthDays(month){
