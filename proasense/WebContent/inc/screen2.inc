@@ -3,10 +3,10 @@
 	<tr>
 		<td>
 			<form id="contextualInformation">
-				<input type="checkbox" style="cursor: default" value="product_id" name="Product" disabled="disabled">Product
-				<input type="checkbox" style="cursor: default" value="machine_id" name="Machine" disabled="disabled">Machine
-				<input type="checkbox" style="cursor: default" value="shift_id" name="Shift" disabled="disabled">Shift
-				<input type="checkbox" style="cursor: default" value="mould_id" name="Mould" disabled="disabled">Mould
+				<input type="checkbox" style="cursor: default" value="product_id" name="Product">Product
+				<input type="checkbox" style="cursor: default" value="machine_id" name="Machine">Machine
+				<input type="checkbox" style="cursor: default" value="shift_id" name="Shift">Shift
+				<input type="checkbox" style="cursor: default" value="mould_id" name="Mould">Mould
 			</form>
 		</td>
 	</tr>

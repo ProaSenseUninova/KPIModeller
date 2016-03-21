@@ -18,7 +18,10 @@ function getChildren(kpis) {
 	var kpiParents = [];
 	var kpiChildren = [];
 	for (var i = 0; i < kpis.length; i++) {
+//		window.alert("AJAX:(getChildren) - kpis[i].children :"+JSON.stringify(kpis[i].children));
 		kpis[i].children = [];
+//		window.alert("AJAX:(getChildren) - kpis[i].name :"+JSON.stringify(kpis[i].name));
+//		window.alert("AJAX:(getChildren) - kpis["+i+"].name :"+JSON.stringify(kpis[i].NAME));
 		kpis[i].text = kpis[i].name + delEditBtn;
 		if (kpis[i].parent_id === null) {
 			kpiParents.push(kpis[i]);
@@ -138,7 +141,8 @@ function getKpi(id) {
 
 window.onload = function() {
 //	setCookie('JSESSIONID',Session.id);
-	
+
+//	window.alert("Initial onload method --------------- ");
 	if (!restAddress.endsWith('/')) {
 		restAddress = restAddress + '/';
 	}
@@ -198,27 +202,41 @@ window.onload = function() {
 		url: restAddress + 'proasense_hella/kpi',
 		type: 'GET',
 		success: function(data) {
+//			window.alert("sdsdsssds");
 			$('html').unblock();
 			kpiInfo = data;
+//			window.alert("AJAX:(proasense_hella/kpi) - data:"+JSON.stringify(data));
+//			window.alert("AJAX:(proasense_hella/kpi) - kpiInfo:"+JSON.stringify(kpiInfo));
 			screen1.kpiInfo = kpiInfo;
+//			window.alert("AJAX:(proasense_hella/kpi) - screen1 kpiInfo :"+JSON.stringify(screen1.kpiInfo));
 			screen2.kpiInfo = kpiInfo;
+//			window.alert("AJAX:(proasense_hella/kpi) - screen2 kpiInfo :"+JSON.stringify(screen2.kpiInfo));
 			scrGraph.kpiInfo = kpiInfo;
+//			window.alert("AJAX:(proasense_hella/kpi) - scrGraph kpiInfo :"+JSON.stringify(scrGraph.kpiInfo));
 			kpiInfo = getChildren(kpiInfo);
+//			window.alert("AJAX:(proasense_hella/kpi) - getChildren(kpiInfo) :"+JSON.stringify(kpiInfo));
 			var tmpKpiInfo = cloneKpis(kpiInfo);
+//			window.alert("AJAX:(proasense_hella/kpi) - kpiInfo:"+JSON.stringify(screen1.kpiInfo));
+//			window.alert("AJAX:(proasense_hella/kpi) - kpiInfo[0].parent_id:"+kpiInfo[0].parent_id);
 			for (var i = 0; i < kpiInfo.length; i++) {
+//				window.alert("AJAX:(proasense_hella/kpi) - kpiInfo ["+i+"]:"+JSON.stringify(kpiInfo[i].parent_id));
 				if (kpiInfo[i].parent_id === null) {
+//					window.alert(kpiInfo[i].parent_id);
 					$('#KPITree').jstree().create_node(null, tmpKpiInfo[i]);
 				}
 			}
 
 		}
 	});
+//	window.alert("After requests --------------- ");
+	
 	elInfo = new elementInfo();
 	screen1 = new Screen1();
 	screen2 = new Screen2();
 	activeScreen = screen1;
 	scrGraph = new ScreenGraph();
 	scrQuery = new ScreenQuery();
+//	window.alert("initializations  --------------- ");
 	
 	$('#KPITree').on('close_node.jstree', function(e, data) {
 			if (data.node.id == 'OEEId') {
@@ -247,6 +265,7 @@ window.onload = function() {
 		})
 		.on('create_node.jstree', function(e, data) {
 			if (data.parent == "OEEId") {
+//				window.alert("creating node:"+data.parent);
 				activeScreen.closeScreen();
 				elInfo.loadedElement = data.node.id;
 				scrGraph.disconnect();
@@ -280,6 +299,7 @@ window.onload = function() {
 //	mainpagewrapperhtml = document.getElementById('main-page-wrapper').innerHTML;
 //	loginpagewrapperhtml = document.getElementById('login-page').innerHTML;
 //	this.login();
+//	window.alert("end  --------------- ");
 };
 
 

@@ -51,7 +51,8 @@ public class DatabaseAccessObject {
 		int id=0;
 		dBUtil.openConnection(dbName);
 		
-		String query = "SELECT \"id\" FROM \""+tableName.toLowerCase()+"\" WHERE \"name\"='"+valueName+"';";
+//		String query = "SELECT \"id\" FROM \""+tableName+"\" WHERE \"name\"='"+valueName+"';";
+		String query = "SELECT \"ID\" FROM \""+tableName.toUpperCase()+"\" WHERE NAME='"+valueName+"';";
 		
 		ResultSet queryResult = dBUtil.processQuery(query);
 		
@@ -73,7 +74,8 @@ public class DatabaseAccessObject {
 		Integer id=0;
 		dBUtil.openConnection(dbName);
 		
-		String query = "SELECT \""+foreignKeyName+"\" FROM \""+tableName+"\" WHERE \"name\"='"+valueName+"';";
+//		String query = "SELECT \""+foreignKeyName+"\" FROM \""+tableName+"\" WHERE NAME='"+valueName+"';";
+		String query = "SELECT \""+foreignKeyName.toUpperCase()+"\" FROM \""+tableName.toUpperCase()+"\" WHERE NAME='"+valueName+"';";
 		
 		ResultSet queryResult = dBUtil.processQuery(query);
 		
@@ -97,7 +99,8 @@ public class DatabaseAccessObject {
 		Integer id=0;
 		dBUtil.openConnection(dbName);
 		
-		String query = "SELECT MAX(\"id\") FROM \""+tableName+"\";";
+//		String query = "SELECT MAX(\"id\") FROM \""+tableName+"\";";
+		String query = "SELECT MAX(\"ID\") FROM \""+tableName.toUpperCase()+"\";";
 		log.saveToFile("<Processing query>"+query);
 		
 		ResultSet queryResult = dBUtil.processQuery(query);
@@ -142,7 +145,8 @@ public class DatabaseAccessObject {
 			}
 			columnNames = columnNames.substring(0, columnNames.length()-2);
 			values = values.substring(0, values.length()-2);
-			queryList.add("INSERT INTO \""+kpiValue.tableName+"\" ("+columnNames+") VALUES ("+values+");");  
+//			queryList.add("INSERT INTO \""+kpiValue.tableName+"\" ("+columnNames+") VALUES ("+values+");");  
+			queryList.add("INSERT INTO \""+kpiValue.tableName.toUpperCase()+"\" ("+columnNames.toUpperCase()+") VALUES ("+values+");");  
 		}
 		
 		
@@ -163,7 +167,7 @@ public class DatabaseAccessObject {
 		Integer contextElementId = (contextualInformation == TableValueType.GLOBAL)?0:getNameId(contextualInformation.toString(), contextName);
 		contextElementId = (contextElementId==0)? 1:contextElementId;
 		
-		HeatMap heatMap = new HeatMap(kpiId, contextualInformation, granularity, startTime, contextElementId, varX, varY);
+		HeatMap heatMap = new HeatMap(kpiId, contextualInformation, granularity, startTime, contextElementId, varX, varY, log);
 		
 		String query = heatMap.getHeatMapQueryString(); 
 
@@ -231,7 +235,7 @@ public class DatabaseAccessObject {
 		
 		tempResultTable = getKpiValue(kpiId, contextualInformation, granularity, startTime, endTime, contextValueId, secondContext);
 		
-		String legend = "[";
+		String legend = "";
 		String[] tempDataStr = new String[tempResultTable.size()];
 		Integer pos = -1;
 		for (ResultTable rt : tempResultTable){
@@ -240,10 +244,15 @@ public class DatabaseAccessObject {
 				legend += rt.toJsonObjectLegend()+",";
 				tempDataStr[++pos] = rt.toJSonObject(rt.columnQty, _refRows).toString();
 			}
-		}
+		}  
 
-		legend = legend.substring(0, legend.length()-1);
-		legend +="]";
+//		legend = "["+legend+"]";
+		if (legend.length() > 0)
+			legend = "["+legend.substring(0, legend.length()-1)+"]";
+		else
+			legend = "[]"; 
+			
+//		legend +="]"; 
 		try {
 			log.saveToFile("<Values>"+Arrays.toString(tempDataStr)+"</Values>");
 			log.saveToFile("<Legends>"+legend+"</Legends>");
@@ -425,7 +434,7 @@ public class DatabaseAccessObject {
 					else
 						resultRow.columnValues[i] = queryResult.getObject(i+1).toString();
 				}
-
+ 
 				resultTable.resultsRows.add(resultRow);
 				resultRow = new ResultTableElement(contextualInformation, colN);
 			}
@@ -463,12 +472,15 @@ public class DatabaseAccessObject {
 		Object result = null;
 
 		try {
-			String tmp = "[";
+			String tmp = "";
 			for (int i=0;i<_refRows.length;i++){
 				tmp += "\""+getLabelName(granularity, _refRows[i])+"\",";
 			}
-			tmp = tmp.substring(0, tmp.length()-1);
-			tmp += "]";
+			if (tmp.length() > 0)
+				tmp = "["+tmp.substring(0, tmp.length()-1)+"]";
+			else
+				tmp = "[]";
+//			tmp += "]";
 			result = parser.parse(tmp);
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -503,17 +515,20 @@ public class DatabaseAccessObject {
 		Object result = null;
 
 		try {
-			String tmp = "[";
+			String tmp = "";
 			for (int i=0;i<_refRows.length;i++){
 				tmp += "\""+getLabelNameTimeStamp(_refRows[i])+"\",";
 			}
-			tmp = tmp.substring(0, tmp.length()-1);
-			tmp += "]";
+			if (tmp.length()>0)
+				tmp = "["+tmp.substring(0, tmp.length()-1)+"]";
+			else
+				tmp = "[]";
+//			tmp += "]";
 			result = parser.parse(tmp);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		return result;
+		return result; 
 	}
 	
 	private Long getLabelNameTimeStamp(String element){
@@ -541,11 +556,17 @@ public class DatabaseAccessObject {
 	public String getCurrentDayTotalUnits() {
 		String currentDayTotalUnits = "";
 		
+//		String query = "SELECT COUNT(*) "
+//				+ "FROM \"kpi_values\" kv "
+//				+ "WHERE kv.\"timestamp\" "
+//					+ "BETWEEN CAST(CONCAT(CAST((SELECT MAX(kv.\"timestamp\") FROM \"kpi_values\" kv) AS DATE), ' 00:00:00.0') AS TIMESTAMP) "
+//					+ "AND (SELECT MAX(kv.\"timestamp\") FROM \"kpi_values\" kv);";
+		
 		String query = "SELECT COUNT(*) "
-				+ "FROM \"kpi_values\" kv "
-				+ "WHERE kv.\"timestamp\" "
-					+ "BETWEEN CAST(CONCAT(CAST((SELECT MAX(kv.\"timestamp\") FROM \"kpi_values\" kv) AS DATE), ' 00:00:00.0') AS TIMESTAMP) "
-					+ "AND (SELECT MAX(kv.\"timestamp\") FROM \"kpi_values\" kv);";
+				+ "FROM \"KPI_VALUES\" kv "
+				+ "WHERE kv.\"KPI_TIMESTMP\" "
+					+ "BETWEEN CAST(CONCAT(CAST((SELECT MAX(kv.\"KPI_TIMESTMP\") FROM \"KPI_VALUES\" kv) AS DATE), ' 00:00:00.0') AS TIMESTAMP) "
+					+ "AND (SELECT MAX(kv.\"KPI_TIMESTMP\") FROM \"KPI_VALUES\" kv);";
 		
 		dBUtil.openConnection(dbName);
 		
@@ -574,7 +595,8 @@ public class DatabaseAccessObject {
 	private void setTitle(Integer kpiId) {
 		dBUtil.openConnection(dbName);
 		
-		String query = "SELECT \"name\" FROM \"kpi\" WHERE \"kpi\".\"id\"='"+kpiId+"';";
+//		String query = "SELECT \"name\" FROM \"kpi\" WHERE \"kpi\".\"id\"='"+kpiId+"';";
+		String query = "SELECT \"NAME\" FROM \"KPI\" WHERE \"KPI\".\"ID\"='"+kpiId+"';";
 		log.saveToFile("<Processing query>"+query);
 		
 		ResultSet queryResult = dBUtil.processQuery(query);

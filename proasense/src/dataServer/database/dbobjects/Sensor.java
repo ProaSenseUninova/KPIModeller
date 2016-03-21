@@ -9,6 +9,7 @@ public class Sensor extends KpiDataObject {
 	
 	public Sensor() {
 		super("sensor");
+//		super("SENSOR");
 	}
 
 	@Override

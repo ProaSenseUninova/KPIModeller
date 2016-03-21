@@ -19,6 +19,7 @@ public class Kpi extends KpiDataObject {
 
 	public Kpi() {
 		super("kpi");
+//		super("KPI");
 		super.columnsNames.addAll(Arrays.asList("parent_id", "name", "description", "sampling_rate", "sampling_interval", "context_product", 
 												"context_machine", "context_mould", "context_shift","calculation_type"));
 	}

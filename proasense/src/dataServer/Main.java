@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.WriteListener;
 import javax.servlet.annotation.WebServlet;
 
 import java.awt.image.renderable.ContextualRenderedImageFactory;
@@ -85,24 +86,28 @@ public class Main extends HttpServlet
 			{
 				Connection c = DriverManager.getConnection(dbConfig.jdbcURL+dbName, dbConfig.userName, dbConfig.password);
 				Statement s =  c.createStatement();
-				String query = "SELECT * FROM \""+tableName+"\"";
+//				String query = "SELECT * FROM \""+tableName+"\"";
+				String query = "SELECT * FROM \""+tableName.toUpperCase()+"\"";
 				
-				if(tableName.equals("kpi")) {
-					query += " WHERE \"active\" = true ";
+				if(tableName.toUpperCase().equals("KPI")) {
+//					query += " WHERE \"active\" = true ";
+					query += " WHERE \"ACTIVE\" = true ";
 					if(idReq!=null)
 					{
 						writeLogMsg(tableName);
-						query+= " AND \"id\"="+idReq;
+//						query+= " AND \"id\"="+idReq;
+						query+= " AND \"ID\"="+idReq;
 					}
 				}
 				else {
 					if(idReq!=null)
 					{
 						writeLogMsg(tableName);
-						query+= " WHERE \"id\"="+idReq;
+//						query+= " WHERE \"id\"="+idReq;
+						query+= " WHERE \"ID\"="+idReq;
 					}
 				}
-
+				
 				writeLogMsg("SQL Query: "+query);
 				
 				
@@ -134,7 +139,8 @@ public class Main extends HttpServlet
 		            	{
 		            		qm="";
 		            	}
-		            	str=str+"\""+meta.getColumnName(i+1)+"\":"+qm+o+qm;
+//		            	str=str+"\""+meta.getColumnName(i+1)+"\":"+qm+o+qm;
+		            	str=str+"\""+meta.getColumnName(i+1).toLowerCase()+"\":"+qm+o+qm;
 		                if(i<colmax-1)
 		                {
 		                	str=str+",";
@@ -142,8 +148,8 @@ public class Main extends HttpServlet
 		                
 		                // with 1 not 0
 		                
-		            }
-		            str=str+"},";
+		            } 
+		            str=str+"},"; 
 		        }
 		        if(!str.endsWith("["))
 		        {
@@ -178,7 +184,7 @@ public class Main extends HttpServlet
 		else
 		{
 			tableValueType = TableValueType.valueOf(getParamValueOf(requestData.get("contextualInformation").toUpperCase()));
-		}
+		} 
 
 		SamplingInterval samplingInterval = SamplingInterval.valueOf(getParamValueOf(requestData.get("granularity").toUpperCase()));
 		String startTimeStr = requestData.get("startTime");
@@ -362,7 +368,8 @@ public class Main extends HttpServlet
 			}
 			properties=properties.substring(0,properties.length()-1)+")";
 			
-			query="INSERT INTO \""+tableName+"\" "+properties+" VALUES ";
+//			query="INSERT INTO \""+tableName+"\" "+properties+" VALUES ";
+			query="INSERT INTO \""+tableName.toUpperCase()+"\" "+properties.toUpperCase()+" VALUES ";
 			for(int i=0;i<parsedData.size();i++)
 			{
 				obj=(JSONObject)parsedData.get(i);
@@ -439,7 +446,8 @@ public class Main extends HttpServlet
 
 			Object id = obj.get(idEl);
 			Object[] propertiesVect = obj.keySet().toArray();
-			query="UPDATE \""+tableName+"\" SET ";
+//			query="UPDATE \""+tableName+"\" SET ";
+			query="UPDATE \""+tableName.toUpperCase()+"\" SET ";
 			
 			for(int i=0;i<propertiesVect.length;i++)
 			{
@@ -478,7 +486,8 @@ public class Main extends HttpServlet
 	{
 		try {
 			Integer delRows =null;
-			String query = "DELETE FROM \""+tableName+"\" WHERE ";
+//			String query = "DELETE FROM \""+tableName+"\" WHERE ";
+			String query = "DELETE FROM \""+tableName.toUpperCase()+"\" WHERE ";
 			JSONArray parsedData =  (JSONArray)data;
 			JSONObject obj=null;
 			Connection c = DriverManager.getConnection(dbConfig.jdbcURL+dbName, dbConfig.userName, dbConfig.password);
@@ -487,7 +496,8 @@ public class Main extends HttpServlet
 			{
 				obj = (JSONObject)parsedData.get(i);
 				
-				query = query+"\"id\"="+obj.get("id");
+				query = query+"\"ID\"="+obj.get("id");
+//				query = query+"\"id\"="+obj.get("id");
 
 				if(i<parsedData.size()-1)
 				{
@@ -681,10 +691,16 @@ public class Main extends HttpServlet
 	  {
 		  ServletContext context = getServletContext();
 		  logPath =  context.getRealPath("WEB-INF")+"/";
+		  // Database that needs to be used IMPORTANT:has its identifiers as uppercase
 		  dbPath = context.getRealPath("WEB-INF/db/");
+		  // Database for which the initial code is written IMPORTANT:has its identifiers as lowercase
+//		  dbPath = context.getRealPath("WEB-INF/db(working)/");
+		  // Database created to test new structure with identifiers as lowercase
+//		  dbPath = context.getRealPath("WEB-INF/dbLowCTest/");
 		  dbConfig = new DBConfig("jdbc:hsqldb:file:"+dbPath, "", "SA", "");
 		  dAO = new DatabaseAccessObject(dbPath,logPath);
 		  _log = LoggingSystem.getLog(logPath);
+		  System.out.println("Database path: "+dbPath);
 		  System.out.println("LogSystem configured in: "+logPath);
 	  }
 }

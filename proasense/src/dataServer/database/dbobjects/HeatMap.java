@@ -3,12 +3,15 @@ package dataServer.database.dbobjects;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 import org.hsqldb.Table;
+import org.hsqldb.persist.Log;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import dataServer.LoggingSystem;
 import dataServer.database.enums.SamplingInterval;
 import dataServer.database.enums.TableValueType;
 
@@ -37,14 +40,18 @@ public class HeatMap extends ResultTable {
 
 	private Timestamp startTime;
 	private Timestamp endTime;
+	
+	LoggingSystem log;
 
-	public HeatMap(Integer kpiId, TableValueType type, SamplingInterval granularity, Timestamp startTime, Integer contextElementId, TableValueType varXAxis, TableValueType varYAxis) {
+
+	public HeatMap(Integer kpiId, TableValueType type, SamplingInterval granularity, Timestamp startTime, Integer contextElementId, TableValueType varXAxis, TableValueType varYAxis, LoggingSystem log) {
 		super(type, granularity);
 		varXtype = varXAxis;
 		varYtype = varYAxis;
 		this.kpiId = kpiId;
 		this.contextElementId = contextElementId;
 		this.startTime = startTime;
+		this.log = log;
 	}
 	
 	public String getHeatMapQueryString(){
@@ -52,30 +59,45 @@ public class HeatMap extends ResultTable {
 		String varXStr = varXtype.toString().toLowerCase();
 		String varYStr = varYtype.toString().toLowerCase();
 		
-		String query 	= "SELECT vx.\"name\" as \"varX\", vy.\"name\" as \"varY\", "+super.getAgregation(kpiId)+"(\"value\") as \"value\""
-				+ " FROM \"kpi_values\" kv"
-				+ "	INNER JOIN \""+varXStr+"\" vx ON \""+varXStr+"_id\" = vx.\"id\""
-				+ " INNER JOIN \""+varYStr+"\" vy ON \""+varYStr+"_id\" = vy.\"id\""
-				+ getSamplingIntervalWhereClause(super.samplingInterval, startTime, true)
-				+ getContextElementWhereClause(super.tableVT, contextStr, contextElementId, false)
-				+ " AND \"kpi_id\" = "+kpiId
-				+ " AND \"granularity_id\" IS NOT NULL"
-				+ " GROUP BY \"varX\", \"varY\""
-				+ " ORDER BY \"varX\", \"varY\";";
+//		String query = "SELECT vx.\"name\" as \"varX\", vy.\"name\" as \"varY\", "+super.getAgregation(kpiId)+"(\"value\") as \"value\""
+//				+ " FROM \"kpi_values\" kv"
+//				+ "	INNER JOIN \""+varXStr+"\" vx ON \""+varXStr+"_id\" = vx.\"id\""
+//				+ " INNER JOIN \""+varYStr+"\" vy ON \""+varYStr+"_id\" = vy.\"id\""
+//				+ getSamplingIntervalWhereClause(super.samplingInterval, startTime, true)
+//				+ getContextElementWhereClause(super.tableVT, contextStr, contextElementId, false)
+//				+ " AND \"kpi_id\" = "+kpiId
+//				+ " AND \"granularity_id\" IS NOT NULL"
+//				+ " GROUP BY \"varX\", \"varY\""
+//				+ " ORDER BY \"varX\", \"varY\";";
 		
+		String query = "SELECT vx.\"NAME\" as \"varX\", vy.\"NAME\" as \"varY\", \"KPI_VALUE\" as \"value\""
+				+ " FROM \"KPI_VALUES\" kv"
+				+ "	INNER JOIN \""+varXStr.toUpperCase()+"\" vx ON \""+varXStr.toUpperCase()+"_ID\" = vx.\"ID\""
+				+ " INNER JOIN \""+varYStr.toUpperCase()+"\" vy ON \""+varYStr.toUpperCase()+"_ID\" = vy.\"ID\""
+				+ getSamplingIntervalWhereClause(super.samplingInterval, startTime, true)
+				+ getContextElementWhereClause(super.tableVT, contextStr, contextElementId, false).toUpperCase()
+				+ " AND \"KPI_ID\" = "+kpiId
+				+ " AND \"GRANULARITY_ID\" IS NOT NULL"
+//				+ " GROUP BY \"varX\", \"varY\""
+				+ " ORDER BY \"varX\", \"varY\";";
+		log.saveToFile("HeatMap Query : "+query);
 		return query;
 	}
 		
 	private String getSamplingIntervalWhereClause(SamplingInterval granularity, Timestamp time, boolean mainClause){
 		String result = (mainClause)?" WHERE ":" AND ";
 		switch (granularity){
-		case DAILY: result += "DAY(CAST(kv.\"timestamp\" AS DATE)) = DAY(CAST(TIMESTAMP'"+time+"' AS DATE)) ";
+		case DAILY: result += "DAY(CAST(kv.\"KPI_TIMESTMP\" AS DATE)) = DAY(CAST(TIMESTAMP'"+time+"' AS DATE)) ";
+//					result += "DAY(CAST(kv.\"kpi_timestmp\" AS DATE)) = DAY(CAST(TIMESTAMP'"+time+"' AS DATE)) ";
 			break;
-		case HOURLY: result += "HOUR(CAST(kv.\"timestamp\" AS TIME)) = HOUR(CAST(TIMESTAMP'"+time+"' AS TIME)) ";
+		case HOURLY: result += "HOUR(CAST(kv.\"KPI_TIMESTMP\" AS TIME)) = HOUR(CAST(TIMESTAMP'"+time+"' AS TIME)) ";
+//					 result += "HOUR(CAST(kv.\"kpi_timestmp\" AS TIME)) = HOUR(CAST(TIMESTAMP'"+time+"' AS TIME)) ";
 			break;
-		case MONTHLY: result += "MONTH(CAST(kv.\"timestamp\" AS DATE)) = MONTH(CAST(TIMESTAMP'"+time+"' AS DATE)) ";
+		case MONTHLY: result += "MONTH(CAST(kv.\"KPI_TIMESTMP\" AS DATE)) = MONTH(CAST(TIMESTAMP'"+time+"' AS DATE)) ";
+//					  result += "MONTH(CAST(kv.\"kpi_timestmp\" AS DATE)) = MONTH(CAST(TIMESTAMP'"+time+"' AS DATE)) ";
 			break;
-		case WEEKLY: result += "MONTH(CAST(kv.\"timestamp\" AS DATE)) = MONTH(CAST(TIMESTAMP'"+time+"' AS DATE)) ";
+		case WEEKLY: result += "MONTH(CAST(kv.\"KPI_TIMESTMP\" AS DATE)) = MONTH(CAST(TIMESTAMP'"+time+"' AS DATE)) ";
+//					 result += "MONTH(CAST(kv.\"kpi_timestmp\" AS DATE)) = MONTH(CAST(TIMESTAMP'"+time+"' AS DATE)) ";
 			break;
 		case MINUTELY: 
 			break;
@@ -87,7 +109,7 @@ public class HeatMap extends ResultTable {
 			break;
 		
 		}
-		return result;
+		return result; 
 	}
 	
 	private String getContextElementWhereClause(TableValueType contextualInformation, String contextStr, Integer contextElmentId, boolean mainClause){
@@ -105,7 +127,7 @@ public class HeatMap extends ResultTable {
 		String result = (kpi > 3)?" AND \"granularity_id\" IS NOT NULL":" ";
 		
 		return result;
-	}
+	} 
 
 	public void setHeatMapValues(){
 		Integer xSize = varXUnique.size();
