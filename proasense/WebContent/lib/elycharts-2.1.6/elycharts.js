@@ -1021,7 +1021,8 @@
 			var props = this.areaProps(env, 'Series', serie, index);
 			if(serie.startsWith('limit'))
 			{
-				props.color="#888888";
+				var color = env.opt.series[serie].color!=undefined?env.opt.series[serie].color:"#888888";
+				props.color=color
 			}
 			if (props.color) return props.color;
 			if (index !== false && props.valuesPalette) return props.valuesPalette[index % props.valuesPalette.length];
@@ -3664,7 +3665,8 @@ TODO
 			
 			for(var ik = 0; ik<limits.length;ik++)
 			{
-				values['limit'+ik]=Array.apply(null,Array(length)).map(function(){return parseFloat(limits[ik])});
+				values['limit'+ik]=Array.apply(null,Array(length)).map(function(){return parseFloat(limits[ik].value)});
+				opt.series['limit'+ik]={"color":limits[ik].color};
 			}
 			
 			var labels = env.opt.labels;
@@ -3839,7 +3841,8 @@ TODO
 				props = common.areaProps(env, 'Series', serie);
 				if(serie.startsWith('limit') )
 				{
-					props.color="#888888";
+					var color = env.opt.series[serie].color!=undefined?env.opt.series[serie].color:"#888888";
+					props.color=color;
 					props.dotProps.size=1;
 					props.dotProps["stroke-width"]=1;
 					props.plotProps["stroke-width"]=1;
