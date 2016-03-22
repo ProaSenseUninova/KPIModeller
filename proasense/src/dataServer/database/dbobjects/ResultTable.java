@@ -292,7 +292,7 @@ public class ResultTable {
 		return kpiDO.tableName;
 	}
 
-	private String getSamplingIntervalNumber(SamplingInterval sI) {
+	protected String getSamplingIntervalNumber(SamplingInterval sI) {
 		String number = "";
 		switch (sI){
 			case MONTHLY: number = "1";

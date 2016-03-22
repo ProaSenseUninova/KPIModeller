@@ -325,10 +325,10 @@ public class Main extends HttpServlet
 			String varXStr = varX.equals(TableValueType.NONE)?"":"per "+varX.toString().toLowerCase();
 			String varYStr = varY.equals(TableValueType.NONE)?"":"per "+varY.toString().toLowerCase();
 			Object title = dAO.getTitle(kpiId) + " " + varYStr + " " + varXStr + " of " 
-						 + contextName + " for " + dAO.getLabelName(samplingInterval, startTime.toString()).toString().toLowerCase();
+						 + contextName + " for " + dAO.getLabelName(SamplingInterval.HOURLY, startTime.toString()).toString().toLowerCase();
 			writeLogMsg("HeatMap title: "+title);
 			
-			writeLogMsg("---------- HEATMAP DATA -------------------------------");
+			writeLogMsg("---------- HEATMAP DATA -------------------------------"); 
 			writeLogMsg("Data: "+data.toString());
 			writeLogMsg("xLabels: "+xLabels.toString());
 			writeLogMsg("yLabels: "+yLabels.toString());

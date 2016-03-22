@@ -847,7 +847,7 @@ function ScreenGraph(kpiInfo) {
 		var horizontalSet = $('#horizontalSet').val();
 		var verticalSet = $('#verticalSet').val();
 		var heatMapStartTime = startDate!==undefined?startDate:$('#fromDateHeatMap').handleDtpicker('getDate').getTime();
-		var heatMapEndTime = endDate!==undefined?endDate:$('#toDateHeatMap').handleDtpicker('getDate').getTime();
+		var heatMapEndTime = endDate!==undefined?endDate:$('#toDateHeatMap').handleDtpicker('getDate').getTime()+1;
 		var contextName = legend!==undefined?legend:'Global';
 		var heatMapGranularity = legend!==undefined?$('#granularityChart').val():$('#granularityHeatMap').val()
 
@@ -864,7 +864,7 @@ function ScreenGraph(kpiInfo) {
 									"&varY="+verticalSet+ 
 									"&startTime=" + heatMapStartTime + 
 									"&endTime=" + heatMapEndTime + 
-									"&granularity=" + heatMapGranularity+
+									"&granularity=" + /*heatMapGranularity+*/ "NONE" +
 									"&contextName="+contextName,
 				type: "GET",
 				success: function(heatMapData) {
@@ -873,7 +873,7 @@ function ScreenGraph(kpiInfo) {
 			});
 			$('#fromDateHeatMap').handleDtpicker('setDate',heatMapStartTime);
 			$('#toDateHeatMap').handleDtpicker('setDate',heatMapEndTime);
-			$('#granularityHeatMap').val(heatMapGranularity);
+//			$('#granularityHeatMap').val(heatMapGranularity);
 		}
 		
 	}
@@ -1039,7 +1039,7 @@ function ScreenGraph(kpiInfo) {
 							   "&varY="+verticalSet +
 							   "&startTime=" + heatMapStartTime + 
 							   "&endTime=" + heatMapEndTime + 
-							   "&granularity=" + heatMapGranularity +
+							   "&granularity=" + /*heatMapGranularity+*/ "NONE" + 
 							   /* ContextName when page is opening is Global */
 							   "&contextName=Global",
 			type: "GET",
@@ -1444,8 +1444,8 @@ function ScreenGraph(kpiInfo) {
 										endDate=new Date(startDate.getTime());
 										endDate.setMonth(endDate.getMonth()+1);
 								}
-								
-								scr.updateHeatMap(startDate.getTime(),endDate.getTime(),legend);
+								console.log("HeatMap for graph point request: startDate="+startDate.getTime()+"; endDate="+(endDate.getTime()+1));
+								scr.updateHeatMap(startDate.getTime(),startDate.getTime()+1,legend);
 							}
 						},
 					},
@@ -2019,11 +2019,11 @@ function isDatetimeOk(granularity, graphStartTime, graphEndTime) {
 				message = 'Date & times cannot be equal.\nPlease choose valid dates and press update again.';
 			}
 	} else {
-		var evaluation = isInGranularity(granularity, graphStartTime, graphEndTime);
-		if (!evaluation.isInGranularity){
-			resultDtTmOk = false;
-			message = evaluation.message;
-		}
+//		var evaluation = isInGranularity(granularity, graphStartTime, graphEndTime);
+//		if (!evaluation.isInGranularity){
+//			resultDtTmOk = false;
+//			message = evaluation.message;
+//		}
 	}
 	
 	return { isDateTimeOk : resultDtTmOk,

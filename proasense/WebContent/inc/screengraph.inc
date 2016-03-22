@@ -83,7 +83,7 @@
 			<select id="granularityChart" class="box btn btn-primary form-control granularityBoxes">
 				<option value="hourly">Hourly</option>
 				<option value="daily">Daily</option>
-				<option value="weekly">Weekly</option>
+				<option value="weekly" style="display:none">Weekly</option>
 				<option selected value="monthly">Monthly</option>
 			</select>
 		</td>
@@ -136,15 +136,15 @@
 			<input type="text" class="inputField" id="toDateHeatMap" value="">
 			<br>
 			<br>
-			<b>Granularity:</b>
-			<br>
-			<br>
-			<select id="granularityHeatMap" class="box btn btn-primary form-control granularityBoxes">
-				<option value="hourly">Hourly</option>
-				<option value="daily">Daily</option>
-				<option value="weekly">Weekly</option>
-				<option selected value="monthly">Monthly</option>
-			</select>
+<!-- 			<b>Granularity:</b> -->
+<!-- 			<br> -->
+<!-- 			<br> -->
+<!-- 			<select id="granularityHeatMap" class="box btn btn-primary form-control granularityBoxes"> -->
+<!-- 				<option value="hourly">Hourly</option> -->
+<!-- 				<option value="daily">Daily</option> -->
+<!-- 				<option value="weekly">Weekly</option> -->
+<!-- 				<option selected value="monthly">Monthly</option> -->
+<!-- 			</select> -->
 		</td>
 	</tr>
 	<tr>

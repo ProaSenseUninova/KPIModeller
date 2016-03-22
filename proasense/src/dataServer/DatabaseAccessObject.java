@@ -41,6 +41,7 @@ public class DatabaseAccessObject {
 	private Object _heatMapYLabels;
 	private String[][] _heatMap;
 	
+	
 	public DatabaseAccessObject(String dbPath,String logPath)
 	{
 		dBUtil = new DBUtils(new DBConfig("jdbc:hsqldb:file:"+dbPath, dbName, "SA", ""),logPath);
@@ -159,7 +160,7 @@ public class DatabaseAccessObject {
 		dBUtil.processBatchQuery(batchQuery);
 		dBUtil.closeConnection();
 		return true;
-	}
+	} 
 	
 	public Object getHeatMapData(Integer kpiId, TableValueType contextualInformation, Timestamp startTime, Timestamp endTime,
 			SamplingInterval granularity, String contextName, TableValueType varX, TableValueType varY) {
@@ -167,14 +168,58 @@ public class DatabaseAccessObject {
 		Integer contextElementId = (contextualInformation == TableValueType.GLOBAL)?0:getNameId(contextualInformation.toString(), contextName);
 		contextElementId = (contextElementId==0)? 1:contextElementId;
 		
-		HeatMap heatMap = new HeatMap(kpiId, contextualInformation, granularity, startTime, contextElementId, varX, varY, log);
+		HeatMap heatMap = new HeatMap(kpiId, contextualInformation, granularity, startTime, endTime,contextElementId, varX, varY, log);
+		String aggregation = getAggregation(kpiId);
 		
-		String query = heatMap.getHeatMapQueryString(); 
+		Object resultObject = null;
+		
+		String query = "";
+		if (!aggregation.equals("none")){
+			query = heatMap.getHeatMapQueryString(aggregation);
+			heatMap = getHeatMapFromDb(query, heatMap, contextualInformation);
+			heatMap.setHeatMapValues();
+			resultObject = heatMap.toJSonObjectHeatMap();
+			
+		} else {
+			String formula = getFormula(kpiId);
+			if (formula.length()==3) {
+				String kpiIdA = formula.substring(0,1);
+				String operator = formula.substring(1,2); 
+				String kpiIdB = formula.substring(2,3);
+				
+				HeatMap heatMapA = new HeatMap(Integer.parseInt(kpiIdA), contextualInformation, granularity, startTime, endTime,contextElementId, varX, varY, log);
+				String queryA = heatMapA.getHeatMapQueryString(aggregation);
+				heatMapA = getHeatMapFromDb(queryA, heatMapA, contextualInformation);
+				HeatMap heatMapB = new HeatMap(Integer.parseInt(kpiIdB), contextualInformation, granularity, startTime, endTime,contextElementId, varX, varY, log);
+				String queryB = heatMapB.getHeatMapQueryString(aggregation);
+				heatMapB = getHeatMapFromDb(queryB, heatMapB, contextualInformation);
+				
+				heatMap.setHeatMapValues(heatMapA, heatMapB, operator, heatMapA.varXUnique.size(), heatMapA.varYUnique.size());
+				
+				heatMap.varXUnique = heatMapA.varXUnique;
+				heatMap.varYUnique = heatMapA.varYUnique;
+				
+				resultObject = heatMap.toJSonObjectHeatMap(heatMapA.varXUnique.size(), heatMapA.varYUnique.size());
+			}
+		}
 
+		heatMap.setHeatMapLabels(); 
+		
+		_heatMapXLabels = heatMap.getHeatMapXLabels();
+		_heatMapYLabels = heatMap.getHeatMapYLabels();
+		
+//		heatMap.setHeatMapValues(); 
+		
+		return resultObject;
+	}
+	
+
+	public HeatMap getHeatMapFromDb(String query, HeatMap heatMap, TableValueType contextualInformation) {
 		dBUtil.openConnection(dbName);
 		log.saveToFile("<Processing query>"+query);
 		
 		ResultSet queryResult = dBUtil.processQuery(query);
+		
 		log.saveToFile("<Query processed>");
 		
         try {
@@ -215,17 +260,11 @@ public class DatabaseAccessObject {
 		}		
 		
 		dBUtil.closeConnection();
-		heatMap.setHeatMapLabels();
 		
-		_heatMapXLabels = heatMap.getHeatMapXLabels();
-		_heatMapYLabels = heatMap.getHeatMapYLabels();
-		
-		heatMap.setHeatMapValues();
-		
-		return heatMap.toJSonObjectHeatMap();
+		return heatMap;
 	}
 	
-
+	
 	public Object getData(Integer kpiId, TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime, Integer contextValueId, TableValueType secondContext){
 		Object data = null;
 		JSONParser parser = new JSONParser();
@@ -267,117 +306,6 @@ public class DatabaseAccessObject {
 		
 		
 		return data;
-	}
-
-	/*
-	 * @deprecated {@link #getKpiValue()} instead.
-	 * */
-	@Deprecated
-	public ArrayList<ResultTable> getScrapRate(TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime){
-		ArrayList<ResultTable> alrt = new ArrayList<ResultTable>();
-		alrt.add(getOneScrapRate(TableValueType.GLOBAL, granularity, startTime, endTime));
-		if (!contextualInformation.equals(TableValueType.GLOBAL)){
-			Integer numTableElements = getMaxId(contextualInformation.toString().toLowerCase());
-			for (int k = 1; k<=numTableElements;k++){
-				ResultTable tbResult = getOneScrapRate(contextualInformation, granularity, startTime, endTime, k);
-				if (tbResult.resultsRows.size() != 0)
-					alrt.add(tbResult);
-			}
-				
-		}
-			
-		return alrt;
-	}
-	
-	/* 
-	 * 
-	 * @deprecated use {@link #getOneKpiValue()} instead.
-	 * */
-	@Deprecated
-	public ResultTable getOneScrapRate(TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime, Integer id){
-		ResultTable resultTable = new ResultTable(contextualInformation, granularity);
-		String query = resultTable.getResultTableQueryString(id, startTime, endTime);
-		
-		dBUtil.openConnection(dbName);
-		log.saveToFile("<Processing query>"+query);
-		
-		ResultSet queryResult = dBUtil.processQuery(query);
-		log.saveToFile("<Query processed>");
-		
-        try {
-        	ResultSetMetaData rMD = queryResult.getMetaData();
-        	Integer colN = rMD.getColumnCount();
-        	resultTable.columnQty = colN;
-
-        	ResultTableElement resultRow = new ResultTableElement(contextualInformation, colN);
-        	
-        	for (; queryResult.next(); ) {
-
-				for (int i = 0; i<rMD.getColumnCount(); i++) {
-					resultRow.columnsNames.add(rMD.getColumnName(i+1));
-					if (queryResult.getObject(i+1)==null)
-						resultRow.columnValues[i] = "null";
-					else
-						resultRow.columnValues[i] = queryResult.getObject(i+1).toString();
-				}
-
-				resultTable.resultsRows.add(resultRow);
-				resultRow = new ResultTableElement(contextualInformation, colN);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}		
-		
-		dBUtil.closeConnection();
-		return resultTable;
-	}
-	
-	/*
-	 * 
-	 *  @deprecated use {@link #getOneKpiValue()} instead.
-	 *  */
-	@Deprecated
-	public ResultTable getOneScrapRate(TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime){
-		ResultTable resultTable = new ResultTable(contextualInformation, granularity);
-		String query = resultTable.getResultTableQueryString(startTime, endTime);
-		
-		dBUtil.openConnection(dbName);
-		log.saveToFile("<Processing query>"+query);
-		
-		ResultSet queryResult = dBUtil.processQuery(query);
-		log.saveToFile("<Query processed>");
-		
-        try {
-        	ResultSetMetaData rMD = queryResult.getMetaData();
-        	Integer colN = rMD.getColumnCount();
-        	resultTable.columnQty = colN;
-        	
-        	ResultTableElement resultRow = new ResultTableElement(contextualInformation, colN);
-        	
-        	for (; queryResult.next(); ) {
-
-				for (int i = 0; i<rMD.getColumnCount(); i++) {
-					resultRow.columnsNames.add(rMD.getColumnName(i+1));
-					if (queryResult.getObject(i+1)==null)
-						resultRow.columnValues[i] = "null";
-					else
-						resultRow.columnValues[i] = queryResult.getObject(i+1).toString();
-				}
-
-				resultTable.resultsRows.add(resultRow);
-				resultRow = new ResultTableElement(contextualInformation, colN);
-			}
-        	
-        	
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}		
-		
-		dBUtil.closeConnection();
-		
-		initializeValueRefQtyVector(resultTable.resultsRows);
-		
-		return resultTable;
 	}
 	
 	public ArrayList<ResultTable> getKpiValue(Integer kpi, TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime, Integer contextValueId, TableValueType secondContext){
@@ -534,8 +462,8 @@ public class DatabaseAccessObject {
 	private Long getLabelNameTimeStamp(String element){
 //		return Timestamp.valueOf(element).getTime();
 		return Long.parseLong(""+Timestamp.valueOf(element).getTime());
-		
 	}
+
 	public Object getTitle(Integer kpiId) {
 		setTitle(kpiId);
 		JSONParser parser = new JSONParser();
@@ -551,6 +479,80 @@ public class DatabaseAccessObject {
 			e.printStackTrace();
 		}
 		return result;
+	}
+	
+	public String getAggregation(Integer kpiId){
+		String aggregation = "";
+		dBUtil.openConnection(dbName);
+		String query = "SELECT \"KPI_AGG_TYPE\".\"AGGREGATION\" "
+					 + "	FROM \"KPI\" "
+					 + "	INNER JOIN \"KPI_AGG_TYPE\" ON \"KPI\".\"AGGREGATION\" = \"KPI_AGG_TYPE\".\"ID\" "
+					 + "    WHERE \"ID\" = "+kpiId; 
+
+		log.saveToFile("<Processing query>"+query);
+		
+		ResultSet queryResult = dBUtil.processQuery(query);
+		log.saveToFile("<Query processed>");
+		
+        try {
+        	if (queryResult.next()) {
+	        	aggregation = (String)queryResult.getObject(1);
+        	}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		dBUtil.closeConnection();
+		return aggregation;
+	}
+	
+	public String getFormula(Integer kpiId){
+		String formula = "";
+		String query = "SELECT \"TERM1_KPI_ID\", \"OPERATOR_1\", \"TERM2_KPI_ID\", \"OPERATOR_2\", \"TERM3_KPI_ID\" "
+					 + " FROM \"KPI_FORMULA\" "
+					 + " WHERE \"KPI_ID\" = "+kpiId;
+
+		log.saveToFile("<Processing query>"+query);
+		
+		ResultSet queryResult = dBUtil.processQuery(query);
+		
+		log.saveToFile("<Query processed>");
+		
+        try {
+        	if (queryResult.next()) {
+	        	String termA = "";
+	        	if (queryResult.getObject(1) != null){
+	        		termA = queryResult.getObject(1).toString();
+	        	}
+	        	
+	        	String operator1 = "";
+	        	if (queryResult.getObject(2) != null) {
+	        		operator1 = queryResult.getObject(2).toString();
+	        	}
+	        	
+	        	String termB = "";
+	        	if (queryResult.getObject(3) != null) {
+	        		termB = queryResult.getObject(3).toString();
+	        	}
+	        	
+	        	String operator2 = "";
+	        	if (queryResult.getObject(4) != null) {
+	        		operator2 = queryResult.getObject(4).toString();
+	        	}
+	        	
+	        	String termC = ""; 
+	        	if (queryResult.getObject(5) != null){
+	        		termC = queryResult.getObject(5).toString();
+	        	}
+	        	formula = termA + operator1 + termB + operator2 + termC;
+        	}
+		} catch (SQLException e) { 
+			e.printStackTrace();
+		}
+		
+		dBUtil.closeConnection();
+		
+		return formula;	
 	}
 	
 	public String getCurrentDayTotalUnits() {
@@ -622,6 +624,117 @@ public class DatabaseAccessObject {
 	
 	public Object getHeatMapYLabels() {
 		return _heatMapYLabels;
+	}
+
+	/*
+	 * @deprecated {@link #getKpiValue()} instead.
+	 * */
+	@Deprecated
+	public ArrayList<ResultTable> getScrapRate(TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime){
+		ArrayList<ResultTable> alrt = new ArrayList<ResultTable>();
+		alrt.add(getOneScrapRate(TableValueType.GLOBAL, granularity, startTime, endTime));
+		if (!contextualInformation.equals(TableValueType.GLOBAL)){
+			Integer numTableElements = getMaxId(contextualInformation.toString().toLowerCase());
+			for (int k = 1; k<=numTableElements;k++){
+				ResultTable tbResult = getOneScrapRate(contextualInformation, granularity, startTime, endTime, k);
+				if (tbResult.resultsRows.size() != 0)
+					alrt.add(tbResult);
+			}
+				
+		}
+			
+		return alrt;
+	}
+	
+	/* 
+	 * 
+	 * @deprecated use {@link #getOneKpiValue()} instead.
+	 * */
+	@Deprecated
+	public ResultTable getOneScrapRate(TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime, Integer id){
+		ResultTable resultTable = new ResultTable(contextualInformation, granularity);
+		String query = resultTable.getResultTableQueryString(id, startTime, endTime);
+		
+		dBUtil.openConnection(dbName);
+		log.saveToFile("<Processing query>"+query);
+		
+		ResultSet queryResult = dBUtil.processQuery(query);
+		log.saveToFile("<Query processed>");
+		
+        try {
+        	ResultSetMetaData rMD = queryResult.getMetaData();
+        	Integer colN = rMD.getColumnCount();
+        	resultTable.columnQty = colN;
+
+        	ResultTableElement resultRow = new ResultTableElement(contextualInformation, colN);
+        	
+        	for (; queryResult.next(); ) {
+
+				for (int i = 0; i<rMD.getColumnCount(); i++) {
+					resultRow.columnsNames.add(rMD.getColumnName(i+1));
+					if (queryResult.getObject(i+1)==null)
+						resultRow.columnValues[i] = "null";
+					else
+						resultRow.columnValues[i] = queryResult.getObject(i+1).toString();
+				}
+
+				resultTable.resultsRows.add(resultRow);
+				resultRow = new ResultTableElement(contextualInformation, colN);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}		
+		
+		dBUtil.closeConnection();
+		return resultTable;
+	}
+	
+	/*
+	 * 
+	 *  @deprecated use {@link #getOneKpiValue()} instead.
+	 *  */
+	@Deprecated
+	public ResultTable getOneScrapRate(TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime){
+		ResultTable resultTable = new ResultTable(contextualInformation, granularity);
+		String query = resultTable.getResultTableQueryString(startTime, endTime);
+		
+		dBUtil.openConnection(dbName);
+		log.saveToFile("<Processing query>"+query);
+		
+		ResultSet queryResult = dBUtil.processQuery(query);
+		log.saveToFile("<Query processed>");
+		
+        try {
+        	ResultSetMetaData rMD = queryResult.getMetaData();
+        	Integer colN = rMD.getColumnCount();
+        	resultTable.columnQty = colN;
+        	
+        	ResultTableElement resultRow = new ResultTableElement(contextualInformation, colN);
+        	
+        	for (; queryResult.next(); ) {
+
+				for (int i = 0; i<rMD.getColumnCount(); i++) {
+					resultRow.columnsNames.add(rMD.getColumnName(i+1));
+					if (queryResult.getObject(i+1)==null)
+						resultRow.columnValues[i] = "null";
+					else
+						resultRow.columnValues[i] = queryResult.getObject(i+1).toString();
+				}
+
+				resultTable.resultsRows.add(resultRow);
+				resultRow = new ResultTableElement(contextualInformation, colN);
+			}
+        	
+        	
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}		
+		
+		dBUtil.closeConnection();
+		
+		initializeValueRefQtyVector(resultTable.resultsRows);
+		
+		return resultTable;
 	}
 
 	public static void main(String[] args) {

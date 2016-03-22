@@ -14,6 +14,7 @@ import org.json.simple.parser.ParseException;
 import dataServer.LoggingSystem;
 import dataServer.database.enums.SamplingInterval;
 import dataServer.database.enums.TableValueType;
+import dataServer.mathUtils.mathOperations;
 
 public class HeatMap extends ResultTable {
 	public ArrayList<String> varXUnique = new ArrayList<String>();
@@ -44,43 +45,46 @@ public class HeatMap extends ResultTable {
 	LoggingSystem log;
 
 
-	public HeatMap(Integer kpiId, TableValueType type, SamplingInterval granularity, Timestamp startTime, Integer contextElementId, TableValueType varXAxis, TableValueType varYAxis, LoggingSystem log) {
+	public HeatMap(Integer kpiId, TableValueType type, SamplingInterval granularity, Timestamp startTime, Timestamp endTime, Integer contextElementId, TableValueType varXAxis, TableValueType varYAxis, LoggingSystem log) {
 		super(type, granularity);
 		varXtype = varXAxis;
 		varYtype = varYAxis;
 		this.kpiId = kpiId;
 		this.contextElementId = contextElementId;
 		this.startTime = startTime;
+		this.endTime = endTime;
 		this.log = log;
 	}
 	
-	public String getHeatMapQueryString(){
+	public String getHeatMapQueryString(String aggregation){
 		String contextStr = super.tableVT.toString().toLowerCase();
 		String varXStr = varXtype.toString().toLowerCase();
 		String varYStr = varYtype.toString().toLowerCase();
+		String valueColumnStr = "\"KPI_VALUE\"";
+		String groupByClauseStr = " ";
+		if (!aggregation.equals("none")){
+			if (aggregation.equals("count")) {
+				valueColumnStr = "SUM("+valueColumnStr+")";
+			}
+			else{
+				valueColumnStr = aggregation+"("+valueColumnStr+")";
+			}
+			groupByClauseStr = " GROUP BY \"varX\", \"varY\"";
+		}
 		
-//		String query = "SELECT vx.\"name\" as \"varX\", vy.\"name\" as \"varY\", "+super.getAgregation(kpiId)+"(\"value\") as \"value\""
-//				+ " FROM \"kpi_values\" kv"
-//				+ "	INNER JOIN \""+varXStr+"\" vx ON \""+varXStr+"_id\" = vx.\"id\""
-//				+ " INNER JOIN \""+varYStr+"\" vy ON \""+varYStr+"_id\" = vy.\"id\""
-//				+ getSamplingIntervalWhereClause(super.samplingInterval, startTime, true)
-//				+ getContextElementWhereClause(super.tableVT, contextStr, contextElementId, false)
-//				+ " AND \"kpi_id\" = "+kpiId
-//				+ " AND \"granularity_id\" IS NOT NULL"
-//				+ " GROUP BY \"varX\", \"varY\""
-//				+ " ORDER BY \"varX\", \"varY\";";
-		
-		String query = "SELECT vx.\"NAME\" as \"varX\", vy.\"NAME\" as \"varY\", \"KPI_VALUE\" as \"value\""
+		String query = "SELECT vx.\"NAME\" as \"varX\", vy.\"NAME\" as \"varY\", "+valueColumnStr+" as \"value\""
 				+ " FROM \"KPI_VALUES\" kv"
 				+ "	INNER JOIN \""+varXStr.toUpperCase()+"\" vx ON \""+varXStr.toUpperCase()+"_ID\" = vx.\"ID\""
 				+ " INNER JOIN \""+varYStr.toUpperCase()+"\" vy ON \""+varYStr.toUpperCase()+"_ID\" = vy.\"ID\""
-				+ getSamplingIntervalWhereClause(super.samplingInterval, startTime, true)
+				+ " WHERE kv.\"KPI_TIMESTMP\" BETWEEN TIMESTAMP('"+startTime+"') AND TIMESTAMP('"+endTime+"')"
 				+ getContextElementWhereClause(super.tableVT, contextStr, contextElementId, false).toUpperCase()
 				+ " AND \"KPI_ID\" = "+kpiId
-				+ " AND \"GRANULARITY_ID\" IS NOT NULL"
-//				+ " GROUP BY \"varX\", \"varY\""
-				+ " ORDER BY \"varX\", \"varY\";";
-		log.saveToFile("HeatMap Query : "+query);
+				+ " AND \""+varXStr.toUpperCase()+"_ID\" IS NOT NULL"
+				+ " AND \""+varYStr.toUpperCase()+"_ID\" IS NOT NULL"
+				+ groupByClauseStr
+				+ " ORDER BY \"varX\", \"varY\";"; 
+		
+		log.saveToFile("HeatMap Query : "+query); 
 		return query;
 	}
 		
@@ -153,6 +157,36 @@ public class HeatMap extends ResultTable {
 		}
 	}
 	
+	public void setHeatMapValues(HeatMap heatMapA, HeatMap heatMapB,String operator, Integer xSize, Integer ySize){
+//		Integer xSize = varXUnique.size();
+//		Integer ySize = varYUnique.size(); 
+		Integer varXPosA = -1, varYPosA = -1;
+		Integer varXPosB = -1, varYPosB = -1;
+		String value = "";
+		mathOperations math = new mathOperations();
+		
+		_heatMap = new String[xSize][ySize];
+		
+		// _heatMap matrix initialization
+		for (int i=0;i<xSize;i++)
+			for (int j=0;j<ySize;j++){
+				_heatMap[i][j] = "null";
+			} 
+		
+		// populate _heatMap matrix 
+		for (int i = 0; i<heatMapA.resultsRows.size();i++) {
+			varXPosA = heatMapA.varXUnique.indexOf(heatMapA.resultsRows.get(i).columnValues[0]);
+			varYPosA = heatMapA.varYUnique.indexOf(heatMapA.resultsRows.get(i).columnValues[1]);
+			varXPosB = heatMapB.varXUnique.indexOf(heatMapB.resultsRows.get(i).columnValues[0]);
+			varYPosB = heatMapB.varYUnique.indexOf(heatMapB.resultsRows.get(i).columnValues[1]);
+			value = Double.toString(math.getResult(heatMapA.resultsRows.get(i).columnValues[2], 
+								   heatMapB.resultsRows.get(i).columnValues[2], 
+								   operator));
+			
+			_heatMap[varXPosA][varYPosA] = value;
+		}
+	}
+	
 	public void setHeatMapLabels() {
 		setHeatMapXLabels(varXUnique);
 		setHeatMapYLabels(varYUnique);
@@ -181,6 +215,25 @@ public class HeatMap extends ResultTable {
 
 		for (int i=0;i<varXUnique.size();i++){
 			for (int j=0;j<varYUnique.size();j++){
+				tempArrStr.add("{\"varX\":"+(i+1)+", \"varY\":"+(j+1)+", \"value\":"+_heatMap[i][j]+"}");
+			}
+		}
+
+		try {
+			jsonObject = parser.parse(tempArrStr.toString());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return jsonObject;
+	}
+	
+	public Object toJSonObjectHeatMap(Integer varXUniqueSize, Integer varYUniqueSize){
+		Object jsonObject = new JSONObject();
+		JSONParser parser = new JSONParser();
+		ArrayList<String> tempArrStr = new ArrayList<String>();
+
+		for (int i=0;i<varXUniqueSize;i++){
+			for (int j=0;j<varYUniqueSize;j++){
 				tempArrStr.add("{\"varX\":"+(i+1)+", \"varY\":"+(j+1)+", \"value\":"+_heatMap[i][j]+"}");
 			}
 		}
