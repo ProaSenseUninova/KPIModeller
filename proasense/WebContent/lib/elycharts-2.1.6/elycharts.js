@@ -3666,7 +3666,7 @@ TODO
 			for(var ik = 0; ik<limits.length;ik++)
 			{
 				values['limit'+ik]=Array.apply(null,Array(length)).map(function(){return parseFloat(limits[ik].value)});
-				opt.series['limit'+ik]={"color":limits[ik].color};
+				opt.series['limit'+ik]={"color":limits[ik].color, "plotProps":limits[ik].plotProps};
 			}
 			
 			var labels = env.opt.labels;

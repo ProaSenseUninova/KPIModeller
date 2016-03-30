@@ -1560,17 +1560,27 @@ function ScreenGraph(kpiInfo) {
 							if(kpiTargets[i].lower_bound!=null && kpiTargets[i].lower_bound!="")
 							{
 								var obj={};
+								var plotProps={};
+								plotProps = {"stroke-dasharray" : "-"};
+								console.log("PlotProps lower bound = "+JSON.stringify(plotProps));
+								obj.plotProps = plotProps;
 								obj.color = color==null?$.elycharts.templates["line_basic_1"].series.serie1.color:color;
 								obj.value = kpiTargets[i].lower_bound
 								limits.push(obj);
+								console.log(JSON.stringify(limits));
 							}
 							
 							if(kpiTargets[i].upper_bound!=null && kpiTargets[i].upper_bound!="")
 							{
 								var obj={};
+								var plotProps={};
+								plotProps = {"stroke-dasharray" : "-"};
+								console.log("PlotProps upper bound = "+JSON.stringify(plotProps));
+								obj.plotProps = plotProps;
 								obj.color = color==null?$.elycharts.templates["line_basic_1"].series.serie1.color:color;
 								obj.value = kpiTargets[i].upper_bound
 								limits.push(obj);
+								console.log(JSON.stringify(limits));
 							}
 						}
 					}
