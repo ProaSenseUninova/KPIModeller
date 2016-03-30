@@ -165,26 +165,61 @@ public class HeatMap extends ResultTable {
 		String value = "";
 		mathOperations math = new mathOperations();
 		
+		log.saveToFile("xSize:"+xSize+";ySize:"+ySize); 
+		
 		_heatMap = new String[xSize][ySize];
 		
+		Double[][] _heatMapA = new Double[xSize][ySize];
+		Double[][] _heatMapB = new Double[xSize][ySize];
+
 		// _heatMap matrix initialization
 		for (int i=0;i<xSize;i++)
 			for (int j=0;j<ySize;j++){
 				_heatMap[i][j] = "null";
+				_heatMapA[i][j] = 0.0;
+				_heatMapB[i][j] = 0.0;
 			} 
+		
+		
+		log.saveToFile("heatMapA.resultsRows.size():"+heatMapA.resultsRows.size());	
+
+		log.saveToFile("heatMapB.resultsRows.size():"+heatMapB.resultsRows.size());
+			
+		System.out.println("HeatMap length" + _heatMap.length);
+		System.out.println("HeatMap A length" + _heatMapA.length);
+		System.out.println("HeatMap B length" + _heatMapB.length);
 		
 		// populate _heatMap matrix 
 		for (int i = 0; i<heatMapA.resultsRows.size();i++) {
-			varXPosA = heatMapA.varXUnique.indexOf(heatMapA.resultsRows.get(i).columnValues[0]);
-			varYPosA = heatMapA.varYUnique.indexOf(heatMapA.resultsRows.get(i).columnValues[1]);
-			varXPosB = heatMapB.varXUnique.indexOf(heatMapB.resultsRows.get(i).columnValues[0]);
-			varYPosB = heatMapB.varYUnique.indexOf(heatMapB.resultsRows.get(i).columnValues[1]);
-			value = Double.toString(math.getResult(heatMapA.resultsRows.get(i).columnValues[2], 
-								   heatMapB.resultsRows.get(i).columnValues[2], 
-								   operator));
+			System.out.println("Context calculation : ---------------- ");
 			
-			_heatMap[varXPosA][varYPosA] = value;
-		}
+			varXPosA = heatMapA.varXUnique.indexOf(heatMapA.resultsRows.get(i).columnValues[0]);
+			System.out.println("i=("+i+")"+"kpiId("+kpiId+")"+"for <"+heatMapA.resultsRows.get(i).columnValues[0]+">"+"index: "+varXPosA);
+			
+			varYPosA = heatMapA.varYUnique.indexOf(heatMapA.resultsRows.get(i).columnValues[1]);
+			System.out.println("i=("+i+")"+"kpiId("+kpiId+")"+"for <"+heatMapA.resultsRows.get(i).columnValues[1]+">"+"index: "+varYPosA);
+			
+			varXPosB = heatMapB.varXUnique.indexOf(heatMapB.resultsRows.get(i).columnValues[0]);
+			System.out.println("i=("+i+")"+"kpiId("+kpiId+")"+"for <"+heatMapB.resultsRows.get(i).columnValues[0]+">"+"index: "+varXPosB);
+			
+			varYPosB = heatMapB.varYUnique.indexOf(heatMapB.resultsRows.get(i).columnValues[1]);
+			System.out.println("i=("+i+")"+"kpiId("+kpiId+")"+"for <"+heatMapB.resultsRows.get(i).columnValues[1]+">"+"index: "+varYPosB);
+			
+			_heatMapA [varXPosA][varYPosA] += Double.parseDouble(heatMapA.resultsRows.get(i).columnValues[2]);
+			_heatMapB [varXPosB][varYPosB] += Double.parseDouble(heatMapB.resultsRows.get(i).columnValues[2]);
+			
+			_heatMap[varXPosA][varYPosA] = Double.toString(math.getResult(_heatMapA[varXPosA][varYPosA],	_heatMapB[varXPosA][varYPosA], operator));
+			log.saveToFile("i=("+i+")"+"valueA:"+ _heatMapA[varXPosA][varYPosA] +";"+
+					   "valueB:"+ _heatMapB[varXPosA][varYPosA] + ";  " + operator); 
+
+
+
+			log.saveToFile("i=("+i+")"+"valueA:"+ _heatMapA[varXPosA][varYPosA] +";"+
+						"valueB:"+ _heatMapB[varXPosA][varYPosA] + ";" +
+						"result: "+value); 
+		} 
+		
+		System.out.println("END OF context calculation : ---------------- ");
 	}
 	
 	public void setHeatMapLabels() {

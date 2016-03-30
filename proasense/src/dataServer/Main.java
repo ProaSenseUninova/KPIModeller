@@ -157,7 +157,7 @@ public class Main extends HttpServlet
 		        }
 		        str=str+"]";
 		       response.getWriter().println(str);
-		       writeLogMsg(str);
+		       writeLogMsg(tableName+":"+str);
 		       writeLogMsg("Response at: "+remoteAddress);
 		       c.close();
 			}		
@@ -325,7 +325,8 @@ public class Main extends HttpServlet
 			String varXStr = varX.equals(TableValueType.NONE)?"":"per "+varX.toString().toLowerCase();
 			String varYStr = varY.equals(TableValueType.NONE)?"":"per "+varY.toString().toLowerCase();
 			Object title = dAO.getTitle(kpiId) + " " + varYStr + " " + varXStr + " of " 
-						 + contextName + " for " + dAO.getLabelName(SamplingInterval.HOURLY, startTime.toString()).toString().toLowerCase();
+						 + contextName + " from " + dAO.getLabelName(SamplingInterval.HOURLY, startTime.toString(), true).toString().toLowerCase()
+						 + " to " + dAO.getLabelName(SamplingInterval.HOURLY, endTime.toString(), true).toString().toLowerCase();
 			writeLogMsg("HeatMap title: "+title);
 			
 			writeLogMsg("---------- HEATMAP DATA -------------------------------"); 
@@ -693,10 +694,6 @@ public class Main extends HttpServlet
 		  logPath =  context.getRealPath("WEB-INF")+"/";
 		  // Database that needs to be used IMPORTANT:has its identifiers as uppercase
 		  dbPath = context.getRealPath("WEB-INF/db/");
-		  // Database for which the initial code is written IMPORTANT:has its identifiers as lowercase
-//		  dbPath = context.getRealPath("WEB-INF/db(working)/");
-		  // Database created to test new structure with identifiers as lowercase
-//		  dbPath = context.getRealPath("WEB-INF/dbLowCTest/");
 		  dbConfig = new DBConfig("jdbc:hsqldb:file:"+dbPath, "", "SA", "");
 		  dAO = new DatabaseAccessObject(dbPath,logPath);
 		  _log = LoggingSystem.getLog(logPath);

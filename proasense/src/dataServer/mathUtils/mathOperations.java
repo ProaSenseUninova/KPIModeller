@@ -25,6 +25,23 @@ public class mathOperations {
 		return result;
 	}
 	
+	public double getResult(Double operandA, Double operandB, String operator) {
+		double result = 0.0;
+		switch (operator) {
+		case "+": result = getAddition(operandA, operandB);
+			break;
+		case "-": result = getDifference(operandA, operandB);
+			break;
+		case "*": result = getProduct(operandA, operandB);
+			break;
+		case "/": result = getQuocient(operandA, operandB);
+			break;
+		default: result = 0.0;
+			break;
+		}
+		return result;
+	}
+	
 	private double getQuocient(String termA, String termB){
 		return Double.parseDouble(termA)/Double.parseDouble(termB);
 //		return Integer.parseInt(termA)/Integer.parseInt(termB);
@@ -40,5 +57,22 @@ public class mathOperations {
 	
 	private double getAddition(String termA, String termB){
 		return Integer.parseInt(termA)+Integer.parseInt(termB);
+	}
+
+	private double getQuocient(Double termA, Double termB){
+		return termA/termB;
+//		return Integer.parseInt(termA)/Integer.parseInt(termB);
+	}
+
+	private double getProduct(Double termA, Double termB){
+		return termA*termB;
+	}
+	
+	private double getDifference(Double termA, Double termB){
+		return termA-termB;
+	}
+	
+	private double getAddition(Double termA, Double termB){
+		return termA+termB;
 	}
 }

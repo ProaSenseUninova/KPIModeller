@@ -2,11 +2,11 @@
 <table class="middleTable containerColor2">
 	<tr>
 		<td>
-			<form id="contextualInformation">
-				<input type="checkbox" style="cursor: default" value="product_id" name="Product">Product
-				<input type="checkbox" style="cursor: default" value="machine_id" name="Machine">Machine
-				<input type="checkbox" style="cursor: default" value="shift_id" name="Shift">Shift
-				<input type="checkbox" style="cursor: default" value="mould_id" name="Mould">Mould
+			<form id="contextualInformation" >
+				<input type="checkbox" style="cursor: default" value="product_id" name="Product" disabled="true">Product
+				<input type="checkbox" style="cursor: default" value="machine_id" name="Machine" disabled="true">Machine
+				<input type="checkbox" style="cursor: default" value="shift_id" name="Shift" disabled="true">Shift
+				<input type="checkbox" style="cursor: default" value="mould_id" name="Mould" disabled="true">Mould
 			</form>
 		</td>
 	</tr>

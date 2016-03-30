@@ -298,3 +298,10 @@ function removeElement(delId) {
 		$.notify('Violation of foreign key constraint');
 	}
 }
+
+closeDtPickerOnEnter = function closeDtPickerOnEnter(event){
+	if (event.which == 13){
+		$('.datepicker').hide();
+	} 
+}
+		

@@ -402,7 +402,7 @@ public class DatabaseAccessObject {
 		try {
 			String tmp = "";
 			for (int i=0;i<_refRows.length;i++){
-				tmp += "\""+getLabelName(granularity, _refRows[i])+"\",";
+				tmp += "\""+getLabelName(granularity, _refRows[i], false)+"\",";
 			}
 			if (tmp.length() > 0)
 				tmp = "["+tmp.substring(0, tmp.length()-1)+"]";
@@ -416,12 +416,20 @@ public class DatabaseAccessObject {
 		return result;
 	}
 	
-	public String getLabelName(SamplingInterval granularity, String element){
+	public String getLabelName(SamplingInterval granularity, String element, boolean heatMapTitle){
 		String labelName ="";
 		log.saveToFile("getLabelName method: element->"+element);
 		switch (granularity) {
-		case HOURLY: labelName = (new SimpleDateFormat("HH'h' dd MMM")).format(Timestamp.valueOf(element));
-			break;
+		case HOURLY:
+					String format = "";
+					if (heatMapTitle) {
+						format = "HH'h'mm'm' dd'-'MMM";
+					}
+					else {
+						format = "HH'h' dd MMM";
+					}
+					labelName = (new SimpleDateFormat(format)).format(Timestamp.valueOf(element));
+					break;
 		case DAILY: labelName = (new SimpleDateFormat("dd MMM ''yy")).format(Timestamp.valueOf(element)); //yyyy-mm-dd
 			break;
 		case MONTHLY: labelName = (new SimpleDateFormat("MMM ''yy")).format(Timestamp.valueOf(element)); // "April" 
@@ -430,7 +438,7 @@ public class DatabaseAccessObject {
 			break;
 		case YEARLY: labelName = (new SimpleDateFormat("yyyy")).format(Timestamp.valueOf(element));
 			break;
-		default:
+		default: labelName = "NO DATE-TIME FORMAT AVAILABLE";
 			break;
 		}
 		log.saveToFile("getLabelName method: labelName->"+labelName);

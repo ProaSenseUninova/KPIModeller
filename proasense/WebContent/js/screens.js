@@ -604,7 +604,23 @@ function Screen2(kpiInfo) {
 							toAppend = toAppend + '<td>' + eval('get' + chk[k].name.split(' ')[0] + '(' + kpiTargets[j][chk[k].value] + ').name'); + '</td>';
 						}
 					}
-					toAppend = toAppend + '<td>' + kpiTargets[j].lower_bound + '</td><td>' + kpiTargets[j].upper_bound + '</td>';
+					var lower_bound_to_append; 
+					if ( (kpiTargets[j].lower_bound == null) || (kpiTargets[j].lower_bound == '') ){
+						lower_bound_to_append = '-'; 
+					}
+					else {
+						lower_bound_to_append = kpiTargets[j].lower_bound;
+					}
+					
+					var upper_bound_to_append; 
+					if ( (kpiTargets[j].upper_bound == null) || (kpiTargets[j].upper_bound == '')){
+						upper_bound_to_append = '-'; 
+					}
+					else {
+						upper_bound_to_append = kpiTargets[j].upper_bound;
+					}
+					console.log("[Appending]: kpi target lower bound "+kpiTargets[j].lower_bound + "; upper bound "+kpiTargets[j].upper_bound);
+					toAppend = toAppend + '<td>' + lower_bound_to_append + '</td><td>' + upper_bound_to_append + '</td>';
 					toAppend = toAppend + '<td width="25px" data-id=' + kpiTargets[j].id + ' style="cursor:pointer" align="center" title="Delete element" ><span class="glyphicon glyphicon-minus" style="color:#333333" aria-hidden="true"></span></td></tr>';
 					$('#targetTable').append(toAppend);
 					var scr = this;
@@ -850,13 +866,16 @@ function ScreenGraph(kpiInfo) {
 		var heatMapEndTime = endDate!==undefined?endDate:$('#toDateHeatMap').handleDtpicker('getDate').getTime()+1;
 		var contextName = legend!==undefined?legend:'Global';
 		var heatMapGranularity = legend!==undefined?$('#granularityChart').val():$('#granularityHeatMap').val()
-
+	    console.log("[HEATMAP] start time: " + heatMapStartTime + "; end time: "+ heatMapEndTime);
 		var evaluation = isDatetimeOk(heatMapGranularity, heatMapStartTime, heatMapEndTime);
+	    console.log("[HEATMAP]: isDatetimeOk(heatMapGranularity, heatMapStartTime, heatMapEndTime)");
 		if(!evaluation.isDateTimeOk){
+		    console.log("[HEATMAP]: evaluation " + evaluation.message);
 			$.notify(evaluation.message, {
 				'autoHideDelay': 10000
 				});
 		} else {
+		    console.log("[HEATMAP]: Ajax  ");
 			$.ajax({
 				url: restAddress + "func/getHeatMapData?kpiId=" + loadedKpi +
 									"&contextualInformation="+scr.graphContextualInformation+ 
@@ -994,15 +1013,18 @@ function ScreenGraph(kpiInfo) {
 
 		
 		var graphContextualInformation = $('#graphTable').find('input:checked').val();
-		var firstGraphDate = new Date(2014, 11, 1, 0, 0, 0, 0);
-		var secondGraphDate = new Date(2015, 4, 31, 23, 59, 59, 9);
+		var firstGraphDate = new Date(2014, 11, 1, 6, 0, 0, 0);
+		var secondGraphDate = new Date(2015, 5, 1, 5, 59, 59, 9);
 		var graphStartTime = firstGraphDate.getTime();
 		this.startYear=(new Date(graphStartTime)).getFullYear();
 		var graphEndTime = secondGraphDate.getTime();
 		var graphGranularity = $('#granularityChart').val();
 		$('#graphButton').on('click', function(event) {
 			scr.updateGraph();
-//			scr.updateHeatMap();
+			var startDate = ($('#fromDateChart').handleDtpicker('getDate').getTime())!==undefined?$('#fromDateChart').handleDtpicker('getDate').getTime():graphStartTime;
+			var endDate = ($('#toDateChart').handleDtpicker('getDate').getTime())!==undefined?$('#toDateChart').handleDtpicker('getDate').getTime():graphEndTime;
+			console.log("[Update graph Button] heatmap: start time: "+graphStartTime+"; end time:"+graphEndTime);
+			scr.updateHeatMap(startDate,endDate);
 		});
 		$('#heatMapButton').on('click', function(event) {
 			scr.updateHeatMap();
@@ -1024,8 +1046,8 @@ function ScreenGraph(kpiInfo) {
 		var graphRadioValue = $('#heatMapTable').find('input:checked').val();
 		var horizontalSet = $('#horizontalSet').val();
 		var verticalSet = $('#verticalSet').val();
-		var firstHeatDate = new Date(2015, 4, 1, 0, 0, 0, 0); 
-		var secondHeatDate = new Date(2015, 5, 1, 0, 0, 0, 0);
+		var firstHeatDate = new Date(2015, 4, 1, 6, 0, 0, 0); 
+		var secondHeatDate = new Date(2015, 5, 1, 5, 59, 59, 9);
 //		var secondHeatDate = new Date(2015, 4, 31, 23, 59, 59, 9);
 		var heatMapStartTime = firstHeatDate.getTime();
 		var heatMapEndTime = secondHeatDate.getTime();
@@ -1054,9 +1076,11 @@ function ScreenGraph(kpiInfo) {
 				"todayButton": false,
 				"onShow": function(handler){},
 				"onHide": function(handler){}
-			}, firstGraphDate
-			);
-		
+			}, firstGraphDate)
+			.keyup(closeDtPickerOnEnter)
+			.blur(function() {
+				$('.datepicker').hide();
+			  });
 		
 		$('#toDateChart').appendDtpicker({
 				"dateOnly": false,
@@ -1065,7 +1089,12 @@ function ScreenGraph(kpiInfo) {
 				"onShow": function(handler) {},
 				"onHide": function(handler) {}
 			},
-			secondGraphDate);
+			secondGraphDate)
+			.keyup(closeDtPickerOnEnter)
+			.blur(function() {
+				$('.datepicker').hide();
+			  });
+		
 		$('#fromDateHeatMap').appendDtpicker({
 				"dateOnly": false,
 				"closeOnSelected": true,
@@ -1073,7 +1102,11 @@ function ScreenGraph(kpiInfo) {
 				"onShow": function(handler) {},
 				"onHide": function(handler) {}
 			},
-			firstHeatDate);
+			firstHeatDate)
+			.keyup(closeDtPickerOnEnter)
+			.blur(function() {
+				$('.datepicker').hide();
+			  });
 
 		$('#toDateHeatMap').appendDtpicker({
 				"dateOnly": false,
@@ -1082,7 +1115,11 @@ function ScreenGraph(kpiInfo) {
 				"onShow": function(handler) {},
 				"onHide": function(handler) {}
 			},
-			secondHeatDate);
+			secondHeatDate)
+			.keyup(closeDtPickerOnEnter)
+			.blur(function() {
+				$('.datepicker').hide();
+			  });
 		
 
 		this.gage = new JustGage({
@@ -1170,15 +1207,17 @@ function ScreenGraph(kpiInfo) {
 		$('#heatMap').empty();
 		$('#heatMap').width(0);
 		var containerWidth = $('#heatMapTable').find('td').eq(4).width();
-		var width = containerWidth < 550 * factor ? 550 * factor : containerWidth > 800 * factor ? 800 * factor : containerWidth;
-		var minWidth = width<400?400:width;
+		var width = containerWidth < 550 * factor ? 550 * factor : containerWidth > 800 * factor ? 800 * factor : containerWidth+200;
+		var minWidth = width<485?485:width;
+		console.log("Heatmap container width:" + containerWidth + "; width:" +width+ "; minWidth:"+minWidth+"; factor:"+factor);
+
 		var deltaX=xLabelLength!=1?xLabelLength!=2?0:40:80
 		$('#heatMap').width(minWidth);
 		var margin = {
 				top: 30,
 				right: 0,
 				bottom: 50,
-				left: 80
+				left: 140
 			},
 			height = (201 - margin.top - margin.bottom) * heatMapData.yLabels.length,
 			gridSize = Math.floor(width / (heatMapData.xLabels.length + 1)),
@@ -1188,7 +1227,7 @@ function ScreenGraph(kpiInfo) {
 			colors = generateColor("#FFFFFF", "#F7A35C", 18); // alternatively colorbrewer.YlGnBu[9]
 
 		var svg = d3.select("#heatMap").append("svg")
-			.attr("width", minWidth)
+			.attr("width", minWidth+150)
 			.attr("height", height + margin.top + margin.bottom)
 			.append("g")
 			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
