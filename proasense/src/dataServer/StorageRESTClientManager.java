@@ -84,6 +84,12 @@ public class StorageRESTClientManager {
 		storageLocation = System.getenv("StorageLocation");
 		storagePortReadC = System.getenv("StoragePortReadC");
 		storagePortRegistryC = System.getenv("StoragePortRegistryC");
+		
+		System.out.println("Environment variables:");
+		System.out.println("StreamPipes: " + StreamPipes);
+		System.out.println("storageLocation: " + storageLocation);
+		System.out.println("storagePortReadC: " + storagePortReadC);
+		System.out.println("storagePortRegistryC: " + storagePortRegistryC);
     }
 
     public void reconnect(){

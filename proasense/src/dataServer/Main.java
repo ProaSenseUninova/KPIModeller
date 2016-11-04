@@ -1266,28 +1266,28 @@ private String getParamValueOf(String paramString){
 			logPath = File.separator+"home"
 					+File.separator+"proasense"
 					+File.separator+"proasenseModeller"
-					+File.separator+"KPIrepMaven"
+					+File.separator+"KPIModeller"
 					+File.separator;
 			// Database that needs to be used IMPORTANT:has its identifiers as
 			// uppercase
 			dbPath = File.separator+"home"
 					+File.separator+"proasense"
 					+File.separator+"proasenseModeller"
-					+File.separator+"KPIrepMaven"
+					+File.separator+"KPIModeller"
 					+File.separator+"db"
 					+File.separator;
 		}else{
 			logPath = System.getProperty("user.home")
 					+File.separator+"proasense"
 					+File.separator+"proasenseModeller"
-					+File.separator+"KPIrepMaven"
+					+File.separator+"KPIModeller"
 					+File.separator;
 			// Database that needs to be used IMPORTANT:has its identifiers as
 			// uppercase
 			dbPath = System.getProperty("user.home")
 					+File.separator+"proasense"
 					+File.separator+"proasenseModeller"
-					+File.separator+"KPIrepMaven"
+					+File.separator+"KPIModeller"
 					+File.separator+"db"
 					+File.separator;
 		}
