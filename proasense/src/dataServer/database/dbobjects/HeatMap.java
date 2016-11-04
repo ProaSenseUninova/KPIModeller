@@ -62,7 +62,7 @@ public class HeatMap extends ResultTable {
 		String varYStr = varYtype.toString().toLowerCase();
 		String valueColumnStr = "\"KPI_VALUE\"";
 		String groupByClauseStr = " ";
-		if (!aggregation.equals("none")){
+		if (!aggregation.equals("NONE")){
 			if (aggregation.equals("count")) {
 				valueColumnStr = "SUM("+valueColumnStr+")";
 			}

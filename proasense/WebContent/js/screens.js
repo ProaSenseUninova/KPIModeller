@@ -1,10 +1,7 @@
-
-
 function openKPI() {
 	scrQuery.closeScreen();
 	$('.headerSelector').find('a').eq(0).attr('class', 'selected');
 	$('.headerSelector').find('a').eq(1).attr('class', 'notSelected');
-	$('.headerSelector').find('a').eq(2).attr('class', 'notSelected');
 	var isScrHidden = $('.screen').css('visibility') == "hidden";
 	activeScreen = screen1;
 	if (!isScrHidden) {
@@ -16,13 +13,9 @@ function openTarget() {
 	scrQuery.closeScreen();
 	$('.headerSelector').find('a').eq(0).attr('class', 'notSelected');
 	$('.headerSelector').find('a').eq(1).attr('class', 'selected');
-	$('.headerSelector').find('a').eq(2).attr('class', 'notSelected');
 	var isScrHidden = $('.screen').css('visibility') == "hidden";
 	activeScreen = screen2;
-	//if(!isScrHidden)
-	//{
 	activeScreen.openScreen();
-	//}
 }
 
 function openQuery() {
@@ -34,7 +27,7 @@ function openQuery() {
 }
 
 function Screen1(elInfo) {
-//	window.alert("screen 1 initialization");
+	// window.alert("screen 1 initialization");
 	this.elInfo = elInfo
 	var scr = this;
 
@@ -43,20 +36,18 @@ function Screen1(elInfo) {
 	});
 
 	this.saveBtn = function() {
-//		window.alert("screen 1 - this.kpiSensor1");
+		// window.alert("screen 1 - this.kpiSensor1");
 		this.saveLoadedElement();
 	}
-//	window.alert("screen 1 - OK");
-
+	// window.alert("screen 1 - OK");
 
 	this.cancelBtn = function() {
-//		window.alert("screen 1 - this.kpiSensor1");
+		// window.alert("screen 1 - this.kpiSensor1");
 		this.closeScreen();
 	}
-//	window.alert("screen 1 - OK");
-
+	// window.alert("screen 1 - OK");
 	this.selectBoxes = function(e) {
-//		window.alert("screen 1 - this.kpiSensor1");
+		// window.alert("screen 1 - this.kpiSensor1");
 		$('.elRow').css('display', 'none');
 		$('.elAggRow').css('display', 'none');
 		if ($('#calculationType').val() == 'aggregate' && $('#kpiSensor1').val() != null) {
@@ -69,48 +60,441 @@ function Screen1(elInfo) {
 		$('.aggregate').css('display', 'none');
 		$('.composed').css('display', 'none')
 		$('.' + e.currentTarget.value).css('display', 'table-row');
+				
+		$("#selectSensor1 option:eq(0)").prop('selected',true);
+		$("#selectSensor2 option:eq(0)").prop('selected',true);
+		$(".eventBox").hide();
+		//reset all fields
+		//simple		
+			//reset event type
+			$('#eventType1').hide();
+			$('#eventType1').html("Type: ");	
+			//reset textbox
+			//$('#eventTypeValue1').hide();
+			//$('#eventTypeValue1').attr('value',"Event value");
+		//aggregate
+			$('#eventType2').hide();
+			$('#eventType2').html("Type: ");	
+			//reset textbox
+			//$('#eventTypeValue2').hide();
+			//$('#eventTypeValue2').attr('value',"Event value");
+		//Composed
+			$('#eventType3').hide();
+			$('#eventType3').html("Type: ");
+			$('#eventType4').hide();
+			$('#eventType4').html("Type: ");
+			$('#eventType5').hide();
+			$('#eventType5').html("Type: ");	
+			//reset textbox
+			//$('#eventTypeValue3').hide();
+			//$('#eventTypeValue3').attr('value',"Event value");
+			//$('#eventTypeValue4').hide();
+			//$('#eventTypeValue4').attr('value',"Event value");
+			//$('#eventTypeValue5').hide();
+			//$('#eventTypeValue5').attr('value',"Event value");
+			
+		//hide partition when calculation type changes
+		$('.partitionSelection').hide();
+		$('#NonePartition').prop("checked",true);
+		$('#partitionOptions').css('display', 'none');
+		$('#partitionOptions').find('option:gt(0)').remove();
+		$('#partitionOptions').append('<option value="" disabled selected hidden>Select Partition ID</option>');
 	}
-//	window.alert("screen 1 - OK");
+	// window.alert("screen 1 - OK");
 	this.kpiSensor1 = function() {
-//		window.alert("screen 1 - this.kpiSensor1");
-		$('.elAggRow').css('display', 'table-row');
+		// window.alert("screen 1 - this.kpiSensor1"); //caso do agregated
+		// measure
+		$('.elAggRow').css('display', 'table-row'); 
 		if ($('#kpiSensor1').val() == 'sensor') {
 			$('#selectSensor2').css('display', 'inline-block');
-			$('#selectKpi1').css('display', 'none');
+			$('#selectKpi1').css('display', 'none'); 
 		} else {
-			$('#selectSensor2').css('display', 'none');
+			$('#selectSensor2').css('display', 'none'); 
 			$('#selectKpi1').css('display', 'inline-block');
+			
+			$('#selectSensorEvent2').hide();
+			$("#selectSensorEvent2 option:eq(0)").prop('selected',true);
+			$('#eventType2').hide();
+			$('#eventType2').html("Type: ");	
+			//reset textbox
+			//$('#eventTypeValue2').hide();
+			//$('#eventTypeValue2').attr('value',"Event value");
 		}
+
+		//hide and reset partition section
+		$('.partitionSelection').hide();
+		$('#NonePartition').prop("checked",true);
+		$('#partitionOptions').css('display', 'none');
+		$('#partitionOptions').find('option:gt(0)').remove();
+		$('#partitionOptions').append('<option value="" disabled selected hidden>Select Partition ID</option>');
 	}
-//	window.alert("screen 1 - OK");
-	this.kpiSensor = function() {
-		$('.elRow').css('display', 'table-row');
-		var kpiSensors = $('.kpiSensor');
+	// window.alert("screen 1 - OK");
+	this.kpiSensor = function() { // caso do composed measure
+		$('.elRow').css('display', 'table-row'); // mostra a linha
+		var kpiSensors = $('.kpiSensor'); //
 		for (var i = 0; i < kpiSensors.length; i++) {
-			if (kpiSensors.eq(i).val() == 'sensor') {
+			if (kpiSensors.eq(i).val() == 'sensor') {				
 				$('.sensorChoice').eq(i).css('display', 'inline-block');
 				$('.kpiChoice').eq(i).css('display', 'none');
+				
 			} else if (kpiSensors.eq(i).val() == 'kpi') {
 				$('.kpiChoice').eq(i).css('display', 'inline-block');
 				$('.sensorChoice').eq(i).css('display', 'none');
+				
+				//selector have a diferent id (-1) (slice(-1)->get last element)
+				var id = parseInt(event.target.id.slice(-1))+1;
+								
+				$('#selectSensorEvent'+id).hide();
+				$("#selectSensorEvent"+id+" option:eq(0)").prop('selected',true);
+				$('#eventType'+id).hide();
+				$('#eventType'+id).html("Type: ");	
+				//reset textbox
+				$('#eventTypeValue'+id).hide();
+				//$('#eventTypeValue'+id).attr('value',"Event value");
 			}
 		}
 	}
-//	window.alert("screen 1 - OK");
+	
+	this.loadEventProperties = function(asynchronous) {
+	
+
+		var context = $('#companyContext').val();
+		
+		switch ($('#calculationType').val()) {
+		case 'simple':
+			
+			var sensorId = $('#selectSensor1').val();
+			// get sensor events
+			$.ajax({
+				url : restAddress + 'proasense_hella/sensorProperties/'
+						+ sensorId+"_"+context,
+				type : 'GET',
+				async: asynchronous ,
+				success : function(events) {
+
+					$('#selectSensorEvent1').find('option:gt(0)').remove();
+					$('#selectSensorEvent1').append('<option value="" disabled selected hidden>Select Event</option>');					
+					for (var i = 0; i < events.length; i++) {
+						$('#selectSensorEvent1').append(
+								'<option type=' + events[i].type
+										+ ' partition=' + events[i].partition
+										+ '>' + events[i].name + '</option>');
+					}
+				}
+			});
+			$('#selectSensorEvent1').css('display', 'block');
+			
+			//reset event type
+			$('#eventType1').hide();
+			$('#eventType1').html("Type: ");	
+			//reset textbox
+			//$('#eventTypeValue1').hide();
+			//$('#eventTypeValue1').attr('value',"Event value");	
+
+			//reset partition option
+			$('.partitionSelection').hide();
+			$('#NonePartition').prop("checked",true);
+			$('#partitionOptions').css('display', 'none');
+			$('#partitionOptions').find('option:gt(0)').remove();
+			$('#partitionOptions').append('<option value="" disabled selected hidden>Select Partition ID</option>');
+			break;
+		case 'aggregate':
+
+			var sensorId = $('#selectSensor2').val();
+			// get sensor events
+			$.ajax({
+				url : restAddress + 'proasense_hella/sensorProperties/'
+						+ sensorId+"_"+context,
+				type : 'GET',
+				async: asynchronous ,
+				success : function(events) {
+
+					$('#selectSensorEvent2').find('option:gt(0)').remove();
+					$('#selectSensorEvent2').append('<option value="" disabled selected hidden>Select Event</option>');					
+					for (var i = 0; i < events.length; i++) {
+						$('#selectSensorEvent2').append(
+								'<option type=' + events[i].type
+										+ ' partition=' + events[i].partition
+										+ '>' + events[i].name + '</option>');
+					}
+				}
+			});
+			$('#selectSensorEvent2').css('display', 'block');
+			
+			//reset event type
+			$('#eventType2').hide();
+			$('#eventType2').html("Type: ");	
+			//reset textbox
+			//$('#eventTypeValue2').hide();
+			//$('#eventTypeValue2').attr('value',"Event value");
+
+			//reset partition option
+			$('.partitionSelection').hide();
+			$('#NonePartition').prop("checked",true);
+			$('#partitionOptions').css('display', 'none');
+			$('#partitionOptions').find('option:gt(0)').remove();
+			$('#partitionOptions').append('<option value="" disabled selected hidden>Select Partition ID</option>');
+			break;
+		case 'composed':
+			
+			var id = event.target.id.slice(-1);
+			
+			var sensorId = $('#selectSensor'+id).val();
+			// get sensor events
+			$.ajax({
+				url : restAddress + 'proasense_hella/sensorProperties/'
+						+ sensorId+"_"+context,
+				type : 'GET',
+				async: asynchronous ,
+				success : function(events) {
+
+					$('#selectSensorEvent'+id).find('option:gt(0)').remove();
+					$('#selectSensorEvent'+id).append('<option value="" disabled selected hidden>Select Event</option>');					
+					for (var i = 0; i < events.length; i++) {
+						$('#selectSensorEvent'+id).append(
+								'<option type=' + events[i].type
+										+ ' partition=' + events[i].partition
+										+ '>' + events[i].name + '</option>');
+					}
+				}
+			});
+			$('#selectSensorEvent'+id).css('display', 'block');
+			
+			//reset event type
+			$('#eventType'+id).hide();
+			$('#eventType'+id).html("Type: ");	
+			//reset textbox
+			//$('#eventTypeValue'+id).hide();
+			//$('#eventTypeValue'+id).attr('value',"Event value");
+			break;
+		default:
+			window.alert('default load sensor');
+		}
+	}
+
+	
+	this.loadEventPropertiesSync = function(id) {	
+		
+		var sensorId = $('#selectSensor'+id).val();
+		var context = $('#companyContext').val();
+		
+		// get sensor events
+		$.ajax({
+			url : restAddress + 'proasense_hella/sensorProperties/'
+					+ sensorId+"_"+context,
+			type : 'GET',
+			async: false ,
+			success : function(events) {
+
+				$('#selectSensorEvent'+id).find('option:gt(0)').remove();
+				$('#selectSensorEvent'+id).append('<option value="" disabled selected hidden>Select Event</option>');					
+				for (var i = 0; i < events.length; i++) {
+					$('#selectSensorEvent'+id).append(
+							'<option type=' + events[i].type
+									+ ' partition=' + events[i].partition
+									+ '>' + events[i].name + '</option>');
+				}
+			}
+		});
+		$('#selectSensorEvent'+id).css('display', 'block');
+		
+		//reset event type
+		$('#eventType'+id).hide();
+		$('#eventType'+id).html("Type: ");	
+		//reset textbox
+		//$('#eventTypeValue'+id).hide();
+		//$('#eventTypeValue'+id).attr('value',"Event value");
+	
+	}
+	this.changeTypeAndPartition = function() {
+		var sensorEventPartitionable;
+		switch ($('#calculationType').val()) {
+		case 'simple':
+
+			var sensorEventType = $('#selectSensorEvent1').find(":selected").attr("type");
+			if(sensorEventType!=null)
+				sensorEventPartitionable = $('#selectSensorEvent1').find(":selected").attr("partition").toUpperCase();
+
+			$('#eventType1').css('display', 'block')
+			$('#eventType1').html('Type: '+sensorEventType);
+			//enable textBox
+			//$('#eventTypeValue1').css('display', 'block');
+			//$('#eventTypeValue1').attr('value',"Event value");
+			
+			if (sensorEventPartitionable == "TRUE") {
+				$('.partitionSelection').show();
+			} else {
+				$('.partitionSelection').hide();
+				$('#NonePartition').prop("checked",true);
+				$('#partitionOptions').css('display', 'none');
+				$('#partitionOptions').find('option:gt(0)').remove();
+				$('#partitionOptions').append('<option value="" disabled selected hidden>Select Partition ID</option>');
+			}
+			break;
+		case 'aggregate':
+
+			var sensorEventType = $('#selectSensorEvent2').find(":selected").attr("type");
+			sensorEventPartitionable = $('#selectSensorEvent2').find(":selected").attr("partition").toUpperCase();
+
+			$('#eventType2').css('display', 'block')
+			$('#eventType2').html('Type: '+sensorEventType);
+			//enable textBox
+			//$('#eventTypeValue2').css('display', 'block');
+			//$('#eventTypeValue2').attr('value',"Event value");
+			
+			if (sensorEventPartitionable == "TRUE") {
+				$('.partitionSelection').show();
+			} else {
+				$('.partitionSelection').hide();
+				$('#NonePartition').prop("checked",true);
+				$('#partitionOptions').css('display', 'none');
+				$('#partitionOptions').find('option:gt(0)').remove();
+				$('#partitionOptions').append('<option value="" disabled selected hidden>Select Partition ID</option>');
+			}
+			break;
+		case 'composed':
+
+			var id = event.target.id.slice(-1);
+			
+			var sensorEventType = $('#selectSensorEvent'+id).find(":selected").attr("type");
+			
+			if($('.partitionSelection').is(":visible")){
+				if($('#selectSensorEvent3').find(":selected").attr("partition").toUpperCase()== "FALSE"
+						&& $('#selectSensorEvent4').find(":selected").attr("partition").toUpperCase()== "FALSE"
+							&& $('#selectSensorEvent5').find(":selected").attr("partition").toUpperCase()== "FALSE"){
+							$('.partitionSelection').hide();
+							$('#NonePartition').prop("checked",true);
+							$('#partitionOptions').css('display', 'none');
+							$('#partitionOptions').find('option:gt(0)').remove();
+							$('#partitionOptions').append('<option value="" disabled selected hidden>Select Partition ID</option>');
+						}
+			}else
+				if($('#selectSensorEvent'+id).find(":selected").attr("partition").toUpperCase()== "TRUE")
+					$('.partitionSelection').show();
+			
+			$('#eventType'+id).css('display', 'block')
+			$('#eventType'+id).html('Type: '+sensorEventType);
+			//enable textBox
+			//$('#eventTypeValue'+id).css('display', 'block');
+			//$('#eventTypeValue'+id).attr('value',"Event value");
+			break;
+		default:
+			window.alert('default partition');
+		}
+		
+	}
+	
+this.changeTypeAndPartitionAsync = function(id) {	
+		
+	var sensorEventType = $('#selectSensorEvent'+id).find(":selected").attr("type");
+	
+	if($('.partitionSelection').is(":visible")){
+		if($('#selectSensorEvent3').find(":selected").attr("partition").toUpperCase()== "FALSE"
+				&& $('#selectSensorEvent4').find(":selected").attr("partition").toUpperCase()== "FALSE"
+					&& $('#selectSensorEvent5').find(":selected").attr("partition").toUpperCase()== "FALSE"){
+					$('.partitionSelection').hide();
+					$('#NonePartition').prop("checked",true);
+					$('#partitionOptions').css('display', 'none');
+					$('#partitionOptions').find('option:gt(0)').remove();
+					$('#partitionOptions').append('<option value="" disabled selected hidden>Select Partition ID</option>');
+				}
+	}else
+		if($('#selectSensorEvent'+id).find(":selected").attr("partition").toUpperCase()== "TRUE")
+			$('.partitionSelection').show();
+	
+	$('#eventType'+id).css('display', 'block');
+	$('#eventType'+id).html('Type: '+sensorEventType);
+	//enable textBox
+	//$('#eventTypeValue'+id).css('display', 'block');
+	//$('#eventTypeValue'+id).attr('value',"Event value");
+	
+	}
+
+	this.changePartitionIDs = function(asynchronous) {
+
+		var partitionType = $('input[name=partition]:checked', '#contextualInformation').val()
+		if(partitionType == "none"){
+			$('#partitionOptions').css('display', 'none');
+			$('#partitionOptions').find('option:gt(0)').remove();
+			$('#partitionOptions').append('<option value="" disabled selected hidden>Select Partition ID</option>');
+		}
+		else{
+			// get sensor events
+			$.ajax({
+				url : restAddress + 'proasense_hella/partitionType/'
+						+ partitionType,
+				async: asynchronous ,
+				type : 'GET',
+				success : function(events) {
+
+					$('#partitionOptions').find('option:gt(0)').remove();
+					$('#partitionOptions').append('<option value="" disabled selected hidden>Select Partition Id</option>');					
+					for (var i = 0; i < events.length; i++) {
+						$('#partitionOptions').append(
+								'<option value=' + events[i].id
+										+ '>' + events[i].id + '</option>');
+					}
+				}
+			});
+			$('#partitionOptions').css('display', 'block');
+		}
+	}
+	
+	// window.alert("screen 1 - OK");
 	this.loadSensors = function() {
+		
+		// load dos sensores
 		var tmpVal = [];
 		for (var i = 0; i < $('.sensorBox').length; i++) {
 			tmpVal.push($('.sensorBox').eq(i).val());
 		}
 		$('.sensorBox').find('option:gt(0)').remove();
-		for (var i = 0; i < sensors.length; i++) {
-			$('.sensorBox').append('<option value=' + sensors[i].id + '>' + sensors[i].name + '</option>');
+		if(sensors!=null){
+			for (var i = 0; i < sensors.length; i++) {
+				$('.sensorBox').append('<option value=' + sensors[i].id + '>' + sensors[i].name + '</option>');
+			}
+			for (var i = 0; i < $('.sensorBox').length; i++) {
+				$('.sensorBox').eq(i).val(tmpVal[i]);
+			}
 		}
-		for (var i = 0; i < $('.sensorBox').length; i++) {
-			$('.sensorBox').eq(i).val(tmpVal[i]);
+
+		$('.sensorBox').prop( "disabled", false );
+		$('#companyContext').prop( "disabled", false );
+	}
+	this.loadAggregationTypes = function() {
+		// load dos tipos de aggregation
+		var tmpVal = [];
+		for (var i = 0; i < $('#selectAggType').length; i++) {
+			tmpVal.push($('#selectAggType').eq(i).val());
+		}
+		$('#selectAggType').find('option:gt(0)').remove();
+		//starts on 1 to ignore de "none" value from the DB
+		for (var i = 1; i < aggTypes.length; i++) {
+			$('#selectAggType').append(
+					'<option id=' + aggTypes[i].id + '>' + aggTypes[i].aggregation
+							+ '</option>');
+		}
+		for (var i = 0; i < $('#selectAggType').length; i++) {
+			$('#selectAggType').eq(i).val(tmpVal[i]);
+		}
+	}	
+	this.loadSamplingIntervals = function() {
+		// load dos tipos de aggregation
+		var tmpVal = [];
+		for (var i = 0; i < $('#samplingInterval').length; i++) {
+			tmpVal.push($('#samplingInterval').eq(i).val());
+		}
+		$('#samplingInterval').find('option:gt(0)').remove();
+		for (var i = 0; i < sampInt.length; i++) {
+			$('#samplingInterval').append(
+					'<option id=' + sampInt[i].id + ' value=' + sampInt[i].name + '>' + sampInt[i].name
+							+ '</option>');
+		}
+		for (var i = 0; i < $('#samplingInterval').length; i++) {
+			$('#samplingInterval').eq(i).val(tmpVal[i]);
 		}
 	}
-//	window.alert("screen 1 - OK also");
+	// window.alert("screen 1 - OK also");
 	this.loadKpis = function() {
 		var tmpVal = [];
 		for (var i = 0; i < $('.kpiBox').length; i++) {
@@ -125,21 +509,120 @@ function Screen1(elInfo) {
 		}
 	}
 
-//	window.alert("screen 1 - OK");
+	// window.alert("screen 1 - OK");
 	this.checkConstraints = function(id) {
 		for (var i = 0; i < kpiFormulas.length; i++) {
 			if (kpiFormulas[i].kpi_id == id) {
 				continue;
 			}
-			if (kpiFormulas[i].term1_kpi_id == id || kpiFormulas[i].term2_kpi_id == id || kpiFormulas[i].term3_kpi_id == id) {
-				return true
+			if (kpiFormulas[i].term1_kpi_id == id
+					|| kpiFormulas[i].term2_kpi_id == id
+					|| kpiFormulas[i].term3_kpi_id == id) {
+				return true;
 			}
 		}
 		return false;
 	}
+	
+	this.checkParentConstraints = function(id) {
+		for (var i = 0; i < kpiInfo.length; i++) {
+			if (kpiInfo[i].kpi_id == id) {
+				continue;
+			}
+			if (kpiInfo[i].parent_id == id) {
+				return true;
+			}
+		}
+		return false;
+	}	
+	
+	// window.alert("screen 1 - OK");	
+	this.changeContextEnt = function(){
+		
+		var myContext = $('#companyContext').val();
+		$('.sensorBox').prop( "disabled", true );
+		$('#companyContext').prop( "disabled", true );
+					
+		$('.elRow').css('display', 'none');
+		$('.elAggRow').css('display', 'none');
+		if ($('#calculationType').val() == 'aggregate' && $('#kpiSensor1').val() != null) {
+			$('.elAggRow').css('display', 'table-row');
+		} else if ($('#calculationType').val() == 'composed' && ($('#kpiSensor2').val() != null || $('#kpiSensor3').val() != null || $('#kpiSensor4').val() != null)) {
+			$('.elRow').css('display', 'table-row');
+		}
+		$('.kpi').css('display', 'none');
+		$('.simple').css('display', 'none');
+		$('.aggregate').css('display', 'none');
+		$('.composed').css('display', 'none')
+		$('.' + ($('#calculationType').val())).css('display', 'table-row');
+				
+		$("#selectSensor1 option:eq(0)").prop('selected',true);
+		$("#selectSensor2 option:eq(0)").prop('selected',true);
+		$(".eventBox").hide();
+		//reset all fields
+		//simple		
+			//reset event type
+			$('#eventType1').hide();
+			$('#eventType1').html("Type: ");	
+			//reset textbox
+			//$('#eventTypeValue1').hide();
+			//$('#eventTypeValue1').attr('value',"Event value");
+		//aggregate
+			$('#eventType2').hide();
+			$('#eventType2').html("Type: ");	
+			//reset textbox
+			//$('#eventTypeValue2').hide();
+			//$('#eventTypeValue2').attr('value',"Event value");
+		//Composed
+			$('#eventType3').hide();
+			$('#eventType3').html("Type: ");
+			$('#eventType4').hide();
+			$('#eventType4').html("Type: ");
+			$('#eventType5').hide();
+			$('#eventType5').html("Type: ");	
+			//reset textbox
+			//$('#eventTypeValue3').hide();
+			//$('#eventTypeValue3').attr('value',"Event value");
+			//$('#eventTypeValue4').hide();
+			//$('#eventTypeValue4').attr('value',"Event value");
+			//$('#eventTypeValue5').hide();
+			//$('#eventTypeValue5').attr('value',"Event value");
+			
+		//hide partition when calculation type changes
+		$('.partitionSelection').hide();
+		$('#NonePartition').prop("checked",true);
+		$('#partitionOptions').css('display', 'none');
+		$('#partitionOptions').find('option:gt(0)').remove();
+		$('#partitionOptions').append('<option value="" disabled selected hidden>Select Partition ID</option>');
+		
+		$.ajax({
+			url : restAddress + 'proasense_hella/sensor/'
+					+ myContext,
+			type : 'GET',
+			success : function(sensors) {
+								
+				var tmpVal = [];
+				for (var i = 0; i < $('.sensorBox').length; i++) {
+					tmpVal.push($('.sensorBox').eq(i).val());
+				}
+				
+				$('.sensorBox').find('option:gt(0)').remove();
+				if(sensors!=null){
+					for (var i = 0; i < sensors.length; i++) {
+						$('.sensorBox').append('<option value=' + sensors[i].id + '>' + sensors[i].name + '</option>');
+					}
+					for (var i = 0; i < $('.sensorBox').length; i++) {
+						$('.sensorBox').eq(i).val(tmpVal[i]);
+					}
+				}
+				
 
-//	window.alert("screen 1 - OK");
-
+				$('.sensorBox').prop( "disabled", false );
+				$('#companyContext').prop( "disabled", false );
+			}
+		});
+	}
+	
 	this.openScreen = function() {
 
 		$('.content').html(this.content);
@@ -153,8 +636,14 @@ function Screen1(elInfo) {
 		$('#calculationType').change(this.selectBoxes);
 		$('.kpiSensor').change(this.kpiSensor);
 		$('#kpiSensor1').change(this.kpiSensor1);
+		$('.sensorBox').change(this.loadEventProperties);
+		$('.eventBox').change(this.changeTypeAndPartition); 
+		$('#companyContext').change(this.changeContextEnt);
+		$('#contextualInformation').change(this.changePartitionIDs);
 		$('#op2').change(this.thirdElement);
 		this.loadSensors();
+		this.loadAggregationTypes();
+		this.loadSamplingIntervals();
 		this.loadKpis();
 
 		$('.box').change(function(e) {
@@ -162,9 +651,13 @@ function Screen1(elInfo) {
 		});
 		if (loadedKpi != "") {
 			this.loadElData(loadedKpi)
-		} else {}
+		} else {
+			//add new kpi
+		
+		}		
+		initializeTooltips();
 	}
-//	window.alert("screen 1 - OK 2");
+	// window.alert("screen 1 - OK 2");
 	this.thirdElement = function() {
 		var els = $('.thEl');
 		if ($('#op2').val() == 'none') {
@@ -180,7 +673,7 @@ function Screen1(elInfo) {
 			}
 		}
 	}
-//	window.alert("screen 1 - OK");
+	// window.alert("screen 1 - OK");
 
 	this.closeScreen = function() {
 		this.changeLoadedKpi();
@@ -188,114 +681,234 @@ function Screen1(elInfo) {
 		$('.content').html('');
 	}
 
-//	window.alert("screen 1 - OK 3");
+	// window.alert("screen 1 - OK 3");
 	this.updateField = function(id, value) {
 		$('#' + id).val(value);
 		if (value !== null) {
 			$('#' + id).css('color', 'black');
 		}
 	}
-
-//	window.alert("screen 1 - OK 4");
+	
+	//window.alert("screen 1 - OK 4");
 	this.loadElData = function(elId) {
 		for (var i = 0; i < this.kpiInfo.length; i++) {
 			if (this.kpiInfo[i].id == elId) {
-				this.changeLoadedKpi(elId);
+				//this.changeLoadedKpi(elId);
+				
 				el = this.kpiInfo[i];
 				this.updateField('name', el.name);
 				this.updateField('description', el.description);
-
+				this.updateField('samplingRate', el.sampling_rate);
+				this.updateField('samplingInterval', el.sampling_interval);
+				
 				this.updateField('calculationType', el.calculation_type);
+						
+				$('#numberSupport').prop("disabled",false);
+				$('#numberSupport option[value="'+ el.number_support.toLowerCase() +'"]').prop('selected',true);
+				
+				$('#companyContext option[value="'+ el.company_context +'"]').prop('selected',true);
+				$.ajax({
+					url: restAddress + 'proasense_hella/sensor/'+el.company_context,
+					type: 'GET',
+					async: false,
+					success: function(data) {
+						$("#companyContext").prop( "disabled", false);
+						sensors = data;
+						screen1.loadSensors();
+					}
+				});
+				
 				var kpiFormula = {};
 				for (var j = 0; j < kpiFormulas.length; j++) {
-					if (kpiFormulas[j].kpi_id == loadedKpi) {
+					if (kpiFormulas[j].kpi_id == el.id) {
 						kpiFormula = kpiFormulas[j];
 						break;
 					}
 				}
-				if (el.calculation_type == 'simple') {
-					this.updateField('selectSensor1', kpiFormula.term1_sensor_id);
-				} else if (el.calculation_type == 'aggregate') {
-					var isKpi = kpiFormula.term1_kpi_id != null;
-					$('#kpiSensor1').val(isKpi ? 'kpi' : 'sensor');
-					$('#kpiSensor1').css('color', 'black');
-					$('#selectAggType').val(kpiFormula.operator_1);
-					$('#selectAggType').css('color', 'black');
-					if (isKpi) {
-						$('#selectKpi1').val(kpiFormula.term1_kpi_id);
-						$('#selectKpi1').css('color', 'black');
-					} else {
-						$('#selectSensor2').val(kpiFormula.term1_sensor_id);
-						$('#selectSensor2').css('color', 'black');
-					}
-					this.kpiSensor1();
-				} else if (el.calculation_type == 'composed') {
-					var isKpi = [];
-					isKpi[0] = kpiFormula.term1_kpi_id != null;
-					isKpi[1] = kpiFormula.term2_kpi_id != null;
-					isKpi[2] = kpiFormula.term3_kpi_id != null;
-					$('#op1').val(kpiFormula.operator_1);
-					$('#op1').css('color', 'black');
-					$('#op2').val(kpiFormula.operator_2 == null ? 'none' : kpiFormula.operator_2);
-					$('#op2').css('color', kpiFormula.operator_2 == null ? '#808080' : 'black');
-					$('#kpiSensor2').val(isKpi[0] ? 'kpi' : 'sensor');
-					$('#kpiSensor2').css('color', 'black');
-					$('#kpiSensor3').val(isKpi[1] ? 'kpi' : 'sensor');
-					$('#kpiSensor3').css('color', 'black');
-					$('#kpiSensor4').val(isKpi[2] ? 'kpi' : 'sensor');
-					$('#kpiSensor4').css('color', 'black');
-					if (kpiFormula.operator_2 == null) {
-						$('#kpiSensor4').val(null);
-						$('#kpiSensor4').eq(i).css('color', '#808080');
-					}
-					for (var i = 0; i < isKpi.length; i++) {
-						var val = "";
-						if (isKpi[i]) {
-							val = kpiFormula['term' + (i + 1) + '_kpi_id'];
-							$('.kpiChoice').eq(i).val(val);
-							$('.kpiChoice').eq(i).css('color', val == null ? '#808080' : 'black');
-						} else {
-							val = kpiFormula['term' + (i + 1) + '_sensor_id'];
-							$('.sensorChoice').eq(i).val(kpiFormula['term' + (i + 1) + '_sensor_id']);
-							$('.sensorChoice').eq(i).css('color', val == null ? '#808080' : 'black');
-						}
-					}
-					this.thirdElement();
-					this.kpiSensor();
-
-
-				}
-
-
-				this.updateField('samplingRate', el.sampling_rate);
-				this.updateField('samplingInterval', el.sampling_interval);
-
-				$('.kpi').css('display', 'none');
-				$('.simple').css('display', 'none');
-				$('.aggregate').css('display', 'none');
-				$('.composed').css('display', 'none')
+				
+				//show partition control variable
+				var showpartition = false;
+				
+				//show correct calculation type
 				$('.' + el.calculation_type).css('display', 'table-row');
+				
+				switch(el.calculation_type){
+				
+				case 'simple':
+					
+					//get sensor configurations
+					var sEnv = {};
+					for(var idx = 0 ; idx < sensorEvents.length ; idx++)
+						if(sensorEvents[idx].id == kpiFormula.term1_sensor_id){
+							sEnv = sensorEvents[idx];
+							break;
+						}
+														
+					//this.updateField('selectSensor1',sEnv.sensorname);
+					$('#selectSensor1 option[value="'+ sEnv.sensorid +'"]').prop('selected',true);
+					//get sensor properties
+					this.loadEventProperties(false);
+					//set event
+					$('#selectSensorEvent1').val(sEnv.eventname).prop('selected',true);
+					this.changeTypeAndPartition();					
+					//this.updateField('eventTypeValue1', sEnv.eventtypevalue);
+					
+					if(sEnv.eventpartition != null)
+						showpartition = true;
+					
+					break;
+				case 'aggregate':
+				
+					$('#selectAggType option[id="'+ el.aggregation +'"]').prop('selected',true);
+					
+					if(kpiFormula.term1_sensor_id != null){
+						
+						//sensor based
+						$('#kpiSensor1 option[value="sensor"]').prop('selected',true);
+						this.kpiSensor1();
+						//get sensor configurations
+						var sEnv = {};
+						for(var idx = 0 ; idx < sensorEvents.length ; idx++)
+							if(sensorEvents[idx].id == kpiFormula.term1_sensor_id){
+								sEnv = sensorEvents[idx];
+								break;
+						}
+						
+						//this.updateField('selectSensor1',sEnv.sensorname);
+						$('#selectSensor2 option[value="'+ sEnv.sensorid +'"]').prop('selected',true);
+						//get sensor properties
+						this.loadEventProperties(false);
+						//set event
+						$('#selectSensorEvent2').val(sEnv.eventname).prop('selected',true);
+						this.changeTypeAndPartition();					
+						//this.updateField('eventTypeValue2', sEnv.eventtypevalue);
+					}else{
+						//kpi based
+						$('#kpiSensor1 option[value="kpi"]').prop('selected',true);
+						this.kpiSensor1();
+						
+						//choose the correspondent kpi 
+						$('#selectKpi1 option[value="'+ kpiFormula.term1_kpi_id +'"]').prop('selected',true);
+						
+					}
+					if(sEnv != null)				
+						if(sEnv.eventpartition != null)
+							showpartition = true;
+					
+					break;
+				case 'composed':
+												
+					if(kpiFormula.term1_sensor_id != null){
+						
+						//sensor based
+						$('#kpiSensor2 option[value="sensor"]').prop('selected',true);
+						this.kpiSensor();
+						//get sensor configurations
+						var sEnv = {};
+						for(var idx = 0 ; idx < sensorEvents.length ; idx++)
+							if(sensorEvents[idx].id == kpiFormula.term1_sensor_id){
+								sEnv = sensorEvents[idx];
+								break;
+						}						
+						//this.updateField('selectSensor1',sEnv.sensorname);
+						$('#selectSensor3 option[value="'+ sEnv.sensorid +'"]').prop('selected',true);
+						//get sensor properties
+						this.loadEventPropertiesSync(3);
+						//set event
+						$('#selectSensorEvent3').val(sEnv.eventname).prop('selected',true);
+						this.changeTypeAndPartitionAsync(3);					
+						//this.updateField('eventTypeValue2', sEnv.eventtypevalue);
+					}else{
+						//kpi based
+						$('#kpiSensor2 option[value="kpi"]').prop('selected',true);
+						this.kpiSensor();
+						
+						//choose the correspondent kpi 
+						$('#selectKpi2 option[value="'+ kpiFormula.term1_kpi_id +'"]').prop('selected',true);
+					}
+					
+					if(kpiFormula.operator_1.length == 1)
+						$('#op1 option:contains("'+ kpiFormula.operator_1 +'")').prop('selected',true);
+					else
+						$('#op1 option[value="'+ kpiFormula.operator_1 +'"]').prop('selected',true);
+					
+					if(kpiFormula.term2_sensor_id != null){
+						
+						//sensor based
+						$('#kpiSensor3 option[value="sensor"]').prop('selected',true);
+						this.kpiSensor();
+						//get sensor configurations
+						var sEnv = {};
+						for(var idx = 0 ; idx < sensorEvents.length ; idx++)
+							if(sensorEvents[idx].id == kpiFormula.term2_sensor_id){
+								sEnv = sensorEvents[idx];
+								break;
+						}
 
-				var chk = $('#contextualInformation input');
-				chk[0].checked = el.context_product;
-				chk[1].checked = el.context_machine;
-				chk[2].checked = el.context_shift;
-				chk[3].checked = el.context_mould;
-
-
-				$('.' + el.calculationType).css('display', 'table-row');
+						//this.updateField('selectSensor1',sEnv.sensorname);
+						$('#selectSensor4 option[value="'+ sEnv.sensorid +'"]').prop('selected',true);
+						//get sensor properties
+						this.loadEventPropertiesSync(4);
+						//set event
+						$('#selectSensorEvent4').val(sEnv.eventname).prop('selected',true);
+						this.changeTypeAndPartitionAsync(4);					
+						//this.updateField('eventTypeValue2', sEnv.eventtypevalue);
+					}else{
+						//kpi based
+						$('#kpiSensor3 option[value="kpi"]').prop('selected',true);
+						this.kpiSensor();
+						
+						//choose the correspondent kpi
+						$('#selectKpi3 option[value="'+ kpiFormula.term2_kpi_id +'"]').prop('selected',true);
+						
+					}
+					
+					if(sEnv != null)
+						if(sEnv.eventpartition != null)
+							showpartition = true;
+					
+					break;
+				default:
+					alert("error in calculation type!!");
+					break;
+				
+				}
+				
+				if(showpartition){
+					var chk = $('#contextualInformation input');
+					if(el.context_product){
+						chk[0].checked = true;
+						
+					}else if(el.context_machine){
+						chk[1].checked = true;
+					
+					}else if(el.context_shift){
+						chk[2].checked = true;
+					
+					}else if(el.context_mould){
+						chk[3].checked = true;
+						
+					}else{
+						chk[4].checked = true;
+						return true;
+					}
+					     
+					this.changePartitionIDs(false);
+					$('#partitionOptions').val(sEnv.partitionid).prop('selected',true);
+				}
+				
 				return true;
 			}
 		}
 		return false;
 	}
-	
-//	window.alert("screen 1 - OK");
-	
-	this.changeLoadedKpi = function(elId) /***/ {
-		var oldId = loadedKpi;
-		loadedKpi = arguments.length > 0 ? elId : "";
 
+	//window.alert("screen 1 - OK");
+
+	this.changeLoadedKpi = function(elId) /***/
+	{
+		var oldId = loadedKpi;
+		loadedKpi = arguments.length > 0 ? elId : ""; //arguments is 1 unit lenght and it's the kpi ID
 		var tree = $("#KPITree").jstree(true);
 		var toDelete = true;
 		for (var i = 0; i < this.kpiInfo.length; i++) {
@@ -313,17 +926,19 @@ function Screen1(elInfo) {
 			}
 		}
 	}
-//	window.alert("screen 1 - OK");
+	// window.alert("screen 1 - OK");
 	this.getKpiFormula = function(kpi, kpiFormula) {
 		if (kpi.calculation_type == 'simple') {
-			kpiFormula.term1_sensor_id = parseInt($('#selectSensor1').val());
+			//alert("pedido de sensor 1");
+			//kpiFormula.term1_sensor_id = parseInt($('#selectSensor1').val());
 		} else if (kpi.calculation_type == 'aggregate') {
 			if ($('#kpiSensor1').val() == 'kpi') {
-				kpiFormula.term1_kpi_id = parseInt($('#selectKpi1').val());
+				//kpiFormula.term1_kpi_id = parseInt($('#selectKpi1').val());
 			} else {
-				kpiFormula.term1_sensor_id = parseInt($('#selectSensor2').val());
+				alert("pedido de sensor 2");
+				//kpiFormula.term1_sensor_id = parseInt($('#selectSensor2').val());
 			}
-			kpiFormula.operator_1 = $('#selectAggType').val();
+			//kpiFormula.operator_1 = $('#selectAggType').val();
 
 		} else if (kpi.calculation_type == 'composed') {
 			if ($('#kpiSensor2').val() == 'kpi') {
@@ -342,48 +957,47 @@ function Screen1(elInfo) {
 				if ($('#kpiSensor4').val() == 'kpi') {
 					kpiFormula.term3_kpi_id = parseInt($('#selectKpi4').val());
 				} else {
-					kpiFormula.term3_sensor_id = parseInt($('#selectSensor5').val());
+					kpiFormula.term3_sensor_id = parseInt($('#selectSensor5')
+							.val());
 				}
 			}
 		}
 		return kpiFormula;
 	}
-//	window.alert("screen 1 - OK lsdjs");
+	// window.alert("screen 1 - OK lsdjs");
 	this.saveLoadedElement = function() {
+		
 		var kpi = {};
 		var kpiFormula = {};
 		var kpiIndex = "";
 		var kpiFormulaIndex = "";
-		var kpiFormulaId = "";
+		var kpiFormulaId = {};
+		var sensorKpi = {};
+		var sensorKpi2 = {};
+		var kpiInformation = {};
+		
 		if (loadedKpi != "") {
-
+			
+			$('html').block({
+				'message' : null
+			});
+			
 			for (var i = 0; i < kpiInfo.length; i++) {
 				if (kpiInfo[i].id == loadedKpi) {
-					kpi = jQuery.extend({}, kpiInfo[i]);
+					kpi = $.extend( {}, kpiInfo[i]);
 					kpiIndex = i;
 					break;
 				}
 			}
+			
 			for (var i = 0; i < kpiFormulas.length; i++) {
 				if (kpiFormulas[i].kpi_id == loadedKpi) {
-					kpiFormulaId = kpiFormulas[i].id;
+					kpiFormula = $.extend( {}, kpiFormulas[i]);
 					kpiFormulaIndex = i;
 					break;
 				}
 			}
-
-			kpiFormula.id = kpiFormulaId;
-			kpiFormula.kpi_id = parseInt(loadedKpi);
-			kpiFormula.term1_kpi_id = null;
-			kpiFormula.term1_sensor_id = null;
-			kpiFormula.operator_1 = null;
-			kpiFormula.term2_kpi_id = null;
-			kpiFormula.term2_sensor_id = null;
-			kpiFormula.operator_2 = null;
-			kpiFormula.term3_kpi_id = null;
-			kpiFormula.term3_sensor_id = null;
-			kpiFormula.criteria = null;
-
+			
 			kpi.name = $('#name').val();
 			kpi.text = $('#name').val() + delEditBtn;
 			kpi.description = $('#description').val();
@@ -391,62 +1005,548 @@ function Screen1(elInfo) {
 			kpi.sampling_rate = parseInt($('#samplingRate').val());
 			kpi.sampling_interval = $('#samplingInterval').val();
 			
-			kpi.number_support = $('#numberSupport').val();
-			kpi.number_support_format = $('#numberSupportFormat').val();
+			var samplingRate = parseInt($('#samplingRate').val());
 			
-			var context = $('#contextualInformation :input');
-			for (var i = 0; i < context.length; i++) {
-				kpi[context[i].value] = context[i].checked;
+			var chk = $('#contextualInformation input');
+			kpi.context_product = chk[0].checked;
+			kpi.context_machine = chk[1].checked;
+			kpi.context_shift = chk[2].checked;
+			kpi.context_mould = chk[3].checked;
+			
+			if(kpi.calculation_type != "aggregate"){
+				kpi.aggregation = 1;
+				kpiInformation.aggregationName = "NONE";
 			}
-			kpiFormula = this.getKpiFormula(kpi, kpiFormula);
-			$('html').block({
-				'message': null
-			});
-			$.ajax({
-				url: restAddress + 'proasense_hella/kpi_formula',
-				type: 'POST',
-				data: '{"type":"UPDATE","data":' + JSON.stringify(kpiFormula) + '}',
-				success: function(result) {
+			else{
+				if($('#selectAggType').val()==null){
+					$.notify('Please choose the aggregation type', 'info');
+					return;
+				}else{
+					kpi.aggregation = $('#selectAggType').find(":selected").attr("id");
+					kpiInformation.aggregationName = $('#selectAggType').find(":selected").text();		
+				}
+			}
+			
+			kpi.number_support = $('#numberSupport').val().toUpperCase();
 
-					if (result.succeeded) {
-						var tmpObj = jQuery.extend({}, kpi);
-						delete tmpObj.parent_id;
-						delete tmpObj.text;
-						delete tmpObj.children;
+			kpi.company_context = $('#companyContext').val();
+			
+			var senEnvIds2Delup = [];
+			var senEnvErrorUp = [];
+			
+			switch(kpi.calculation_type){
+			case "simple":
+				
+				kpiFormula.term1_kpi_id = null;
+				kpiFormula.operator_1 = null;
+				kpiFormula.term2_kpi_id = null;
+				
+				if(kpiFormula.term2_sensor_id != null)
+					senEnvIds2Delup.push(kpiFormula.term2_sensor_id);
+				kpiFormula.term2_sensor_id = null;
+				
+				sensorIDvalue = $('#selectSensor1').find(":selected").attr("value");
+				eventNAMEvalue = $('#selectSensorEvent1').find(":selected").attr("value");
+				
+				if(sensorIDvalue == null){
+					$.notify('Choose a sensor');
+					return;
+				}
+				if(eventNAMEvalue == null){
+					$.notify('Choose an event');
+					return;
+				}
+				
+				var SensorID = null;
+				var EventName = null;
+				for(var idx = 0 ; idx < sensorEvents.length ; idx++)
+					if(sensorEvents[idx].id == kpiFormula.term1_sensor_id){
+						SensorID = sensorEvents[idx].sensorid;
+						EventName = sensorEvents[idx].eventname;
+						break;
+					}
+				
+				if(SensorID != sensorIDvalue || (SensorID == sensorIDvalue && EventName != eventNAMEvalue)){	
+
+					if(kpiFormula.term1_sensor_id != null)	
+						senEnvIds2Delup.push(kpiFormula.term1_sensor_id);
+
+					sensorKpi.sensorid = $('#selectSensor1').find(":selected").attr("value");
+					sensorKpi.sensorname = $('#selectSensor1').find(":selected").text();
+					sensorKpi.eventname = $('#selectSensorEvent1').find(":selected").text();
+					sensorKpi.eventtype = $('#selectSensorEvent1').find(":selected").attr("type");
+					//sensorKpi.eventtypevalue = $('#eventTypeValue1').val();
+					sensorKpi.eventpartition = $('#selectSensorEvent1').find(":selected").attr("partition");
+					if(sensorKpi.eventpartition == "true")
+						sensorKpi.partitionid = $('#partitionOptions').find(":selected").attr("value");
+					else
+						sensorKpi.partitionid = "none";
+					sensorKpi.sampling_rate = isNaN(samplingRate) ? 0 : samplingRate;
+					sensorKpi.sampling_interval = $('#samplingInterval').val();
+					
+					
+					$.ajax({
+						url : restAddress
+								+ 'proasense_hella/sensorevent',
+						type : 'POST',
+						async: false ,
+						data : '{"type":"INSERT","data":['
+								+ JSON
+										.stringify(sensorKpi)
+								+ ']}',
+						success : function(result) {
+							$('html').unblock();
+							if (result.succeeded) {
+								
+								kpiFormula.term1_sensor_id = result.insertId[0];
+								sensorKpi.id = result.insertId[0];
+								
+								senEnvErrorUp.push(sensorKpi);
+							}
+							else{
+								$.notify('Error adding sensor 1');
+								return
+							}
+						}
+					});
+				}
+				break;
+			case "aggregate":
+				
+				kpiFormula.operator_1 = null;
+				kpiFormula.term2_kpi_id = null;
+				
+				if(kpiFormula.term2_sensor_id != null)
+					senEnvIds2Delup.push(kpiFormula.term2_sensor_id);
+				kpiFormula.term2_sensor_id = null;
+
+				if($('#kpiSensor1').val() == 'sensor'){
+					
+					kpiFormula.term1_kpi_id = null;
+					
+					sensorIDvalue = $('#selectSensor2').find(":selected").attr("value");
+					eventNAMEvalue = $('#selectSensorEvent2').find(":selected").attr("value");
+										
+					if(sensorIDvalue == null){
+						$.notify('Choose a sensor');
+						return;
+					}
+					if(eventNAMEvalue == null){
+						$.notify('Choose an event');
+						return;
+					}
+					
+//					var SensorID = null;
+//					var EventName = null;
+//					for(var idx = 0 ; idx < sensorEvents.length ; idx++)
+//						if(sensorEvents[idx].id == kpiFormula.term1_sensor_id ){
+//							SensorID = sensorEvents[idx].sensorid;
+//							EventName = sensorEvents[idx].eventname;
+//							break;
+//						}
+//
+//					if(SensorID != sensorIDvalue || (SensorID == sensorIDvalue && EventName != eventNAMEvalue)){	
+
+						if(kpiFormula.term1_sensor_id != null)		
+							senEnvIds2Delup.push(kpiFormula.term1_sensor_id);
+
+						sensorKpi.sensorid = $('#selectSensor2').find(":selected").attr("value");
+						sensorKpi.sensorname = $('#selectSensor2').find(":selected").text();
+						sensorKpi.eventname = $('#selectSensorEvent2').find(":selected").text();
+						sensorKpi.eventtype = $('#selectSensorEvent2').find(":selected").attr("type");
+						//sensorKpi.eventtypevalue = $('#eventTypeValue2').val();
+						sensorKpi.eventpartition = $('#selectSensorEvent2').find(":selected").attr("partition");
+						if(sensorKpi.eventpartition == "true")
+							sensorKpi.partitionid = $('#partitionOptions').find(":selected").attr("value");
+						else
+							sensorKpi.partitionid = "none";
+						sensorKpi.sampling_rate = isNaN(samplingRate) ? 0 : samplingRate;
+						sensorKpi.sampling_interval = $('#samplingInterval').val();
+						
+						
 						$.ajax({
-							url: restAddress + 'proasense_hella/kpi',
-							type: 'POST',
-							data: '{"type":"UPDATE","data":' + JSON.stringify(tmpObj) + '}',
-							success: function(result) {
+							url : restAddress
+									+ 'proasense_hella/sensorevent',
+							type : 'POST',
+							async: false ,
+							data : '{"type":"INSERT","data":['
+									+ JSON
+											.stringify(sensorKpi)
+									+ ']}',
+							success : function(result) {
 								$('html').unblock();
-
 								if (result.succeeded) {
-									$.notify('KPI updated', 'success');
-									kpiInfo[kpiIndex] = kpi;
-									kpiFormulas[kpiFormulaIndex] = kpiFormula;
-									$('#KPITree').jstree().rename_node(kpi.id, kpi.text);
-									activeScreen.closeScreen();
-								} else {
-									$.notify('KPI update failed');
+									
+									kpiFormula.term1_sensor_id = result.insertId[0];
+									sensorKpi.id = result.insertId[0];
+
+									senEnvErrorUp.push(sensorKpi);
+								}
+								else{
+									$.notify('Error adding sensor 1');
+									return
 								}
 							}
 						});
-					} else {
+					//}
+					
+				}
+				else{
+					
+					//case of kpi usage
+					alert("Not supported yet with kpis");
+					return;
+					
+					if(kpiFormula.term1_sensor_id != null)
+						senEnvIds2Delup.push(kpiFormula.term1_sensor_id);
+					
+					
+				}
+				
+				
+				break;
+			case "composed":
+	
+				kpiFormula.operator_1 = $('#op1').val();
+				kpiInformation.operator1 = kpiFormula.operator_1;
+				
+				if($('#kpiSensor2').val() == 'sensor'){
+										
+					kpiFormula.term1_kpi_id = null;
+					
+					var sensorIDvalue = $('#selectSensor3').find(":selected").attr("value");
+					var eventNAMEvalue = $('#selectSensorEvent3').find(":selected").attr("value");
+					
+					if($('#selectSensorEvent3').find(":selected").attr("partition") == "true")
+						partitionIDvalue = $('#partitionOptions').find(":selected").attr("value");
+					
+					if(sensorIDvalue == null){
+						$.notify('Choose a sensor');
+						return;
+					}
+					if(eventNAMEvalue == null){
+						$.notify('Choose an event');
+						return;
+					}
+					
+//					var sensorEventOLD = {};	
+//					
+//					for(var idx = 0 ; idx < sensorEvents.length ; idx++)
+//						if(sensorEvents[idx].id == kpiFormula.term1_sensor_id ){
+//							sensorEventOLD = $.extend( {}, sensorEvents[idx]);
+//							break;
+//						}
+//					
+//					if(sensorEventOLD.sensorid != sensorIDvalue || (sensorEventOLD.sensorid == sensorIDvalue && sensorEventOLD.eventname != eventNAMEvalue)){	
+						
+						if(kpiFormula.term1_sensor_id != null)
+							senEnvIds2Delup.push(kpiFormula.term1_sensor_id);
+
+						sensorKpi.sensorid = $('#selectSensor3').find(":selected").attr("value");
+						sensorKpi.sensorname = $('#selectSensor3').find(":selected").text();
+						sensorKpi.eventname = $('#selectSensorEvent3').find(":selected").text();
+						sensorKpi.eventtype = $('#selectSensorEvent3').find(":selected").attr("type");
+						//sensorKpi.eventtypevalue = $('#eventTypeValue3').val();
+						sensorKpi.eventpartition = $('#selectSensorEvent3').find(":selected").attr("partition");
+						if(sensorKpi.eventpartition == "true")
+							sensorKpi.partitionid = $('#partitionOptions').find(":selected").attr("value");
+						else
+							sensorKpi.partitionid = "none";
+						sensorKpi.sampling_rate = isNaN(samplingRate) ? 0 : samplingRate;
+						sensorKpi.sampling_interval = $('#samplingInterval').val();
+						
+						kpiInformation.sensorid1 = sensorKpi.sensorid;
+						kpiInformation.sensorname1 = sensorKpi.sensorname;
+						kpiInformation.eventname1 = sensorKpi.eventname;
+						kpiInformation.eventtype1 = sensorKpi.eventtype;
+						kpiInformation.eventpartition1 = sensorKpi.eventpartition;
+						kpiInformation.partitionid1 = sensorKpi.partitionid;
+						
+						
+						$.ajax({
+							url : restAddress
+									+ 'proasense_hella/sensorevent',
+							type : 'POST',
+							async: false ,
+							data : '{"type":"INSERT","data":['
+									+ JSON
+											.stringify(sensorKpi)
+									+ ']}',
+							success : function(result) {
+								if (result.succeeded) {
+									
+									kpiFormula.term1_sensor_id = result.insertId[0];
+									sensorKpi.id = result.insertId[0];
+
+									senEnvErrorUp.push(sensorKpi);
+								}
+								else{
+									$.notify('Error adding sensor 1');
+									return
+								}
+							}
+						});
+//					}else{
+//						
+//						kpiInformation.sensorid1 = sensorEventOLD.sensorid;
+//						kpiInformation.sensorname1 = sensorEventOLD.sensorname;
+//						kpiInformation.eventname1 = sensorEventOLD.eventname;
+//						kpiInformation.eventtype1 = sensorEventOLD.eventtype;
+//						kpiInformation.eventpartition1 = sensorEventOLD.eventpartition;
+//						kpiInformation.partitionid1 = sensorEventOLD.partitionid;						
+//					}
+										
+				}
+				else{
+					
+					//case of kpi usage
+					alert("Not supported yet with kpis");
+					return;
+					
+					if(kpiFormula.term1_sensor_id != null)
+						senEnvIds2Delup.push(kpiFormula.term1_sensor_id);
+	
+				}
+				
+				
+				if($('#kpiSensor3').val() == 'sensor'){
+					
+					kpiFormula.term2_kpi_id = null;
+					
+					var sensorIDvalue1 = $('#selectSensor4').attr("value");
+					var eventNAMEvalue1 = $('#selectSensorEvent4').attr("value");
+					if(sensorIDvalue1 == null){
+						$.notify('Choose a sensor');
+						return;
+					}
+					if(eventNAMEvalue1 == null){
+						$.notify('Choose an event');
+						return;
+					}
+					
+//					var sensorEventOLD1 = {};
+//					
+//					for(var idx2 = 0 ; idx2 < sensorEvents.length ; idx2++)
+//						if(sensorEvents[idx2].id == kpiFormula.term2_sensor_id ){
+//							sensorEventOLD1 = $.extend( {}, sensorEvents[idx2]);
+//							break;
+//						}
+//					
+//					if(sensorEventOLD1.sensorid != sensorIDvalue1 || (sensorEventOLD1.sensorid == sensorIDvalue1 && sensorEventOLD1.eventname != eventNAMEvalue1)){	
+						
+						if(kpiFormula.term2_sensor_id != null)
+							senEnvIds2Delup.push(kpiFormula.term2_sensor_id);
+						
+						sensorKpi2.sensorid = $('#selectSensor4').find(":selected").attr("value");
+						sensorKpi2.sensorname = $('#selectSensor4').find(":selected").text();
+						sensorKpi2.eventname = $('#selectSensorEvent4').find(":selected").text();
+						sensorKpi2.eventtype = $('#selectSensorEvent4').find(":selected").attr("type");
+						//sensorKpi2.eventtypevalue = $('#eventTypeValue4').val();
+						sensorKpi2.eventpartition = $('#selectSensorEvent4').find(":selected").attr("partition");
+						if(sensorKpi2.eventpartition == "true")
+							sensorKpi2.partitionid = $('#partitionOptions').find(":selected").attr("value");
+						else
+							sensorKpi2.partitionid = "none";
+												
+						sensorKpi2.sampling_rate = isNaN(samplingRate) ? 0 : samplingRate;
+						sensorKpi2.sampling_interval = $('#samplingInterval').val();
+
+						kpiInformation.sensorid2 = sensorKpi2.sensorid;
+						kpiInformation.sensorname2 = sensorKpi2.sensorname;
+						kpiInformation.eventname2 = sensorKpi2.eventname;
+						kpiInformation.eventtype2 = sensorKpi2.eventtype;
+						kpiInformation.eventpartition2 = sensorKpi2.eventpartition;
+						kpiInformation.partitionid2 = sensorKpi2.partitionid;
+						
+						$.ajax({
+							url : restAddress
+									+ 'proasense_hella/sensorevent',
+							type : 'POST',
+							async: false ,
+							data : '{"type":"INSERT","data":['
+									+ JSON
+											.stringify(sensorKpi2)
+									+ ']}',
+							success : function(result) {
+								if (result.succeeded) {
+									
+									kpiFormula.term2_sensor_id = result.insertId[0];
+									sensorKpi2.id = result.insertId[0];
+
+									senEnvErrorUp.push(sensorKpi2);
+								}
+								else{
+									$.notify('Error adding sensor 2');
+									return
+								}
+							}
+						});
+//					}else{
+//						kpiInformation.sensorid2 = sensorEventOLD1.sensorid;
+//						kpiInformation.sensorname2 = sensorEventOLD1.sensorname;
+//						kpiInformation.eventname2 = sensorEventOLD1.eventname;
+//						kpiInformation.eventtype2 = sensorEventOLD1.eventtype;
+//						kpiInformation.eventpartition2 = sensorEventOLD1.eventpartition;
+//						kpiInformation.partitionid2 = sensorEventOLD1.partitionid;	
+//						
+//					}
+					
+				}
+				else{
+					
+					//case of kpi usage
+					alert("Not supported yet with kpis");
+					return;
+					
+					if(kpiFormula.term2_sensor_id != null)
+						senEnvIds2Delup.push(kpiFormula.term2_sensor_id);
+	
+				}
+				break;
+				
+				default:
+					alert("Enter in default update!!");
+					break;
+			
+			}
+			
+			//merge kpi and sensor information
+			$.extend(kpiInformation, kpiInformation , kpi);
+			
+			//inform the storage of the new kpi
+			$.ajax({
+				url : restAddress
+						+ 'proasense_hella/update',
+				type : 'POST',
+				data : '{"type":"INFORM","data":['
+						+ JSON
+								.stringify(kpiInformation)
+						+ ']}',
+				success : function(result){
+					if(result.succeeded){
+						
+						for(var i = 0; i < senEnvErrorUp.length; i++){
+							sensorEvents.push(senEnvErrorUp[i]);
+						}			
+						
+						$.ajax({
+							url : restAddress + 'proasense_hella/kpi_formula',
+							type : 'POST',
+							async: false,
+							data : '{"type":"UPDATE","data":' + JSON.stringify(kpiFormula)
+									+ '}',
+							success : function(result) {
+
+								if (result.succeeded) {
+									
+									var tmpObj = jQuery.extend({}, kpi);
+									delete tmpObj.parent_id;
+									delete tmpObj.text;
+									delete tmpObj.children;
+									$.ajax({
+										url : restAddress + 'proasense_hella/kpi',
+										type : 'POST',
+										data : '{"type":"UPDATE","data":'
+												+ JSON.stringify(tmpObj) + '}',
+										success : function(result) {
+											$('html').unblock();
+
+											if (result.succeeded) {
+																				
+												$.notify('KPI updated', 'success');
+												kpiInfo[kpiIndex] = kpi;
+												kpiFormulas[kpiFormulaIndex] = kpiFormula;
+												$('#KPITree').jstree().rename_node(kpi.id,
+														kpi.text);
+												activeScreen.closeScreen();
+												
+												for(var i = 0; i < senEnvIds2Delup.length; i++){
+													
+													for(var idx = 0 ; idx < sensorEvents.length ; idx++)
+														if(sensorEvents[idx].id == senEnvIds2Delup[i]){
+															
+															sensorEvents.splice(idx,1);
+															break;
+														}
+																						
+													$.ajax({
+														url: restAddress + 'proasense_hella/sensorevent',
+														type: 'POST',
+														async: false,
+														data: '{"type":"DELETE","data":[{"id":' + senEnvIds2Delup[i] + '}]}',
+														success: function(result) {
+
+															if (result.succeeded) {
+																
+																
+															}else{
+																$('html').unblock();
+																$.notify('Error deleting sensor events');
+																return;
+															}
+														}
+															
+													});
+												}
+												
+											} else {
+												$.notify('KPI update failed');
+											}
+										}
+									});
+								} else {
+									$('html').unblock();
+									$.notify('Formula update failed');
+								}		
+							}
+						});		
+					}
+					else{
+						
+						for(var i = 0; i < senEnvErrorUp.length; i++){
+						
+							$.ajax({
+								url: restAddress + 'proasense_hella/sensorevent',
+								type: 'POST',
+								data: '{"type":"DELETE","data":[{"id":' + senEnvErrorUp[i].id + '}]}',
+								success: function(result) {
+
+									if (result.succeeded) {
+										
+											
+									}else{
+										$('html').unblock();
+										$.notify('Error deleting sensor events');
+										return;
+									}
+								}
+									
+							});
+						}
+						
 						$('html').unblock();
-						$.notify('Formula update failed');
+						$.notify('KPI update failed due to storage');
+						return;
 					}
 				}
 			});
-
 		} else {
-			if ( ($('#calculationType').val() != null) 
-					&& ($('#numberSupport').val() != null) 
-					&& ($('#samplingInterval').val() != null) 
-					&& ($('#name').val() != "") 
-					&& ($('#description').val() != "") ) {
+			if (($('#calculationType').val() != null)
+					&& ($('#numberSupport').val() != null)
+					&& ($('#samplingInterval').val() != null)
+					&& ($('#samplingRate').val() != null)
+					&& ($('#name').val() != "")
+					&& ($('#description').val() != "")) {
+				
 				var newKpi = {};
 				var newKpiFormula = {};
+				var newsensorKpi = {};
+				var newsensorKpi2 = {};
+				var kpiusage = {};
+				var newkpiInformation = {};
+				var sensor1 = false, sensor2 = false, sensor3 = false;
 				newKpiFormula.term1_sensor_id = null;
+				newKpiFormula.term1_kpi_id = null;
 				newKpiFormula.operator_1 = null;
 				newKpiFormula.term2_kpi_id = null;
 				newKpiFormula.term2_sensor_id = null;
@@ -454,7 +1554,7 @@ function Screen1(elInfo) {
 				newKpiFormula.term3_kpi_id = null;
 				newKpiFormula.term3_sensor_id = null;
 				newKpiFormula.criteria = null;
-				
+
 				newKpi.parent_id = newParentId;
 				newKpi.name = $('#name').val();
 				newKpi.description = $('#description').val();
@@ -468,56 +1568,631 @@ function Screen1(elInfo) {
 				newKpi.context_mould = chk[3].checked;
 				newKpi.calculation_type = $('#calculationType').val();
 				
-				newKpi.number_support = $('#numberSupport').val();
-				newKpi.number_support_format = $('#numberSupportFormat').val();
 				
-				newKpiFormula = this.getKpiFormula(newKpi, newKpiFormula);
+				if(newKpi.calculation_type != "aggregate"){
+					newKpi.aggregation = 1;
+					newkpiInformation.aggregationName = "NONE";
+				}
+				else{
+					if($('#selectAggType').val()==null){
+						$.notify('Please choose the aggregation type', 'info');
+						return;
+					}else{
+						newKpi.aggregation = $('#selectAggType').find(":selected").attr("id");
+						newkpiInformation.aggregationName = $('#selectAggType').find(":selected").text();		
+					}
+				}
 
+				newKpi.number_support = $('#numberSupport').val().toUpperCase();
+				//integrating context in kpi
+				newKpi.company_context = $('#companyContext').val();
+				//newKpi.number_support_format = $('#numberSupportFormat').val().toUpperCase();
+
+				//get the formula
+				//newKpiFormula = this.getKpiFormula(newKpi, newKpiFormula);
+								
 				$('html').block({
-					'message': null
+					'message' : null
 				});
 				$.ajax({
-					url: restAddress + 'proasense_hella/kpi',
-					type: 'POST',
-					data: '{"type":"INSERT","data":[' + JSON.stringify(newKpi) + ']}',
-					success: function(result) {
+							url : restAddress + 'proasense_hella/kpi',
+							type : 'POST',
+							data : '{"type":"INSERT","data":['
+									+ JSON.stringify(newKpi) + ']}',
+							success : function(result) {
+								
+								if (result.succeeded) {
+									
+									//insert new kpi ID
+									newKpiFormula.kpi_id = result.insertId[0];
+									newKpi.id = result.insertId[0];
+									
+									switch(newKpi.calculation_type){
+									case "simple":
+										//info to integrate with dominik model
+										newsensorKpi.sensorid = $('#selectSensor1').find(":selected").attr("value");
+										newsensorKpi.sensorname = $('#selectSensor1').find(":selected").text();
+										newsensorKpi.eventname = $('#selectSensorEvent1').find(":selected").text();
+										newsensorKpi.eventtype = $('#selectSensorEvent1').find(":selected").attr("type");
+										newsensorKpi.eventtypevalue = $('#eventTypeValue1').val();
+										newsensorKpi.eventpartition = $('#selectSensorEvent1').find(":selected").attr("partition");
+										if(newsensorKpi.eventpartition == "true")
+											newsensorKpi.partitionid = $('#partitionOptions').find(":selected").attr("value");
+										else
+											newsensorKpi.partitionid = "none";
+										newsensorKpi.sampling_rate = isNaN(samplingRate) ? 0 : samplingRate;
+										newsensorKpi.sampling_interval = $('#samplingInterval').val();
+																				
+										$.ajax({
+											url : restAddress
+													+ 'proasense_hella/sensorevent',
+											type : 'POST',
+											data : '{"type":"INSERT","data":['
+													+ JSON
+															.stringify(newsensorKpi)
+													+ ']}',
+											success : function(result) {
+												if (result.succeeded) {
+													
+													newKpiFormula.term1_sensor_id = result.insertId[0];
+													newsensorKpi.id = result.insertId[0];
+													
+													$.ajax({
+																url : restAddress
+																		+ 'proasense_hella/kpi_formula',
+																type : 'POST',
+																data : '{"type":"INSERT","data":['
+																		+ JSON
+																				.stringify(newKpiFormula)
+																		+ ']}',
+																success : function(result) {
+																	
+																	if (result.succeeded) {
+																		
+																		//merge kpi and sensor information
+																		$.extend(newkpiInformation, newsensorKpi, newKpi);
+																		
+																		newKpiFormula.id = result.insertId[0];
+																		
+																		//inform the storage of the new kpi
+																		$.ajax({
+																			url : restAddress
+																					+ 'proasense_hella/insert',
+																			type : 'POST',
+																			data : '{"type":"INFORM","data":['
+																					+ JSON
+																							.stringify(newkpiInformation)
+																					+ ']}',
+																			success : function(result2) {
+																				$('html').unblock();
+																				if (result2.succeeded) {
+																					
+																					$.notify('KPI added',
+																							'success');
+																					newKpi.children = [];
+																					for (var i = 0; i < kpiInfo.length; i++) {
+																						if (kpiInfo[i].id == newParentId) {
+																							kpiInfo[i].children
+																									.push(newKpi);
+																							break;
+																						}
+																					}
+																					
+																					kpiInfo.push(newKpi);
+																					kpiFormulas.push(newKpiFormula);
+																					sensorEvents.push(newsensorKpi);
+																					newKpi.text = newKpi.name
+																							+ delEditBtn;
+																					$('#KPITree')
+																							.jstree()
+																							.create_node(
+																									newParentId,
+																									jQuery
+																											.extend(
+																													{},
+																													newKpi));
+																					
+																				}
+																				else{
+																					//erase db corrupt data
+																					$.ajax({
+																						url: restAddress + 'proasense_hella/kpi_formula',
+																						type: 'POST',
+																						async: false,
+																						data: '{"type":"DELETE","data":[{"id":' + newKpiFormula.id + '}]}',
+																						});
+																					$.ajax({
+																						url: restAddress + 'proasense_hella/kpi',
+																						type: 'POST',
+																						data: '{"type":"DELETE","data":[{"id":' + newKpi.id + '}]}',
+																						});
+																					$.ajax({
+																						url: restAddress + 'proasense_hella/sensorevent',
+																						type: 'POST',
+																						data: '{"type":"DELETE","data":[{"id":' + newsensorKpi.id + '}]}',
+																						});
 
-						if (result.succeeded) {
+																					$('html').unblock();
+																					$.notify('Error adding kpi in storage');
+																				}
+																				
+																				screen1.closeScreen();
+																			}
+																		});
 
-							newKpiFormula.kpi_id = result.insertId[0];
-							newKpi.id = result.insertId[0];
-							$.ajax({
-								url: restAddress + 'proasense_hella/kpi_formula',
-								type: 'POST',
-								data: '{"type":"INSERT","data":[' + JSON.stringify(newKpiFormula) + ']}',
-								success: function(result) {
-									$('html').unblock();
-									if (result.succeeded) {
-										$.notify('KPI added', 'success');
-										newKpi.children = [];
-										for (var i = 0; i < kpiInfo.length; i++) {
-											if (kpiInfo[i].id == newParentId) {
-												kpiInfo[i].children.push(newKpi);
-												break;
+																	} else {
+																		$.ajax({
+																			url: restAddress + 'proasense_hella/kpi',
+																			type: 'POST',
+																			data: '{"type":"DELETE","data":[{"id":' + newKpi.id + '}]}',
+																			});
+																		$.ajax({
+																			url: restAddress + 'proasense_hella/sensorevent',
+																			type: 'POST',
+																			data: '{"type":"DELETE","data":[{"id":' + newsensorKpi.term1_sensor_id + '}]}',
+																			});
+
+																		$('html').unblock();
+																		$.notify('Error adding formula');
+																	}
+																}
+															});
+												
+												} else {
+													$.ajax({
+														url: restAddress + 'proasense_hella/kpi',
+														type: 'POST',
+														data: '{"type":"DELETE","data":[{"id":' + newKpi.id + '}]}',
+														});
+
+													$('html').unblock();
+													$.notify('Error adding sensor event');
+												}
 											}
+										});
+										
+										break;
+									case "aggregate":
+										
+										sensor1 = $('#kpiSensor1').val() == 'sensor';
+										
+										if(sensor1){
+											//info to integrate with dominik model
+											newsensorKpi.sensorid = $('#selectSensor2').find(":selected").attr("value");
+											newsensorKpi.sensorname = $('#selectSensor2').find(":selected").text();
+											newsensorKpi.eventname = $('#selectSensorEvent2').find(":selected").text();
+											newsensorKpi.eventtype = $('#selectSensorEvent2').find(":selected").attr("type");
+											newsensorKpi.eventtypevalue = $('#eventTypeValue2').val();
+											newsensorKpi.eventpartition = $('#selectSensorEvent2').find(":selected").attr("partition");
+											if(newsensorKpi.eventpartition == "true")
+												newsensorKpi.partitionid = $('#partitionOptions').find(":selected").attr("value");
+											else
+												newsensorKpi.partitionid = "none";
+											newsensorKpi.sampling_rate = isNaN(samplingRate) ? 0 : samplingRate;
+											newsensorKpi.sampling_interval = $('#samplingInterval').val();
+											
+											$.ajax({
+												url : restAddress
+														+ 'proasense_hella/sensorevent',
+												type : 'POST',
+												async: false,
+												data : '{"type":"INSERT","data":['
+														+ JSON
+																.stringify(newsensorKpi)
+														+ ']}',
+												success : function(result) {
+													if (result.succeeded) {
+														
+														newKpiFormula.term1_sensor_id = result.insertId[0];
+														newsensorKpi.id = result.insertId[0];
+													
+													} else {
+														$.ajax({
+															url: restAddress + 'proasense_hella/kpi',
+															type: 'POST',
+															data: '{"type":"DELETE","data":[{"id":' + newKpi.id + '}]}',
+															});
+
+														$('html').unblock();
+														$.notify('Error adding sensor');
+													}
+												}
+											});
 										}
-										newKpiFormula.id = result.insertId[0];
-										kpiInfo.push(newKpi);
-										kpiFormulas.push(newKpiFormula);
-										newKpi.text = newKpi.name + delEditBtn;
-										$('#KPITree').jstree().create_node(newParentId, jQuery.extend({}, newKpi));
-										screen1.closeScreen();
-									} else {
-										$.notify('Error adding formula');
+										else{			
+											
+											//kpi made with another kpi
+											
+											//alert("NOT SUPPORTED YET");
+											//break
+											newKpiFormula.term1_kpi_id = $('#selectKpi1').find(":selected").attr("value");
+											kpiusage.term1_kpi_id = newKpiFormula.term1_kpi_id;
+										}
+										
+										$.ajax({
+												url : restAddress
+														+ 'proasense_hella/kpi_formula',
+												type : 'POST',
+												data : '{"type":"INSERT","data":['
+														+ JSON
+																.stringify(newKpiFormula)
+														+ ']}',
+												success : function(result) {
+													if (result.succeeded) {
+														
+
+														newKpiFormula.id = result.insertId[0];
+														
+														//merge kpi and sensor information
+														if(sensor1)
+															$.extend(newkpiInformation, newsensorKpi , newKpi);
+														else
+															$.extend(newkpiInformation, kpiusage , newKpi);
+														
+														//inform the storage of the new kpi
+														$.ajax({
+															url : restAddress
+																	+ 'proasense_hella/insert',
+															type : 'POST',
+															data : '{"type":"INFORM","data":['
+																	+ JSON
+																			.stringify(newkpiInformation)
+																	+ ']}',
+																	success : function(result2) {
+																		
+																		$('html').unblock();
+																		
+																		if (result2.succeeded) {
+																			
+																			$.notify('KPI added',
+																			'success');
+																			newKpi.children = [];
+																			for (var i = 0; i < kpiInfo.length; i++) {
+																				if (kpiInfo[i].id == newParentId) {
+																					kpiInfo[i].children
+																							.push(newKpi);
+																					break;
+																				}
+																			}
+																			
+																			kpiInfo.push(newKpi);
+																			kpiFormulas.push(newKpiFormula);
+																			if(sensor1)
+																				sensorEvents.push(newsensorKpi);
+																			newKpi.text = newKpi.name
+																					+ delEditBtn;
+																			$('#KPITree')
+																					.jstree()
+																					.create_node(
+																							newParentId,
+																							jQuery
+																									.extend(
+																											{},
+																											newKpi));
+																			
+																		}else{
+																			//erase db corrupt data
+																			$.ajax({
+																				url: restAddress + 'proasense_hella/kpi_formula',
+																				type: 'POST',
+																				async: false,
+																				data: '{"type":"DELETE","data":[{"id":' + newKpiFormula.id + '}]}',
+																				});
+																			$.ajax({
+																				url: restAddress + 'proasense_hella/kpi',
+																				type: 'POST',
+																				data: '{"type":"DELETE","data":[{"id":' + newKpi.id + '}]}',
+																				});
+																			if(sensor1)
+																				$.ajax({
+																					url: restAddress + 'proasense_hella/sensorevent',
+																					type: 'POST',
+																					data: '{"type":"DELETE","data":[{"id":' + newsensorKpi.id + '}]}',
+																					});
+
+																			$('html').unblock();
+																			$.notify('Error adding kpi in storage');
+																			
+																		}
+																		
+																		screen1.closeScreen();
+																	}
+														});
+														
+													} else {
+														$.ajax({
+															url: restAddress + 'proasense_hella/kpi',
+															type: 'POST',
+															data: '{"type":"DELETE","data":[{"id":' + newKpi.id + '}]}',
+															});
+														if(sensor1)
+															$.ajax({
+																url: restAddress + 'proasense_hella/sensorevent',
+																type: 'POST',
+																data: '{"type":"DELETE","data":[{"id":' + newKpiFormula.term1_sensor_id + '}]}',
+																});
+
+														$('html').unblock();
+														$.notify('Error adding formula');
+													}
+												}
+											});
+								
+												
+										break;
+									case "composed":
+																				
+										sensor1 = $('#kpiSensor2').val() == 'sensor';
+										sensor2 = $('#kpiSensor3').val() == 'sensor';
+										//sensor3 = $('#kpiSensor4').val() == 'sensor';
+
+										newsensorKpi.sampling_rate = isNaN(samplingRate) ? 0 : samplingRate;
+										newsensorKpi.sampling_interval = $('#samplingInterval').val();
+										newsensorKpi2.sampling_rate = isNaN(samplingRate) ? 0 : samplingRate;
+										newsensorKpi2.sampling_interval = $('#samplingInterval').val();
+										
+										newKpiFormula.operator_1 = $('#op1').val();
+										newkpiInformation.operator1 = newKpiFormula.operator_1;
+										
+										var sensorRegSuccessfull = true;
+										
+										if(sensor1){
+											//info to integrate with dominik model
+											newsensorKpi.sensorid = $('#selectSensor3').find(":selected").attr("value");
+											newsensorKpi.sensorname = $('#selectSensor3').find(":selected").text();
+											newsensorKpi.eventname = $('#selectSensorEvent3').find(":selected").text();
+											newsensorKpi.eventtype = $('#selectSensorEvent3').find(":selected").attr("type");
+											newsensorKpi.eventtypevalue = $('#eventTypeValue3').val();
+											newsensorKpi.eventpartition = $('#selectSensorEvent3').find(":selected").attr("partition");
+											if(newsensorKpi.eventpartition == "true")
+												newsensorKpi.partitionid = $('#partitionOptions').find(":selected").attr("value");
+											else
+												newsensorKpi.partitionid = "none";
+
+											newkpiInformation.sensorid1 = newsensorKpi.sensorid;
+											newkpiInformation.sensorname1 = newsensorKpi.sensorname;
+											newkpiInformation.eventname1 = newsensorKpi.eventname;
+											newkpiInformation.eventtype1 = newsensorKpi.eventtype;
+											newkpiInformation.eventpartition1 = newsensorKpi.eventpartition;
+											newkpiInformation.partitionid1 = newsensorKpi.partitionid;
+																						
+										}
+										else{
+											alert("Not supported yet, the usage of kpis");
+											break;
+										}
+										
+										$.ajax({
+											url : restAddress
+													+ 'proasense_hella/sensorevent',
+											type : 'POST',
+											async: false ,
+											data : '{"type":"INSERT","data":['
+													+ JSON
+															.stringify(newsensorKpi)
+													+ ']}',
+											success : function(result) {
+												if (result.succeeded) {
+													
+													if(sensor1){
+														newKpiFormula.term1_sensor_id = result.insertId[0];
+														newsensorKpi.id = result.insertId[0];
+														//add to local	
+														sensorEvents.push(newsensorKpi);
+													}else
+														newKpiFormula.term1_kpi_id = result.insertId[0];
+												}
+												else{
+													sensorRegSuccessfull = sensorRegSuccessfull && false;
+													$.notify('Error adding sensor 1');
+												}
+											}
+										});
+										
+										if(sensor2){
+											
+											//info to integrate with dominik model
+											newsensorKpi2.sensorid = $('#selectSensor4').find(":selected").attr("value");
+											newsensorKpi2.sensorname = $('#selectSensor4').find(":selected").text();
+											newsensorKpi2.eventname = $('#selectSensorEvent4').find(":selected").text();
+											newsensorKpi2.eventtype = $('#selectSensorEvent4').find(":selected").attr("type");
+											newsensorKpi2.eventtypevalue = $('#eventTypeValue4').val();
+											newsensorKpi2.eventpartition = $('#selectSensorEvent4').find(":selected").attr("partition");
+											if(newsensorKpi2.eventpartition == "true")
+												newsensorKpi2.partitionid = $('#partitionOptions').find(":selected").attr("value");
+											else
+												newsensorKpi2.partitionid = "none";
+											
+											newkpiInformation.sensorid2 = newsensorKpi2.sensorid;
+											newkpiInformation.sensorname2 = newsensorKpi2.sensorname;
+											newkpiInformation.eventname2 = newsensorKpi2.eventname;
+											newkpiInformation.eventtype2 = newsensorKpi2.eventtype;
+											newkpiInformation.eventpartition2 = newsensorKpi2.eventpartition;
+											newkpiInformation.partitionid2 = newsensorKpi2.partitionid;
+																						
+										}
+										else{
+											alert("Not supported yet, the usage of kpis");
+											break;
+										}
+										
+										$.ajax({
+											url : restAddress
+													+ 'proasense_hella/sensorevent',
+											type : 'POST',
+											async: false ,
+											data : '{"type":"INSERT","data":['
+													+ JSON
+															.stringify(newsensorKpi2)
+													+ ']}',
+											success : function(result) {
+												if (result.succeeded) {
+													if(sensor2){
+														newKpiFormula.term2_sensor_id = result.insertId[0];
+														newsensorKpi2.id = result.insertId[0];
+														//add to local	
+														sensorEvents.push(newsensorKpi2);
+													}else
+														newKpiFormula.term2_kpi_id = result.insertId[0];
+												}
+												else{
+													sensorRegSuccessfull = sensorRegSuccessfull && false;
+													$.notify('Error adding sensor 2');
+												}
+											}
+										});
+										
+										if(sensorRegSuccessfull){
+											$.ajax({
+												url : restAddress
+														+ 'proasense_hella/kpi_formula',
+												type : 'POST',
+												data : '{"type":"INSERT","data":['
+														+ JSON
+																.stringify(newKpiFormula)
+														+ ']}',
+												success : function(result) {													
+													
+													if (result.succeeded) {
+														
+														//merge kpi and sensor information
+														$.extend(newkpiInformation, newkpiInformation , newKpi);
+														
+														newKpiFormula.id = result.insertId[0];
+														
+														//inform the storage of the new kpi
+														$.ajax({
+															url : restAddress
+																	+ 'proasense_hella/insert',
+															type : 'POST',
+															data : '{"type":"INFORM","data":['
+																	+ JSON
+																			.stringify(newkpiInformation)
+																	+ ']}',
+																	success : function(result2) {
+																		
+																		$('html').unblock();
+																		
+																		if (result2.succeeded) {
+																			
+																			$.notify('KPI added',
+																			'success');
+																			newKpi.children = [];
+																			for (var i = 0; i < kpiInfo.length; i++) {
+																				if (kpiInfo[i].id == newParentId) {
+																					kpiInfo[i].children
+																							.push(newKpi);
+																					break;
+																				}
+																			}
+																			kpiInfo.push(newKpi);
+																			kpiFormulas.push(newKpiFormula);
+																			
+																			newKpi.text = newKpi.name
+																					+ delEditBtn;
+																			$('#KPITree')
+																					.jstree()
+																					.create_node(
+																							newParentId,
+																							jQuery
+																									.extend(
+																											{},
+																											newKpi));
+																		}
+																		else{
+																			//erase db corrupt data
+																			$.ajax({
+																				url: restAddress + 'proasense_hella/kpi_formula',
+																				type: 'POST',
+																				async: false,
+																				data: '{"type":"DELETE","data":[{"id":' + newKpiFormula.id + '}]}',
+																				});
+																			$.ajax({
+																				url: restAddress + 'proasense_hella/kpi',
+																				type: 'POST',
+																				data: '{"type":"DELETE","data":[{"id":' + newKpi.id + '}]}',
+																				});
+																			if(sensor1)
+																				$.ajax({
+																					url: restAddress + 'proasense_hella/sensorevent',
+																					type: 'POST',
+																					data: '{"type":"DELETE","data":[{"id":' + newKpiFormula.term1_sensor_id + '}]}',
+																					});
+																			if(sensor2)
+																				$.ajax({
+																					url: restAddress + 'proasense_hella/sensorevent',
+																					type: 'POST',
+																					data: '{"type":"DELETE","data":[{"id":' + newKpiFormula.term2_sensor_id + '}]}',
+																					});
+																			
+																			$.notify('Error adding kpi in storage');
+																			
+																		}
+																		
+																		screen1.closeScreen();
+																	}
+														});
+														
+
+														$('html').unblock();
+														screen1.closeScreen();
+													} else {
+														//delete corrupt data
+														$.ajax({
+															url: restAddress + 'proasense_hella/kpi',
+															type: 'POST',
+															data: '{"type":"DELETE","data":[{"id":' + newKpi.id + '}]}',
+															});
+														if(sensor1)
+															$.ajax({
+																url: restAddress + 'proasense_hella/sensorevent',
+																type: 'POST',
+																data: '{"type":"DELETE","data":[{"id":' + newKpiFormula.term1_sensor_id + '}]}',
+																});
+														if(sensor2)
+															$.ajax({
+																url: restAddress + 'proasense_hella/sensorevent',
+																type: 'POST',
+																data: '{"type":"DELETE","data":[{"id":' + newKpiFormula.term2_sensor_id + '}]}',
+																});
+
+														$('html').unblock();
+														$.notify('Error adding formula');
+													}
+												}
+											});
+										}
+										else{
+											//delete corrupt data
+											$.ajax({
+												url: restAddress + 'proasense_hella/kpi',
+												type: 'POST',
+												data: '{"type":"DELETE","data":[{"id":' + newKpi.id + '}]}',
+												});
+											if(newKpiFormula.term1_sensor_id !=null)
+												$.ajax({
+													url: restAddress + 'proasense_hella/sensorevent',
+													type: 'POST',
+													data: '{"type":"DELETE","data":[{"id":' + newKpiFormula.term1_sensor_id + '}]}',
+													});
+											if(newKpiFormula.term2_sensor_id !=null)
+												$.ajax({
+													url: restAddress + 'proasense_hella/sensorevent',
+													type: 'POST',
+													data: '{"type":"DELETE","data":[{"id":' + newKpiFormula.term2_sensor_id + '}]}',
+													});
+										}
+										break;
+									default:
+										alert("default new sensor kpi");	
+										break;
 									}
+								} else {
+									$('html').unblock();
+									$.notify('Error adding kpi');
 								}
-							});
-						} else {
-							$('html').unblock();
-							$.notify('Error adding kpi');
-						}
-					}
-				});
+							}
+						});
 
 			} else {
 				$.notify('Please fill all the boxes', 'info');
@@ -545,6 +2220,9 @@ function Screen2(kpiInfo) {
 			$('#addTargetBtn').on('click', function(event) {
 				scr.addTargetBtn();
 			});
+			$('#editTargetBtn').on('click', function(event) {
+				scr.editTargetBtn(loadedTargetToEditId);
+			});
 			this.loadElData(loadedKpi)
 			showScreen(true);
 		}
@@ -561,10 +2239,12 @@ function Screen2(kpiInfo) {
 				var listRow = '';
 				var listCol1 = '';
 				var listCol2 = '';
-
+					
 				var contexts = ['context_product', 'context_machine', 'context_shift', 'context_mould'];
 
 				var options = '';
+				
+				var kpiInfoTmp = getKpiInfoId(elId);
 				for (var j = 0; j < $('#contextualInformation input').length; j++) {
 					var chk = $('#contextualInformation input')[j];
 					options = '<option value=null>All '+chk.name+'s</option>';
@@ -575,14 +2255,14 @@ function Screen2(kpiInfo) {
 						for (var k = 0; k < tmpVect.length; k++) {
 							options = options + '<option value=' + tmpVect[k].id + '>' + tmpVect[k].name + '</option>';
 						}
-						listRow = listRow + '<tr><td width="300px">' + chk.name + '</td><td><select data-value="' + chk.value + '">' + options + '</select></td></tr>';
+						listRow = listRow + '<tr><td width="200px">' + chk.name + '</td><td width="200px"><select data-value="' + chk.value + '" class="form-control select-90">' + options + '</select></td></tr>';
 					}
 				}
 				options = '';
 				
 				$('#targetList').append(listRow);
-				titleRow=titleRow+'<td colspan=7 style="text-align:center"><b>'+el.name+'</b></td>'
-				firstRow = firstRow + '<td>Lower bound</td><td colspan=2>Upper bound</td></tr>';
+				titleRow=titleRow+'<td colspan=8 style="text-align:center"><b>'+el.name+'</b></td>'
+				firstRow = firstRow + '<td>Lower bound</td><td colspan=3>Upper bound</td></tr>';
 				$('#targetTable').append(titleRow);
 				$('#targetTable').append(firstRow);
 				var toAppend = '';
@@ -607,28 +2287,41 @@ function Screen2(kpiInfo) {
 					var lower_bound_to_append; 
 					if ( (kpiTargets[j].lower_bound == null) || (kpiTargets[j].lower_bound == '') ){
 						lower_bound_to_append = '-'; 
-					}
-					else {
+					} else {
 						lower_bound_to_append = kpiTargets[j].lower_bound;
+						if (kpiInfoTmp.number_support_format.toUpperCase()  == 'PERCENTAGE') {
+							lower_bound_to_append = parseFloat((lower_bound_to_append*100).toFixed(2));
+						} else if (kpiInfoTmp.number_support_format.toUpperCase()  == 'DECIMAL'){
+							lower_bound_to_append = parseFloat((lower_bound_to_append*1).toFixed(kpiInfoTmp.nsf_decimal_places));
+						}
 					}
 					
 					var upper_bound_to_append; 
 					if ( (kpiTargets[j].upper_bound == null) || (kpiTargets[j].upper_bound == '')){
 						upper_bound_to_append = '-'; 
-					}
-					else {
+					} else {
 						upper_bound_to_append = kpiTargets[j].upper_bound;
+						if (kpiInfoTmp.number_support_format.toUpperCase()  == 'PERCENTAGE') {
+							upper_bound_to_append = parseFloat((upper_bound_to_append*100).toFixed(2));
+						} else if (kpiInfoTmp.number_support_format.toUpperCase()  == 'DECIMAL'){
+							upper_bound_to_append = parseFloat((upper_bound_to_append*1).toFixed(kpiInfoTmp.nsf_decimal_places));
+						}
 					}
-					console.log("[Appending]: kpi target lower bound "+kpiTargets[j].lower_bound + "; upper bound "+kpiTargets[j].upper_bound);
 					toAppend = toAppend + '<td>' + lower_bound_to_append + '</td><td>' + upper_bound_to_append + '</td>';
-					toAppend = toAppend + '<td width="25px" data-id=' + kpiTargets[j].id + ' style="cursor:pointer" align="center" title="Delete element" ><span class="glyphicon glyphicon-minus" style="color:#333333" aria-hidden="true"></span></td></tr>';
+
+					toAppend = toAppend + '<td width="25px" data-id=' + kpiTargets[j].id + ' style="cursor:pointer" align="center" title="Edit target" onclick="screen2.editTargetInfo('+kpiTargets[j].id+')" width="25px"><span class="glyphicon glyphicon-pencil" style="color:#333333" aria-hidden="true"></span></td>';
+					toAppend = toAppend + '<td width="25px" data-id=' + kpiTargets[j].id + ' title="Delete target" style="cursor:pointer" align="center" ><span class="glyphicon glyphicon-minus" style="color:#333333" aria-hidden="true"></span></td></td></tr>';
 					$('#targetTable').append(toAppend);
 					var scr = this;
 					$('#targetTable').find('tr:last').find('td:last').click(function(e) {
 						scr.delTargetInfo(e.currentTarget);
-					})
+					});
 				}
-
+				
+				// Define number support format
+				//showNumberSupportFormat(el.number_support_format);
+//				window.alert(JSON.stringify(el));
+//				showNSFDecimalPlaces(el.nsf_decimal_places);
 				return true;
 			}
 		}
@@ -638,59 +2331,137 @@ function Screen2(kpiInfo) {
 	this.saveLoadedElement = function() {
 		var id = this.loadedKpi;
 		if (id != "") {
+			var kpiInfoTmp = getKpiInfoId(loadedKpi);
 			var query = '[{';
 			var selectBoxes = $('select');
 			for (var j = 0; j < selectBoxes.length; j++) {
 				query = query + '"' + selectBoxes.eq(j).attr('data-value') + '":' + selectBoxes.eq(j).find('option:selected').val() + ',';
-			}
-			query = query + '"kpi_id":' + loadedKpi + ',"upper_bound":"' + $('#upperBoundBox').val() + '","lower_bound":"' + $('#lowerBoundBox').val() + '"}]';
-			$('html').block({
-				'message': null
-			});
-			$.ajax({
-				url: restAddress + 'proasense_hella/kpi_target',
-				type: 'POST',
-				data: '{"type":"INSERT","data":' + query + '}',
-				success: function(response) {
-					$('html').unblock();
-					if (response.succeeded) {
-						var newTgId = response.insertId[0];
-						var newTgObj = JSON.parse(query)[0];
-						newTgObj.id = newTgId;
-//						if (newTgObj.lower_bound == "") {
-//							newTgObj.lower_bound = 0;
-//						}
-//						if (newTgObj.upper_bound == "") {
-//							newTgObj.upper_bound = 0;
-//						}
-						kpiTargets.push(newTgObj);
-						var rows = $('#targetList').find('tr');
-						var toAppend = '<tr>'
-						var targetInfoEl = {}
-						var kpiTargetBoxVal = $('#kpiTargetBox').val()
-						var upperBoundBox = $('#upperBoundBox').val()
-						var lowerBoundBox = $('#lowerBoundBox').val()
-
-						for (var j = 0; j < rows.length ; j++) {
-							toAppend = toAppend + '<td>' + rows.eq(j).find('select option:selected').text() + '</td>';
-						}
-						toAppend = toAppend + '<td>'+ (lowerBoundBox == '' ? '-' : lowerBoundBox) + '</td><td>' + (upperBoundBox == '' ? '-' : upperBoundBox) +  '</td><td width="25px" data-id=' + newTgId + ' style="cursor:pointer" align="center" title="Delete element" ><span class="glyphicon glyphicon-minus" style="color:#333333" aria-hidden="true"></span></td></tr>';
-						$('#targetTable').append(toAppend);
-
-
-
-						$('#targetTable').find('tr:last').find('td:last').click(function(e) {
-							scr.delTargetInfo(e.currentTarget);
-						})
-						$.notify('New target added', 'success');
-					} else {
-						$.notify("Violation of primary key constraint.\n Hint:Check bounds");
-					}
-
+				var dataValueName = selectBoxes.eq(j).attr('data-value');
+				switch(dataValueName) {
+					case "product_id": kpiInfoTmp.product_id = (selectBoxes.eq(j).find('option:selected').val() == "null" ? null : selectBoxes.eq(j).find('option:selected').val()  );
+						break;
+					case "machine_id": kpiInfoTmp.machine_id = (selectBoxes.eq(j).find('option:selected').val() == "null" ? null : selectBoxes.eq(j).find('option:selected').val()  );
+						break;
+					case "shift_id": kpiInfoTmp.shift_id = (selectBoxes.eq(j).find('option:selected').val() == "null" ? null : selectBoxes.eq(j).find('option:selected').val()  );
+						break;
+					case "mould_id": kpiInfoTmp.mould_id = (selectBoxes.eq(j).find('option:selected').val() == "null" ? null : selectBoxes.eq(j).find('option:selected').val()  );
+						break;
+					default:break;
 				}
-			});
+			}
 
+			var upperValue = "";
+			var lowerValue = "";
+			var upValValidateNShow = "";
+			var lwValValidateNShow = "";
+			
+			var nZeros = 4;//numberOfZeros(kpiInfoTmp.nsf_decimal_places);
+			
+//			var x2 = $('#upperBoundBoxDecimalPlaces').css('visibility');
+//			var x3  = $('#upperBoundBoxDecimalPlaces').css('display');
+				
+			if ( ($('#upperBoundBox').val() == null) || ($('#upperBoundBox').val() == "") ){
+				upperValue = "";
+			} else {
+				upperValue = $('#upperBoundBox').val();
+				
+//				if ( (kpiInfoTmp.nsf_decimal_places > 0) && (upperValue.indexOf(".") == -1) )
+//					upperValue = $('#upperBoundBox').val() + "." + nZeros;
+				
+				
+				if (kpiInfoTmp.number_support_format.toUpperCase()  == 'PERCENTAGE') {
+					upperValue = parseFloat((upperValue/100).toFixed(4));
+				} else if (kpiInfoTmp.number_support_format.toUpperCase()  == 'DECIMAL'){
+					upperValue = parseFloat(upperValue).toFixed(4);
+				}
+				upValValidateNShow = upperValue;
+			}
+				
+			if (($('#lowerBoundBox').val() == null) || ($('#lowerBoundBox').val() == "")) {
+				lowerValue = "";
+			} else {
+				lowerValue = $('#lowerBoundBox').val();
 
+//				if ( (kpiInfoTmp.nsf_decimal_places > 0) && (lowerValue.indexOf(".") == -1) )
+//					lowerValue = $('#lowerBoundBox').val() + "." + nZeros;
+
+				if (kpiInfoTmp.number_support_format.toUpperCase()  == 'PERCENTAGE') {
+					lowerValue=parseFloat((lowerValue/100).toFixed(4));
+				} else if (kpiInfoTmp.number_support_format.toUpperCase()  == 'DECIMAL'){
+					lowerValue = parseFloat(lowerValue).toFixed(4);
+				}
+				
+				lwValValidateNShow = lowerValue;
+			}
+			
+//			var upperValue=parseFloat((upperValue/100).toFixed(2));
+
+			
+			query = query + '"kpi_id":' + loadedKpi + ',"upper_bound":"' + upperValue + '","lower_bound":"' + lowerValue + '"}]';
+			
+//			console.log("loadedKPI: "+JSON.stringify(this.loadedKpi));
+
+			var validateInfo = validateNewTargetInputs(upValValidateNShow, lwValValidateNShow, loadedKpiNumberFormat, nZeros, kpiInfoTmp.id, kpiInfoTmp);
+			if (validateInfo.isValid) {
+				$('html').block({
+					'message': null
+				});
+				$.ajax({
+					url: restAddress + 'proasense_hella/kpi_target',
+					type: 'POST',
+					data: '{"type":"INSERT","data":' + query + '}',
+					success: function(response) {
+						$('html').unblock();
+						if (response.succeeded) {
+							var newTgId = response.insertId[0];
+							var newTgObj = JSON.parse(query)[0];
+							newTgObj.id = newTgId;
+
+							kpiTargets.push(newTgObj);
+							var rows = $('#targetList').find('tr');
+							var toAppend = '<tr id="' +response.insertId[0]+'">';
+							var targetInfoEl = {}
+							var kpiTargetBoxVal = $('#kpiTargetBox').val();
+							
+							var upperBoundBox = upValValidateNShow;
+//							var upperBoundBox = $('#upperBoundBox').val();
+
+							var lowerBoundBox = lwValValidateNShow;
+//							var lowerBoundBox = $('#lowerBoundBox').val();
+	
+							for (var j = 0; j < rows.length ; j++) {
+								toAppend = toAppend + '<td>' + rows.eq(j).find('select option:selected').text() + '</td>';
+							}
+	//						toAppend = toAppend + '<td width="25px" data-id=' + kpiTargets[j].id + ' style="cursor:pointer" align="center" title="Edit target" width="25px"><span class="glyphicon glyphicon-pencil" style="color:#333333" aria-hidden="true"></span></td>';
+							
+							toAppend = toAppend + '<td>'
+									 + (lowerBoundBox == '' ? '-' : lowerBoundBox) 
+									 + '</td><td>' 
+									 + (upperBoundBox == '' ? '-' : upperBoundBox) 
+									 + '<td width="25px" data-id=' + newTgId + ' style="cursor:pointer" align="center" title="Edit target" onclick="screen2.editTargetInfo('+newTgId+')" width="25px"><span class="glyphicon glyphicon-pencil" style="color:#333333" aria-hidden="true"></span></td>' 
+									 + '</td><td width="25px" data-id=' + newTgId + ' style="cursor:pointer" align="center" title="Delete element" ><span class="glyphicon glyphicon-minus" style="color:#333333" aria-hidden="true"></span></td></tr>';
+	
+							$('#targetTable').append(toAppend);
+	
+	
+	
+							$('#targetTable').find('tr:last').find('td:last').click(function(e) {
+								scr.delTargetInfo(e.currentTarget);
+							})
+							$.notify('New target added', 'success');
+						} else {
+							$.notify("Violation of primary key constraint.\n Hint:Check bounds");
+						}
+	
+					}
+				});
+			} else {
+//				message: message, elementNameId: elementNameId
+				$.notify(validateInfo.message);
+				$(validateInfo.elementNameId).select();
+//				$(validateInfo.elementNameId+"DecimalPlaces").select();
+				
+			}
 
 		}
 	}
@@ -719,19 +2490,292 @@ function Screen2(kpiInfo) {
 				}
 			}
 		});
+	}
+	
+	this.editTargetInfo = function(element) {
+		
+//		document.getElementById('addTargetBtn').css('display') = "none";
+		document.getElementById('addTargetBtn').style.display = "none";
+		document.getElementById('editTargetBtn').style.display = "inline";
+		
+		
+		loadedTargetToEditId = element;
+		// 0 - discover kpi target to edit 
+		
+		var targetToEdit;
+		
+		for (var k=0; k<kpiTargets.length;k++) {
+			if (kpiTargets[k].id == element)
+				targetToEdit = kpiTargets[k]; 
+				JSON.stringify(targetToEdit);
+		}
+		
+		// 1 - load values from kpiTargets array for this kpi id and target id into html inputs&selects
+		
+		var rows = $('#targetList').find('tr').find('select');
+		
+//		var selectRows = $('#targetList').find('tr').find('select option:selected');
+		
+//		var toAppend = "";
+		for (var j = 0; j < rows.length ; j++) {
+//			window.alert(rows.find('select').eq(j).attr("data-value"));
+			var data_value = rows.eq(j).attr("data-value");
+//			var valueSlct = rows.eq(j).value;
+//			var valueSlctOpt = selectRows.eq(j).attr('value');
+			switch (data_value) {
+				case "product_id": document.getElementById('targetList').getElementsByTagName('select')[j].selectedIndex = targetToEdit.product_id;
+								break;
+				case "machine_id": document.getElementById('targetList').getElementsByTagName('select')[j].selectedIndex = targetToEdit.machine_id;
+								break;
+				case "shift_id": document.getElementById('targetList').getElementsByTagName('select')[j].selectedIndex = targetToEdit.shift_id;
+								 break;
+				case "mould_id": document.getElementById('targetList').getElementsByTagName('select')[j].selectedIndex = targetToEdit.mould_id;
+								 break;
+				default: window.alert("NO CONTEXT");
+					break;
+			}
+		}
+		
+		
+		// 2 - change contexts or values for bounds
+		
+		document.getElementById("upperBoundBox").value = targetToEdit.upper_bound;
+		document.getElementById("lowerBoundBox").value = targetToEdit.lower_bound;
+		
 
+		// 3 - check if bounds already exist in others kpi
+		// 		3.1 - if so, do not edit
+		//		3.2 - if not edit targets by sending an UPDATE request to server and updating the line in the table
+		 
+		//			hint: var rows = $('#targetList').find('tr');
+		
+//		for (var k=0; k<kpiTargets.length;k++) {
+//			if (kpiTargets[k].id == element)
+//				targetToEdit = kpiTargets[k]; 
+//				JSON.stringify(targetToEdit);
+//		}
+//		
+//		hasTargets(upperBound, lowerBound, kpiElId, numSupFormat, contextIds, targetId, editStatus)
+//		
+//		targetToEdit.upper_bound = 100;
+//		
+//		document.getElementById("upperBoundBox").value = targetToEdit.upper_bound;
+//		$.ajax({
+//			url: restAddress + 'proasense_hella/kpi_target',
+//			type: 'POST',
+//			data: '{"type":"UPDATE","data":' + JSON.stringify(targetToEdit) + '}',
+//			success: function(result) {
+//				if (result.succeeded) {
+//					if (debugMode) {
+//						console.log("Sucess from UPDATE - /kpi_formula : result = "+JSON.stringify(result));
+//					}
+//					$.notify('TARGET OK', 'success');
+//				} else {
+////					$('html').unblock();
+//					$.notify('TARGET DID FAILED');
+//				}
+//			}
+//		});
+		
+		// 4- also edit in KpiTargets array
+		
 
 	}
+
+	
 	this.closeScreen = function() {
 		this.changeLoadedKpi();
 		showScreen(false);
 		$('.content').html('');
 	}
+	
 	this.cancelBtn = function() {
 		this.closeScreen();
 	}
 	this.addTargetBtn = function() {
 		this.saveLoadedElement();
+	}
+
+	this.editTargetBtn = function(targetToEditId) {
+		var targetToEdit = "";
+		var newTargetToEdit = {};
+		
+		newTargetToEdit.id = null;
+		newTargetToEdit.kpi_id = null;
+		newTargetToEdit.product_id = null;
+		newTargetToEdit.machine_id = null;
+		newTargetToEdit.mould_id = null;
+		newTargetToEdit.shift_id = null;
+		newTargetToEdit.upper_bound = "";
+		newTargetToEdit.lower_bound = "";
+		
+		for (var k=0; k<kpiTargets.length;k++) {
+			if (kpiTargets[k].id == targetToEditId)
+				targetToEdit = kpiTargets[k]; 
+				JSON.stringify(targetToEdit);
+		}
+		
+		var id = loadedKpi;
+		if (id != "") {
+			var kpiInfoTmp = getKpiInfoId(loadedKpi);
+//			var query = '[{"id":' + targetToEdit.id + ',';
+			var selectBoxes = $('select');
+			for (var j = 0; j < selectBoxes.length; j++) {
+//				query = query + '"' + selectBoxes.eq(j).attr('data-value') + '":' + selectBoxes.eq(j).find('option:selected').val() + ',';
+				var dataValueName = selectBoxes.eq(j).attr('data-value');
+				switch(dataValueName) {
+					case "product_id": kpiInfoTmp.product_id = (selectBoxes.eq(j).find('option:selected').val() == "null" ? null : selectBoxes.eq(j).find('option:selected').val()  );
+						break;
+					case "machine_id": kpiInfoTmp.machine_id = (selectBoxes.eq(j).find('option:selected').val() == "null" ? null : selectBoxes.eq(j).find('option:selected').val()  );
+						break;
+					case "shift_id": kpiInfoTmp.shift_id = (selectBoxes.eq(j).find('option:selected').val() == "null" ? null : selectBoxes.eq(j).find('option:selected').val()  );
+						break;
+					case "mould_id": kpiInfoTmp.mould_id = (selectBoxes.eq(j).find('option:selected').val() == "null" ? null : selectBoxes.eq(j).find('option:selected').val()  );
+						break;
+					default:break;
+				}
+			}
+
+			var upperValue = "";
+			var lowerValue = "";
+			var upValValidateNShow = "";
+			var lwValValidateNShow = "";
+			
+			var nZeros = numberOfZeros(kpiInfoTmp.nsf_decimal_places);
+			
+			if ( ($('#upperBoundBox').val() == null) || ($('#upperBoundBox').val() == "") ){
+				upperValue = "";
+			} else {
+				upperValue = $('#upperBoundBox').val();
+				
+				if ( (kpiInfoTmp.nsf_decimal_places > 0) && (upperValue.indexOf(".") == -1) )
+					upperValue = $('#upperBoundBox').val() + "." + nZeros;
+
+				upValValidateNShow = upperValue;
+				
+				if (kpiInfoTmp.number_support_format.toUpperCase()  == 'PERCENTAGE') {
+					upperValue = parseFloat((upperValue/100).toFixed(4));
+				}
+			}
+				
+			if (($('#lowerBoundBox').val() == null) || ($('#lowerBoundBox').val() == "")) {
+				lowerValue = "";
+			} else {
+				// value is only one box
+				lowerValue = $('#lowerBoundBox').val();
+				
+				if ( (kpiInfoTmp.nsf_decimal_places > 0) && (lowerValue.indexOf(".") == -1) )
+					lowerValue = $('#upperBoundBox').val() + "." + nZeros;
+
+				lwValValidateNShow = lowerValue;
+
+				if (kpiInfoTmp.number_support_format.toUpperCase()  == 'PERCENTAGE') {
+					lowerValue=parseFloat((lowerValue/100).toFixed(4));
+				}
+				
+			}
+			
+			newTargetToEdit.id = targetToEditId;
+			newTargetToEdit.kpi_id = loadedKpi;
+			newTargetToEdit.product_id = kpiInfoTmp.product_id;
+			newTargetToEdit.machine_id = kpiInfoTmp.machine_id;
+			newTargetToEdit.mould_id = kpiInfoTmp.mould_id;
+			newTargetToEdit.shift_id = kpiInfoTmp.shift_id;
+			newTargetToEdit.upper_bound = upperValue;
+			newTargetToEdit.lower_bound = lowerValue;
+			
+
+//			query = query + '"kpi_id":' + loadedKpi + ',"upper_bound":"' + upperValue + '","lower_bound":"' + lowerValue + '"}]';
+
+			var validateInfo = validateNewTargetInputs(upValValidateNShow, lwValValidateNShow, loadedKpiNumberFormat, kpiInfoTmp.nsf_decimal_places, kpiInfoTmp.id, kpiInfoTmp, targetToEditId, true);
+			if (validateInfo.isValid) {
+				$('html').block({
+					'message': null
+				});
+				$.ajax({
+					url: restAddress + 'proasense_hella/kpi_target',
+					type: 'POST',
+
+					data: '{"type":"UPDATE","data":' + JSON.stringify(newTargetToEdit) + '}',
+					success: function(response) {
+						$('html').unblock();
+						if (response.succeeded) {
+							var tmpKpiTargets = [];
+							
+							for (var index=0;index<kpiTargets.length;index++) {
+								if (kpiTargets[index].id == targetToEditId){
+									tmpKpiTargets.push(newTargetToEdit);
+								} else {
+									tmpKpiTargets.push(kpiTargets[index]);
+								}
+							}
+							kpiTargets = tmpKpiTargets;
+							
+
+							var rows = $('#targetTable').find('tr');
+							
+							
+							var toAppend = "";
+							for (var j = 0; j < rows.length ; j++) {
+								var data_valueId = rows.eq(j).attr('id');
+								if (data_valueId == targetToEditId) {
+
+									toAppend = "";
+
+									var chk = $('#contextualInformation input:checked');
+									for (var k = 0; k < chk.length; k++) {
+										if(newTargetToEdit[chk[k].value]==null) {
+											toAppend = toAppend + '<td>All '+ chk[k].name.split(' ')[0]+'s</td>';
+										} else {
+											toAppend = toAppend + '<td>' + eval('get' + chk[k].name.split(' ')[0] + '(' + newTargetToEdit[chk[k].value] + ').name') + '</td>';
+										}
+									}
+
+									toAppend += "<td>" + lowerValue + "</td>";
+									toAppend += "<td>" + upperValue + "</td>";
+									toAppend += '<td width="25px" data-id=' + targetToEditId + ' style="cursor:pointer" align="center" title="Edit target" onclick="screen2.editTargetInfo('+targetToEditId+')" width="25px"><span class="glyphicon glyphicon-pencil" style="color:#333333" aria-hidden="true"></span></td>' 
+									toAppend += '<td width="25px" data-id=' + targetToEditId + ' style="cursor:pointer" align="center" title="Delete element" ><span class="glyphicon glyphicon-minus" style="color:#333333" aria-hidden="true"></span></td>';
+
+									document.getElementById('targetTable').getElementsByTagName('tr')[j].innerHTML = toAppend;
+									
+									$('#targetTable').find('tr').eq(j).find('td:last').click(function(e) {
+										scr.delTargetInfo(e.currentTarget);
+									})
+
+									break;
+								}
+							}
+
+
+							$.notify('Target updated', 'success');
+							document.getElementById('addTargetBtn').style.display = "inline";
+							document.getElementById('editTargetBtn').style.display = "none";
+							document.getElementById('addTargetBtn').style.display = "inline";
+							
+							document.getElementById("upperBoundBox").value = "";
+							document.getElementById("lowerBoundBox").value = "";							
+							var rows = $('#targetList').find('tr').find('select');
+							
+							for (var j = 0; j < rows.length ; j++) {
+								document.getElementById('targetList').getElementsByTagName('select')[j].selectedIndex = 0;
+							}
+
+							
+						} else {
+							$.notify("Violation of primary key constraint.\n Hint:Check bounds");
+						}
+	
+					}
+				});
+			} else {
+//					message: message, elementNameId: elementNameId
+				$.notify(validateInfo.message);
+				$(validateInfo.elementNameId).select();
+//					$(validateInfo.elementNameId+"DecimalPlaces").select();
+				
+			}
+
+		}
 	}
 
 	this.changeLoadedKpi = function(elId) {
@@ -823,6 +2867,8 @@ function ScreenGraph(kpiInfo) {
 		this.startYear=(new Date(graphStartTime)).getFullYear();
 		var graphEndTime = $('#toDateChart').handleDtpicker('getDate').getTime();
 		var graphGranularity = $('#granularityChart').val();
+		var granularityID = $('#granularityChart').find(":selected").attr("id");
+		var enablePred = $('#predictionSwitch').is(":checked");
 		
 		var contextValueId = $('#context_select_list').val();
 		var contextValueIdStr = "";
@@ -834,6 +2880,9 @@ function ScreenGraph(kpiInfo) {
 		if (secondContextValue != null)
 			secondContextValueStr = "&secondContext="+secondContextValue;
 		
+		var includeGlobal = $('#GlobalIncludeId').is(":checked");
+		var includeGlobalStr = "&includeGlobal="+includeGlobal;
+				
 		//scr.initializeGraph(this.testGraphData);
 		var evaluation = isDatetimeOk(graphGranularity, graphStartTime, graphEndTime);
 		if(!evaluation.isDateTimeOk){
@@ -842,17 +2891,35 @@ function ScreenGraph(kpiInfo) {
 				});
 		} else {
 			var checked = $('input:checked').slice(0,5).first().val();
+			$('#graphTable').block({
+				'message': "Updating graph. Please wait...",
+				css: { 
+		            border: 'none', 
+		            padding: '15px', 
+		            backgroundColor: '#000', 
+		            '-webkit-border-radius': '10px', 
+		            '-moz-border-radius': '10px', 
+		            opacity: .5, 
+		            color: '#fff' 
+		        } 
+				
+			});
 			$.ajax({
 				url: restAddress + "func/getGraphData?kpiId=" + loadedKpi + 
 									"&contextualInformation=" + this.graphContextualInformation + 
 									"&startTime=" + graphStartTime + 
 									"&endTime=" + graphEndTime + 
 	 								"&granularity=" + graphGranularity + 
+	 								"&granularityID=" + granularityID + 
+	 							    "&withPrediction="+ enablePred+
 									contextValueIdStr +
-									secondContextValueStr,
+									secondContextValueStr +
+									includeGlobalStr,
 				type: "GET",
 				success: function(graphData) {
 					scr.initializeGraph(graphData,checked);
+					$('#graphTable').unblock();
+					$.notify('Graph updated.', 'success');
 				},
 			});
 		}
@@ -866,16 +2933,24 @@ function ScreenGraph(kpiInfo) {
 		var heatMapEndTime = endDate!==undefined?endDate:$('#toDateHeatMap').handleDtpicker('getDate').getTime()+1;
 		var contextName = legend!==undefined?legend:'Global';
 		var heatMapGranularity = legend!==undefined?$('#granularityChart').val():$('#granularityHeatMap').val()
-	    console.log("[HEATMAP] start time: " + heatMapStartTime + "; end time: "+ heatMapEndTime);
 		var evaluation = isDatetimeOk(heatMapGranularity, heatMapStartTime, heatMapEndTime);
-	    console.log("[HEATMAP]: isDatetimeOk(heatMapGranularity, heatMapStartTime, heatMapEndTime)");
 		if(!evaluation.isDateTimeOk){
-		    console.log("[HEATMAP]: evaluation " + evaluation.message);
 			$.notify(evaluation.message, {
 				'autoHideDelay': 10000
 				});
 		} else {
-		    console.log("[HEATMAP]: Ajax  ");
+			$('#heatMapTable').block({
+				'message': "Updating heatmap. Please wait...",
+				css : { 
+		            border: 'none', 
+		            padding: '15px', 
+		            backgroundColor: '#000', 
+		            '-webkit-border-radius': '10px', 
+		            '-moz-border-radius': '10px', 
+		            opacity: .5, 
+		            color: '#fff' 
+		        } 
+			});
 			$.ajax({
 				url: restAddress + "func/getHeatMapData?kpiId=" + loadedKpi +
 									"&contextualInformation="+scr.graphContextualInformation+ 
@@ -887,7 +2962,10 @@ function ScreenGraph(kpiInfo) {
 									"&contextName="+contextName,
 				type: "GET",
 				success: function(heatMapData) {
-					scr.initializeHeatMap(heatMapData)
+					scr.initializeHeatMap(heatMapData);
+					$('#heatMapTable').unblock();
+					$.notify('Heatmap updated.', 'success');
+					
 				}
 			});
 			$('#fromDateHeatMap').handleDtpicker('setDate',heatMapStartTime);
@@ -934,7 +3012,7 @@ function ScreenGraph(kpiInfo) {
 			scr.scrapRate(parseInt(Math.random() * 100 + 0.5))
 			scr.oee(parseInt(Math.random() * 100 + 0.5))
 			scr.totalUnits(parseInt(Math.random() * 20 + 0.5))
-		}, 1000)
+		}, 1000);
 	}
 
 	this.totalUnits = function(val) {
@@ -966,6 +3044,7 @@ function ScreenGraph(kpiInfo) {
 
 	this.openScreen = function(id) {
 		$('.content').html(this.content);
+		$('#predictionSwitch').bootstrapSwitch();
 		this.graphContextualInformation="Global";
 		this.graphGranularity = "monthly";
 		var radiosGraph = $('#graphTable').find('td').slice(1, 5);
@@ -1019,11 +3098,12 @@ function ScreenGraph(kpiInfo) {
 		this.startYear=(new Date(graphStartTime)).getFullYear();
 		var graphEndTime = secondGraphDate.getTime();
 		var graphGranularity = $('#granularityChart').val();
+		var granularityID = $('#granularityChart').find(":selected").attr("id");
+		var enablePred = $('#predictionSwitch').is(":checked");
 		$('#graphButton').on('click', function(event) {
 			scr.updateGraph();
 			var startDate = ($('#fromDateChart').handleDtpicker('getDate').getTime())!==undefined?$('#fromDateChart').handleDtpicker('getDate').getTime():graphStartTime;
 			var endDate = ($('#toDateChart').handleDtpicker('getDate').getTime())!==undefined?$('#toDateChart').handleDtpicker('getDate').getTime():graphEndTime;
-			console.log("[Update graph Button] heatmap: start time: "+graphStartTime+"; end time:"+graphEndTime);
 			scr.updateHeatMap(startDate,endDate);
 		});
 		$('#heatMapButton').on('click', function(event) {
@@ -1035,7 +3115,9 @@ function ScreenGraph(kpiInfo) {
 		$.ajax({
 			url: restAddress + "func/getGraphData?kpiId=" + loadedKpi + 
 							   "&contextualInformation=" + graphContextualInformation + 
-							   "&granularity=" + graphGranularity + 
+							   "&granularity=" + graphGranularity +
+							   "&granularityID=" + granularityID +
+							   "&withPrediction="+ enablePred+
 							   "&startTime=" + graphStartTime + 
 							   "&endTime=" + graphEndTime,
 			type: "GET",
@@ -1076,11 +3158,13 @@ function ScreenGraph(kpiInfo) {
 				"todayButton": false,
 				"onShow": function(handler){},
 				"onHide": function(handler){}
-			}, firstGraphDate)
+				}, firstGraphDate); /*
 			.keyup(closeDtPickerOnEnter)
-			.blur(function() {
+			.blur(function(handler) {
+				window.alert($(this).handleDtpicker('getDate'));
+				window.alert($(this).val());
 				$('.datepicker').hide();
-			  });
+			  });*/
 		
 		$('#toDateChart').appendDtpicker({
 				"dateOnly": false,
@@ -1089,11 +3173,11 @@ function ScreenGraph(kpiInfo) {
 				"onShow": function(handler) {},
 				"onHide": function(handler) {}
 			},
-			secondGraphDate)
+			secondGraphDate);/*
 			.keyup(closeDtPickerOnEnter)
 			.blur(function() {
 				$('.datepicker').hide();
-			  });
+			  });*/
 		
 		$('#fromDateHeatMap').appendDtpicker({
 				"dateOnly": false,
@@ -1102,11 +3186,11 @@ function ScreenGraph(kpiInfo) {
 				"onShow": function(handler) {},
 				"onHide": function(handler) {}
 			},
-			firstHeatDate)
+			firstHeatDate);/*
 			.keyup(closeDtPickerOnEnter)
 			.blur(function() {
 				$('.datepicker').hide();
-			  });
+			  });*/
 
 		$('#toDateHeatMap').appendDtpicker({
 				"dateOnly": false,
@@ -1115,11 +3199,11 @@ function ScreenGraph(kpiInfo) {
 				"onShow": function(handler) {},
 				"onHide": function(handler) {}
 			},
-			secondHeatDate)
+			secondHeatDate);/*
 			.keyup(closeDtPickerOnEnter)
 			.blur(function() {
 				$('.datepicker').hide();
-			  });
+			  });*/
 		
 
 		this.gage = new JustGage({
@@ -1131,6 +3215,7 @@ function ScreenGraph(kpiInfo) {
 			titleFontSize: 20,
 			title: "Scrap rate",
 		});
+		
 		$.ajax({
 			url: restAddress + "func/getRealTimeKpis?kpiId=" + loadedKpi,
 			type: "GET",
@@ -1140,10 +3225,9 @@ function ScreenGraph(kpiInfo) {
 				scr.oee(realTimeKpisData.oee);
 			},
 		});
-
 		showScreen(true);
 
-		this.connect();
+		//this.connect();
 
 	}
 
@@ -1162,12 +3246,9 @@ function ScreenGraph(kpiInfo) {
 			for (var i = 0; i < seriesData.length; i++) {
 				graphSeries["serie" + (i + 1)] = seriesData[i];
 			}
-		} else
-			console.log("Sorry. No valid values. Neither numbers or objects in the right format received.");
-
+		}
 		return graphSeries;
 	}
-
 
 	this.closeScreen = function() {
 		showScreen(false);
@@ -1200,32 +3281,28 @@ function ScreenGraph(kpiInfo) {
 			
 			data.push({value:value,varX:heatMapData.data[i].varX,varY:heatMapData.data[i].varY})
 		}
-		var factorTemp = maxValue/6;
-		console.log("Max value: "+maxValue+"; factorTemp: " + factorTemp);
-		
+		var factorTemp = maxValue/6;		
 		
 		$('#heatMap').empty();
 		$('#heatMap').width(0);
 		var containerWidth = $('#heatMapTable').find('td').eq(4).width();
 		var width = containerWidth < 550 * factor ? 550 * factor : containerWidth > 800 * factor ? 800 * factor : containerWidth+200;
 		var minWidth = width<485?485:width;
-		console.log("Heatmap container width:" + containerWidth + "; width:" +width+ "; minWidth:"+minWidth+"; factor:"+factor);
-
 		var deltaX=xLabelLength!=1?xLabelLength!=2?0:40:80
 		$('#heatMap').width(minWidth);
 		var margin = {
 				top: 30,
 				right: 0,
-				bottom: 50,
+				bottom: 80,
 				left: 140
 			},
-			height = (201 - margin.top - margin.bottom) * heatMapData.yLabels.length,
+			height = (60) * heatMapData.yLabels.length,
 			gridSize = Math.floor(width / (heatMapData.xLabels.length + 1)),
-			gridHeight = 118,
+			gridHeight = 60/*118*/,
 			legendElementWidth = gridSize*minWidth/width,
 			buckets = 9,
 			colors = generateColor("#FFFFFF", "#F7A35C", 18); // alternatively colorbrewer.YlGnBu[9]
-
+		
 		var svg = d3.select("#heatMap").append("svg")
 			.attr("width", minWidth+150)
 			.attr("height", height + margin.top + margin.bottom)
@@ -1240,7 +3317,7 @@ function ScreenGraph(kpiInfo) {
 			})
 			.attr("x", deltaX)
 			.attr("y", function(d, i) {
-				return i * gridHeight;
+				return i * gridHeight - (gridHeight/2);
 			})
 			.style("text-anchor", "end")
 			.attr("transform", "translate(-6," + gridSize / 1.5 + ")")
@@ -1291,22 +3368,7 @@ function ScreenGraph(kpiInfo) {
 				return (d.varY - 1) * gridHeight;
 			})
 			.attr("title", function(d) {
-				$(this).tooltip({
-					content: kpiFormatValueString(loadedKpiNumberFormat, d.value, true, false)
-						/*d.value==null?"No data":((loadedKpi>=4)?
-							'Value: ' + (d.value).toFixed(2) + '%' : 
-							'Value: ' + (d.value))*/,
-					position: {
-						at: "top-60"
-					},
-					show: {
-						duration: 0
-					},
-					hide: {
-						duration: 0
-					}
-				});
-				return "Value: " + d.value;
+				return kpiFormatValueString(loadedKpiNumberFormat, d.value, true, false);
 			})
 			.attr("rx", 4)
 			.attr("ry", 4)
@@ -1346,7 +3408,7 @@ function ScreenGraph(kpiInfo) {
 			.attr("x", function(d, i) {
 				return legendElementWidth * factor * i;
 			})
-			.attr("y", height + margin.top - 30)
+			.attr("y", height + margin.top)
 			.attr("width", legendElementWidth * factor)
 			.attr("height", gridHeight / 6)
 			.style("fill", function(d, i) {
@@ -1361,12 +3423,14 @@ function ScreenGraph(kpiInfo) {
 			.attr("x", function(d, i) {
 				return legendElementWidth * factor * i;
 			})
-			.attr("y", height + gridHeight - 80);
+			.attr("y", height + gridHeight - 40);
 		var fillColor = "";
 		legend.exit().remove();
 		$('rect').hover(function() {
 				fillColor = $(this).css('fill');
 				$(this).css('fill', '#AFE8FF');
+				//var position = $(this).position();
+				//alert( "left: " + position.left + ", top: " + position.top );
 			},
 			function() {
 				$(this).css('fill', fillColor);
@@ -1380,13 +3444,14 @@ function ScreenGraph(kpiInfo) {
 				break;
 			}
 		}
+		
+		initializeTooltips();
+		
 		$('#heatMapTitle').html('<h4>' + heatMapData.title + '</h4>' + (heatMapData.subTitle !== undefined ? '<h5>' + heatMapData.subTitle + '</h5>' : ''));
 	}
 
 	this.initializeGraph = function(graphData,checked) {
 		this.graphData = graphData;
-		console.log("Initializing graph with graphData = "+JSON.stringify(graphData));
-		console.log("Label count is = " + JSON.stringify(graphData.labels.length) + " - Point count = " + JSON.stringify(graphData.data[0].length));
 		if (graphData.data != null) {
 			// KPI Chart
 			var len = graphData.data.length;
@@ -1395,7 +3460,7 @@ function ScreenGraph(kpiInfo) {
 				margins: [10, 110, 20, 50],
 				defaultSeries: {
 					plotProps: {
-						"stroke-width": 4
+						"stroke-width": 5
 					},
 					dot: true,
 					dotProps: {
@@ -1405,55 +3470,22 @@ function ScreenGraph(kpiInfo) {
 				},
 				series: {
 					serie1: {
-						fill:true,
+						fill: $('#GlobalIncludeId').is(":checked"),
 						color: "#7CB5EC"
 					},
-					serie2: {
-						color: "#FF2020"
-					},
-					serie3: {
-						color: "#90ED7D"
-					},
-					serie4: {
-						color: "#F7A35C"
-					},
-					serie5: {
-						color: "#C0C0C0"
-					},
-					serie6: {
-						color: "#8085E9"
-					},
-					serie7: {
-						color: "#009999"
-					},
-					serie8: {
-						color: "#000000"
-					},
-					serie9: {
-						color: "#F5007B"
-					},
-					serie10: {
-						color: "#9900CC"
-					},
-					serie11: {
-						color: "#EBEB00"
-					},
-					serie12: {
-						color: "#0000EB"
-					},					
-					serie13: {
-						color: "#A0A0A0"
-					},					
-
-
 				},
 				defaultAxis: {
-					labels: true,
-
+					labels: true
 				},
 				features: {
 					mousearea: {
 						onMouseClick: function(a, b, c, d) {
+							/* 
+							 * 
+							 * b = serie name. ex: serie1; 
+							 * c = serie index: if serie2 then c=2;
+							 * 
+							 * */
 							if(b.startsWith('serie'))
 							{
 								var serieIndex = b.substring(5, b.length) - 1;
@@ -1467,24 +3499,26 @@ function ScreenGraph(kpiInfo) {
 								switch(scr.graphGranularity)
 								{
 									case 'monthly':
+										startDate.setHours(6,00);
 										endDate=new Date(startDate.getTime());
 										endDate.setMonth(endDate.getMonth()+1);
+										endDate = new Date(endDate-1);
 										break;
 									case 'weekly':
-										endDate = new Date(startDate.getTime()+1000*3600*24*7);
+										endDate = new Date(startDate.getTime()+(1000*3600*24*7-60));
+										
 										break;
 									case 'daily':
-										endDate = new Date(startDate.getTime()+1000*3600*24);
+										endDate = new Date(startDate.getTime()+(1000*3600*24-60));
 										break;
 									case 'hourly':
-										endDate = new Date(startDate.getTime()+1000*3600);
+										endDate = new Date(startDate.getTime()+(1000*3600-60));
 										break;
 									default:
 										endDate=new Date(startDate.getTime());
 										endDate.setMonth(endDate.getMonth()+1);
 								}
-								console.log("HeatMap for graph point request: startDate="+startDate.getTime()+"; endDate="+(endDate.getTime()+1));
-								scr.updateHeatMap(startDate.getTime(),startDate.getTime()+1,legend);
+								scr.updateHeatMap(startDate.getTime(),endDate.getTime(),legend);
 							}
 						},
 					},
@@ -1519,6 +3553,18 @@ function ScreenGraph(kpiInfo) {
 						'color': scr.getRandomColor()
 					};
 				}
+
+				//add predictions to the char
+				var result = (graphData.data).concat(graphData.predictions);
+				for(var i = 0; i < graphData.predictions.length; i++){
+				
+					$.elycharts.templates["line_basic_1"].series['serie' + (len+1+i)] = {
+							'color': $.elycharts.templates["line_basic_1"].series['serie' + (i+1)].color,
+							'plotProps' : { "stroke-dasharray" : "-"}
+						};					
+				}
+
+				
 				$.elycharts.templates["line_basic_1"].features.legend.x = $('#chart').width() - 100;
 				var limits=[];
 				for(var i=0;i<kpiTargets.length;i++)
@@ -1562,12 +3608,12 @@ function ScreenGraph(kpiInfo) {
 								var obj={};
 								var plotProps={};
 								plotProps = {"stroke-dasharray" : "-"};
-								console.log("PlotProps lower bound = "+JSON.stringify(plotProps));
 								obj.plotProps = plotProps;
 								obj.color = color==null?$.elycharts.templates["line_basic_1"].series.serie1.color:color;
 								obj.value = kpiTargets[i].lower_bound
-								limits.push(obj);
-								console.log(JSON.stringify(limits));
+								if ((i==0 && $('#GlobalIncludeId').is(":checked")) || i>0) {
+									limits.push(obj);
+								} 
 							}
 							
 							if(kpiTargets[i].upper_bound!=null && kpiTargets[i].upper_bound!="")
@@ -1575,12 +3621,12 @@ function ScreenGraph(kpiInfo) {
 								var obj={};
 								var plotProps={};
 								plotProps = {"stroke-dasharray" : "-"};
-								console.log("PlotProps upper bound = "+JSON.stringify(plotProps));
 								obj.plotProps = plotProps;
 								obj.color = color==null?$.elycharts.templates["line_basic_1"].series.serie1.color:color;
 								obj.value = kpiTargets[i].upper_bound
-								limits.push(obj);
-								console.log(JSON.stringify(limits));
+								if ((i==0 && $('#GlobalIncludeId').is(":checked")) || i>0) {
+									limits.push(obj);
+								} 
 							}
 						}
 					}
@@ -1590,21 +3636,15 @@ function ScreenGraph(kpiInfo) {
 					template: "line_basic_1",
 					tooltips: function(serieId, lineIndex, valueIndex, singleValue) {
 						var legend="";
-						
-						console.log("Graph data (labels): "+JSON.stringify(graphData.labels));
-						console.log("Graph data (legends): "+JSON.stringify(graphData.legend));
-						
-						console.log("serieId: " + serieId + "\n valueIndex: " + lineIndex + "\n allValues: "+ valueIndex + "\n singleValue: " + singleValue);
-						
 						if(lineIndex.startsWith("serie")) {
-							legend=this.legend[lineIndex.substring(5,lineIndex.length)-1]+"<br>";
+							var index = lineIndex.substring(5,lineIndex.length)-1;
+							if(index >= len)
+								index-=len;
+							legend=this.legend[index]+"<br>";
 						}
 						else {
 							legend="Target<br>";
 						}
-						console.log("graphData.labels[valueIndex<"+valueIndex+">]: " + JSON.stringify(graphData.labels[valueIndex]));
-						console.log("This.labels[valueIndex<"+valueIndex+">]: " + JSON.stringify(this.labels[valueIndex]));
-						
 						legend+="Date: "+graphData.labels[valueIndex]+"<br>";
 						var value = legend+  /*(loadedKpi >= "4" ? 
 								'Value: ' + parseFloat((singleValue * 100).toFixed(2)) + "%" : 
@@ -1615,8 +3655,8 @@ function ScreenGraph(kpiInfo) {
 					percentage:isPercentage(loadedKpiNumberFormat)/*loadedKpi>=4?true:false,false*/,
 					legend: graphData.legend,
 					labels: graphData.labels,
-					values: scr.graphSeriesValues(graphData.data),
-					limits:limits,
+					values: scr.graphSeriesValues(result),
+					limits: limits,
 					defaultSeries: {
 						tooltip: {
 							width: 100,
@@ -1662,6 +3702,7 @@ function ScreenGraph(kpiInfo) {
 		}
 	};
 
+	/*
 	$.elycharts.templates['line_basic_1'] = {
 		type: "line",
 		margins: [10, 110, 20, 50],
@@ -1720,11 +3761,11 @@ function ScreenGraph(kpiInfo) {
 				}
 			}
 		}
-	};
+	};*/
 }
 
 function ScreenQuery() {
-//	window.alert("ScreenGraph initialization");
+	// window.alert("ScreenGraph initialization");
 	var scr = this;
 
 	this.baseUrl = '/storage-reader/query';
@@ -1845,11 +3886,9 @@ function loadOriginalContextSets(){
 	if (originalHorizontalSetLoaded && originalVerticalSetLoaded){
 		originalVerticalSet = document.getElementById("verticalSet").cloneNode(true);
 		originalVerticalSetLoaded = false;
-		console.log("Original vertical set id (in loadOriginalContextSets): "+originalVerticalSet.id);
 		
 		originalHorizontalSet = document.getElementById("horizontalSet").cloneNode(true);
 		originalHorizontalSetLoaded = false;
-		console.log("Original vertical set id (in loadOriginalContextSets): "+originalHorizontalSet.id);
 	}
 }
 
@@ -1864,11 +3903,7 @@ function insertContextSelectList() {
 	var closeHTML = "</select>";
 	var elementId = "";
 	var content = "";
-	var contextArr;
-	
-	console.log("Original vertical set id (before): "+originalVerticalSet.id);
-	console.log("Original horizontal set id (before): "+originalHorizontalSet.id);
-	
+	var contextArr;	
 	
 	switch (arguments[0]) {
 		case 1: elementId =  "contextProductSelectList";
@@ -1876,41 +3911,69 @@ function insertContextSelectList() {
 				document.getElementById("verticalSet").outerHTML = removeOneContext("product", originalVerticalSet.cloneNode(true)).outerHTML;
 				document.getElementById("verticalSet").selected
 				document.getElementById("horizontalSet").outerHTML = removeOneContext("product", originalHorizontalSet.cloneNode(true)).outerHTML;
+				document.getElementById("GlobalIncludeId").disabled = false;
+				document.getElementById("GlobalIncludeIdDiv").setAttribute('class','checkbox');
 		break;
 		case 2: elementId = "contextMachineSelectList";
 				contextArr = machines;
 				document.getElementById("verticalSet").outerHTML = removeOneContext("machine", originalVerticalSet.cloneNode(true)).outerHTML;
 				document.getElementById("horizontalSet").outerHTML = removeOneContext("machine", originalHorizontalSet.cloneNode(true)).outerHTML;
+				document.getElementById("GlobalIncludeId").disabled = false;
+				document.getElementById("GlobalIncludeIdDiv").setAttribute('class','checkbox');
 		break;
 		case 3: elementId = "contextShiftSelectList";
 				contextArr = shifts;
 				document.getElementById("verticalSet").outerHTML = removeOneContext("shift", originalVerticalSet.cloneNode(true)).outerHTML;
 				document.getElementById("horizontalSet").outerHTML = removeOneContext("shift", originalHorizontalSet.cloneNode(true)).outerHTML;
+				document.getElementById("GlobalIncludeId").disabled = false;
+				document.getElementById("GlobalIncludeIdDiv").setAttribute('class','checkbox');
 		break;
 		case 4: elementId = "contextMouldSelectList";
 				contextArr = moulds;
 				document.getElementById("verticalSet").outerHTML = removeOneContext("mould", originalVerticalSet.cloneNode(true)).outerHTML;
 				document.getElementById("horizontalSet").outerHTML = removeOneContext("mould", originalHorizontalSet.cloneNode(true)).outerHTML;
+				document.getElementById("GlobalIncludeId").disabled = false;
+				document.getElementById("GlobalIncludeIdDiv").setAttribute('class','checkbox');
 		break;
 		default:
 			document.getElementById("verticalSet").outerHTML = originalVerticalSet.outerHTML;
 			document.getElementById("horizontalSet").outerHTML = originalHorizontalSet.outerHTML;
+			document.getElementById("GlobalIncludeId").disabled = true;
+			document.getElementById("GlobalIncludeId").checked = true;
+			document.getElementById("GlobalIncludeIdDiv").setAttribute('class','checkbox disabled');
 			break;
 	}
 	
 	document.getElementById("verticalSet").selectedIndex  = "1";
 	document.getElementById("horizontalSet").selectedIndex  = "0";
 	
-	console.log("Original vertical set id (after): "+originalVerticalSet.id);
-	console.log("Original horizontal set id (after): "+originalHorizontalSet.id);
-	
+//	if (elementId != ""){
+//		for (var i = 0; i<contextArr.length;i++) {
+//			content += "<option value=\""+contextArr[i].id+"\">"+contextArr[i].name+"</option>";
+//			
+//		}
+//		document.getElementById(elementId).innerHTML = openHTML + content + closeHTML;
+//	}
 	if (elementId != ""){
-		for (var i = 0; i<contextArr.length;i++) {
-			content += "<option value=\""+contextArr[i].id+"\">"+contextArr[i].name+"</option>";
-			
-		}
-		document.getElementById(elementId).innerHTML = openHTML + content + closeHTML;
+		document.getElementById(elementId).innerHTML = constructContextSelect(contextArr, arguments[0]);
 	}
+	
+	
+}
+
+function constructContextSelect(contextArr){
+	var openHTML =  "<select id=\"context_select_list\" "+dropdownclass+" size=\"1\" onchange=\"addMoreContext("+arguments[1]+")\">" +
+					"<option value=\"0\">All</option>";
+	var closeHTML = "</select>";
+	var content="";
+	
+	for (var i = 0; i<contextArr.length;i++) {
+		content += "<option value=\""+contextArr[i].id+"\">"+contextArr[i].name+"</option>";
+	}
+	
+	
+	
+	return openHTML + content + closeHTML;
 }
 
 
@@ -1926,16 +3989,19 @@ function addMoreContext(){
 
 		switch (arguments[0]){
 		case 1: contextName = "product";
-				elementId = "secContextProductSelectList";
+//				elementId = "secContextProductSelectList";
+				elementId = "";
 				break;
 		case 2: contextName = "machine";
 				elementId = "secContextMachineSelectList";
 				break;
 		case 3: contextName = "shift";
-				elementId = "secContextShiftSelectList";
+//				elementId = "secContextShiftSelectList";
+				elementId = "";
 				break;
 		case 4: contextName = "mould";
-				elementId = "secContextMouldSelectList";
+//				elementId = "secContextMouldSelectList";
+				elementId = "";
 				break;
 		default:break;
 		}
@@ -1955,8 +4021,9 @@ function addMoreContext(){
 			noneOp.innerHTML = "None";
 			
 			contextList.appendChild(noneOp);
-
-			document.getElementById(elementId).innerHTML = "+"+contextList.outerHTML;
+//			document.getElementById(elementId).innerHTML = "+"+contextList.outerHTML;
+			
+			document.getElementById(elementId).innerHTML = "+"+constructContextSelect(products);
 		}
 	}
 }
@@ -1999,6 +4066,7 @@ function addKpiNumberSupport(){
 		document.getElementById("numberSupport").style.color = "#808080";
 		document.getElementById("numberSupport").disabled = true;
 		document.getElementById("numberSupportFormat").style.visibility = "visible";
+		document.getElementById("numberSupportFormatDecimalPlaces").style.visibility = "visible";
 	}
 }
 
@@ -2007,8 +4075,10 @@ function addKpiNumberSupportFormat(){
 	
 	if (kpiNumberSupportVal == "numeric"){
 		document.getElementById("numberSupportFormat").style.visibility = "visible";
+		document.getElementById("numberSupportFormatDecimalPlaces").style.visibility = "visible";
 	} else {
 		document.getElementById("numberSupportFormat").style.visibility = "hidden";
+		document.getElementById("numberSupportFormatDecimalPlaces").style.visibility = "hidden";
 	}
 }
 
@@ -2086,6 +4156,7 @@ function isInGranularity(granularity, initialDate, finalDate){
 	// if needed, subtract (-60000) to right value in time difference to finish period one minute before
 	var response = true;
 	var message = '';
+	
 	switch (granularity){
 		// the timestamp numeric value for 1 hour is 1000*60*60=3600000
 		case 'hourly':
@@ -2161,7 +4232,6 @@ function timeDifference(initialDate,finalDate) {
 //  var difference = finalDate.getTime() - initialDate.getTime();
   var difference = finalDate - initialDate;
   var result = difference;
-  console.log("Difference numeric value: "+ difference);
   
   var daysDifference = Math.floor(difference/1000/60/60/24);
   difference -= daysDifference*1000*60*60*24;
@@ -2173,11 +4243,6 @@ function timeDifference(initialDate,finalDate) {
   difference -= minutesDifference*1000*60;
 
   var secondsDifference = Math.floor(difference/1000);
-
-  console.log('difference = ' + daysDifference + ' day/s ' 
-  						    + hoursDifference + ' hour/s ' 
-  						    + minutesDifference + ' minute/s ' 
-  						    + secondsDifference + ' second/s ');
   
   return result;
 }
@@ -2189,4 +4254,470 @@ function getMonthDays(month){
 	if ( ((month % 2 == 0)&&(month<7)) || ((month % 2 != 0)&&(month>=7)) )
 		return 31;
 	return 30;
+}
+
+function selectDifferentOption(selectedSet){
+	// selectedSet reflects 1 - verticalSet, 2 - horizontalSet
+	var verticalSetId = "verticalSet";
+	var horizontalSetId = "horizontalSet";
+	
+	var notSelectedSetStr = "";
+	switch (selectedSet){
+		case 1: notSelectedSetStr = horizontalSetId;
+				break;
+		case 2: notSelectedSetStr = verticalSetId;
+				break;
+	}
+	
+	var e1 = document.getElementById(verticalSetId);
+	var e2 = document.getElementById(horizontalSetId);
+	var e1Value = e1.options[e1.selectedIndex].value;
+	var e2Value = e2.options[e2.selectedIndex].value;
+	
+	if (e1.selectedIndex == e2.selectedIndex)
+		if (e1.selectedIndex == 0)
+			document.getElementById(notSelectedSetStr).selectedIndex = "1";
+		else
+			document.getElementById(notSelectedSetStr).selectedIndex = "0";
+	e1Value = e1.options[e1.selectedIndex].value;
+	e2Value = e2.options[e2.selectedIndex].value;
+}
+
+function initializeTooltips(){
+	$(document).ready(function(){
+	    $('[data-toggle="tooltip"]').tooltip();
+	    $('rect').tooltip({
+    			container: 'body',
+	    	    position: {
+	    	        //my: "center bottom-60",
+	    	        at: "center top"
+	    	    },
+	    	    show: {
+					duration: 0
+				}
+	    	});
+	});		
+}
+
+function validateNewKPIInputs(calculationType, numberSupport, samplingInterval, name, description, samplingRate) {
+	var result = false;
+	var message = "";
+	var elementName = "";
+	
+	if ( (calculationType != null) && (numberSupport != null) && (samplingInterval != null) 
+			&& (name != "") && (description != "")  && isAllNumeric(samplingRate)) {
+			result = true;
+			message = "New KPI added with success!";
+		} else {
+			if (name == "") {
+				message = "Please provide a Name for KPI!";
+				result = false;
+				elementName = "#name";
+			} else if (description == "") {
+				message = "Please provide a Description for KPI!";
+				result = false;
+				elementName = "#description";
+
+			} else if (calculationType == null) {
+				result = false;
+				message = "Please choose a calculation type for KPI!";
+				elementName = "#calculationType";
+				
+			} else if ( numberSupport == null) {
+				message = "Please choose a Number Type for KPI!";
+				result = false;
+				elementName = "#numberSupport";
+
+			} else if ( samplingRate == "") {
+				message = "Please choose a Sampling Interval for KPI!";
+				result = false;
+				elementName = "#samplingRate";
+
+			} else if (	!isAllNumeric(samplingRate)) {
+				message = "Please provide a valid input with only numbers for sampling!";
+				result = false;
+				elementName = "#samplingRate";
+
+			} else if ( samplingInterval == null) {
+				message = "Please choose a Sampling Interval for KPI!";
+				result = false;
+				elementName = "#samplingInterval";
+				
+			}
+		}
+		return {validInputs: result, message: message, element:elementName};
+	
+}
+
+function isAllNumeric(stringToEval)  
+{  
+   var result = false;
+   var numbers = /^[0-9]+$/;  
+   
+   if(stringToEval.match(numbers))  
+   {  
+	   result = true;  
+   } else {     
+	   result =  false;  
+   }
+   
+   return result;
+}   
+
+function validateNewTargetInputs(upperBoundValue, lowerBoundValue, numSupFormat, nsfDecimalPlaces, kpiElId, contextIds, targetId, editStatus) {
+	var isValid = false;
+	var message = "";
+	var elementNameId = "";
+	
+	var hasTargetInfo = hasTargets(upperBoundValue, lowerBoundValue, kpiElId, numSupFormat, contextIds, targetId, editStatus);
+	
+	var x1 = (upperBoundValue > 100) && (numSupFormat.toUpperCase() == 'PERCENTAGE');
+	var x2 = (upperBoundValue > 100);
+	var x3 = (numSupFormat.toUpperCase() == 'PERCENTAGE');
+	
+	
+	
+	if ( ( (upperBoundValue == null) || (upperBoundValue == "") ) && ( (lowerBoundValue == null)||(lowerBoundValue == "") ) ) {
+		isValid = false;
+		message = "Please add at least one bound!";
+	} else if (hasTargetInfo.evaluationValue){
+		isValid = false;
+		message = hasTargetInfo.message;
+		elementNameId = hasTargetInfo.element;
+	} else if ( (!isValidDecimal(upperBoundValue, numSupFormat, nsfDecimalPlaces)) || ( (upperBoundValue > 100) && (numSupFormat.toUpperCase() == 'PERCENTAGE') ) ) {
+		isValid = false;
+		message = "Please insert a correct upper bound "+numSupFormat.toLowerCase()+" value";
+		elementNameId = "#upperBoundBox";
+	} else if ( (!isValidDecimal(lowerBoundValue, numSupFormat, nsfDecimalPlaces)) || ( (lowerBoundValue > 100) && (numSupFormat.toUpperCase() == 'PERCENTAGE') ) ) {
+		isValid = false;
+		message = "Please insert a correct lower bound "+numSupFormat.toLowerCase()+" value";
+		elementNameId = "#lowerBoundBox";
+	} else if ( (isValidDecimal(upperBoundValue, numSupFormat, nsfDecimalPlaces)) && (isValidDecimal(lowerBoundValue, numSupFormat, nsfDecimalPlaces)) ) {
+		isValid = true;
+		message = "Target bounds OK";
+	}
+	return {isValid: isValid, message: message, elementNameId: elementNameId};
+}
+
+
+
+
+function hasTargets(upperBound, lowerBound, kpiElId, numSupFormat, contextIds, targetId, editStatus){
+	var result = false;
+	var message = "";
+	var elementName = "";
+	var upperBoundTmp = "";
+	var lowerBoundTmp = "";
+	
+	if ((numSupFormat.toUpperCase() == 'PERCENTAGE')) {
+		upperBoundTmp = parseFloat((upperBound/100).toFixed(4));
+		lowerBoundTmp = parseFloat((lowerBound/100).toFixed(4));
+	} else {
+		upperBoundTmp = upperBound;
+		lowerBoundTmp = lowerBound;
+	}
+	
+//	"product_id":null,"mould_id":null,"machine_id":null,"shift_id":null,"lower_bound":null,"upper_bound":"21.0"}]
+	
+	
+	for (var k=0; k<kpiTargets.length;k++) {
+		
+		console.log("kpiTargets[k].upper_bound:"+kpiTargets[k].upper_bound);
+		console.log("kpiTargets[k].lower_bound:"+kpiTargets[k].lower_bound);
+		
+		if (editStatus) {
+			if (targetId == kpiTargets[k].id)
+				continue;
+		}
+
+		if (kpiElId == kpiTargets[k].kpi_id) {
+			if ( (contextIds.product_id == kpiTargets[k].product_id) 
+			  && (contextIds.mould_id 	== kpiTargets[k].mould_id) 
+			  && (contextIds.machine_id == kpiTargets[k].machine_id) 
+			  && (contextIds.shift_id 	== kpiTargets[k].shift_id) ) {
+				
+			
+				if (  ((kpiTargets[k].upper_bound != null)&& (kpiTargets[k].upper_bound != "")) 
+						&& ((kpiTargets[k].lower_bound != null)&& (kpiTargets[k].lower_bound != "")) )   {
+					// both exist
+					message = "Target for the SAME CONDITIONS already exist.";
+					result = true;
+					elementName = "#upperBoundBox";
+					break;
+				} else if ( ((kpiTargets[k].upper_bound != null) && (kpiTargets[k].upper_bound != "")) 
+							&& ((upperBoundTmp != null) && (upperBoundTmp!= "") ) ) {
+					// wants to create upper but upper already exist 
+//					message = "Target with UPPER BOUND for the SAME CONDITIONS already exist.";
+					message = "Target for the SAME CONDITIONS already exist.";
+					result = true;
+					elementName = "#upperBoundBox";
+					break;
+				} else if ( ((kpiTargets[k].lower_bound != null) && (kpiTargets[k].lower_bound !="") ) 
+						&& ((lowerBoundTmp != null) && (lowerBoundTmp!= "") ) ) {
+					// wants to create lower but upper already exist 
+//					message = "Target with LOWER BOUND for the SAME CONDITIONS already exist.";
+					message = "Target for the SAME CONDITIONS already exist.";
+					result = true;
+					elementName = "#lowerBoundBox";
+					break;
+				}
+				
+			}
+		}
+		
+	}
+	
+//	message += " with that value already exists."
+		
+//	message = "Target in the same conditions already exist.";
+			
+	return {evaluationValue: result, message: message, element:elementName};
+}
+
+
+function isValidDecimal(stringToEval, numSupFormat, nsfDecimalPlaces)  {
+//	var nsfDecimalPlaces = 0;
+	var result = false;
+	// if the decimal includes negative, use the below line instead
+	//	var decimal= /^[-+][0-9]+\.[0-9]+[eE][-+]?[0-9]+$/;  
+	if (numSupFormat.toUpperCase() == 'PERCENTAGE') {
+		if ((nsfDecimalPlaces == 0) || (nsfDecimalPlaces == null) ) {
+			var decimal = /^[0-9]*?$/;
+		} else {
+			switch (nsfDecimalPlaces) {
+			case 1: var decimal = /^([0-9]+\.[0-9]{1,1})*$/;
+					break;
+			case 2: var decimal = /^([0-9]+\.[0-9]{1,2})*$/;
+					break;
+			case 3: var decimal = /^([0-9]+\.[0-9]{1,3})*$/;
+					break;
+			case 4: var decimal = /^([0-9]+\.[0-9]{1,4})*$/;
+					break;
+			default: break;
+			}
+//			var decimal = /^([0-9]+\.[0-9]{1,4})+$/;
+		}
+//		var decimal = /^([0-9]+\.[0-9]{1,4})?$/;
+	} else {
+//		var decimal = /^([0-9]+(\.[0-9])*)?$/;
+//		/^([0-9]+(\.[0-9]{1,4}))?$/
+		if ((nsfDecimalPlaces == 0) || (nsfDecimalPlaces == null) ) {
+			var decimal = /^[0-9]*$/;
+		} else {
+			switch (nsfDecimalPlaces) {
+			case 1: var decimal = /^([0-9]+(\.[0-9]{1,1}))?$/;
+					break;
+			case 2: var decimal = /^([0-9]+(\.[0-9]{1,2}))?$/;
+					break;
+			case 3: var decimal = /^([0-9]+(\.[0-9]{1,3}))?$/;
+					break;
+			case 4: var decimal = /^([0-9]+(\.[0-9]{1,4}))?$/;
+					break;
+			default: break;
+			}
+//			var decimal = /^([0-9]+\.[0-9]{1,4})+$/;
+		}
+	}
+		
+	var stringToEvalTmp = ""+stringToEval;
+	if(stringToEvalTmp.match(decimal)) {  
+	    result = true;  
+    } else { 
+    	result = false;  
+	}
+	
+	return result;
+}   
+
+
+function showNumberSupportFormat(numSupFormat, nsfDecPlaces){
+	var decimalcases = "";
+
+	switch (nsfDecPlaces) {
+	case 1: decimalcases = "Ex2:22.5";
+		break;
+	case 2:	decimalcases = "Ex2:22.58";
+
+		break;
+	case 3: decimalcases = "Ex2:22.583";
+		break;
+	case 4: decimalcases = "Ex2:22.5822";
+		break;
+	default: decimalcases = "";
+		break;
+	
+	}
+	if (numSupFormat.toUpperCase() == 'PERCENTAGE') {
+	
+		// change html
+		// change upperbound to upperbond (%)
+		document.getElementById("upperBoundBoxLabel").innerHTML = "Upper Bound (%)";
+
+		// change lowerbound to lowerbound (%)
+		document.getElementById("lowerBoundBoxLabel").innerHTML = "Lower Bound (%)";
+		var titleStr = "Please insert a percentage value between 0-100. Ex1: 20; "+ decimalcases; 
+		document.getElementById("upperBoundBox").title = titleStr;
+		document.getElementById("upperBoundBox").setAttribute("data-toggle","tooltip");
+		document.getElementById("upperBoundBox").setAttribute("data-placement","bottom");
+		
+		document.getElementById("lowerBoundBox").title = titleStr;
+		document.getElementById("lowerBoundBox").setAttribute("data-toggle","tooltip");
+		document.getElementById("lowerBoundBox").setAttribute("data-placement","bottom");
+		
+	} else if (numSupFormat.toUpperCase() == 'DECIMAL') {
+	// change html
+		// change upperbound to upperbond (DEC)
+		document.getElementById("upperBoundBoxLabel").innerHTML = "Upper Bound (Dec)";
+
+		// change lowerbound to lowerbound (DEC)
+		document.getElementById("lowerBoundBoxLabel").innerHTML = "Lower Bound (Dec)";
+
+		var titleStr = "Please insert a decimal value. Ex1: 110800; "+ decimalcases; 
+		
+		document.getElementById("upperBoundBox").title = titleStr;
+		document.getElementById("upperBoundBox").setAttribute("data-toggle","tooltip");
+		document.getElementById("upperBoundBox").setAttribute("data-placement","bottom");
+		
+		document.getElementById("lowerBoundBox").title = titleStr;
+		document.getElementById("lowerBoundBox").setAttribute("data-toggle","tooltip");
+		document.getElementById("lowerBoundBox").setAttribute("data-placement","bottom");
+	}
+	
+	
+	initializeTooltips();
+}
+
+
+function showNSFDecimalPlaces(nsfDecimalPlaces){
+	if (nsfDecimalPlaces != 0) {
+		$("#upperBoundBox").css('width','45%');
+		
+		$("#upperBoundBoxDecimalSeparator").css('display','inline');
+		$("#upperBoundBoxDecimalPlaces").css('width','25%');
+		$("#upperBoundBoxDecimalPlaces").css('display','inline');
+		
+		$("#lowerBoundBox").css('width','45%');
+		
+		$("#lowerBoundBoxDecimalSeparator").css('display','inline');
+		$("#lowerBoundBoxDecimalPlaces").css('width','25%');
+		$("#lowerBoundBoxDecimalPlaces").css('display','inline');
+	}
+	
+}
+
+function logout(secUrl, redirUrl) {
+//	if ( (secUrl == "") || (secUrl == null) ) {
+//		secUrl = "/proasense";
+//	}
+//	if ( (redirUrl == "") || (redirUrl == null) ) {
+//		redirUrl = "http://www.google.com";
+//	}
+//	console.log("Browser: "+);
+//	if (navigator.userAgent.indexOf("Edge") != -1) {
+		$.ajax({
+			url: restAddress + 'proasense_hella/logout',
+			type: 'POST',
+			username: 'logout',
+			data: '{"type":"LOGOUT","data":{}}',
+//			success: function(result) {
+//				if (debugMode) {
+//					console.log("Trying to logout in IE - EDGE = "+JSON.stringify(result));
+//					window.alert("logout in IE - EDGE = "+JSON.stringify(result));
+//				}
+//				if (result.succeeded) {
+//					window.alert("logout in IE - EDGE = "+JSON.stringify(result));
+//				} else {
+////					$('html').unblock();
+//					$.notify('Logout failed');
+//				}
+//			},
+			statusCode: {
+			    401: function(result) {
+//			      alert( "page not found "+JSON.stringify(result) );
+//			      window.location = "/proasense/index.html";
+//			      window.open('',_self);
+			      document.write(result.responseText);
+//			      window.alert(result.responseText);
+			      if (navigator.userAgent.indexOf("Edge") != -1) {
+			    	  document.execCommand('ClearAuthenticationCache');
+			      }
+			    }
+			  }
+		});
+		
+//	} else if (navigator.userAgent.indexOf("AppleWebKit") != -1) {
+//		
+//	} else {
+//		window.alert("UserAgent not found!");
+//	}
+	
+//    if ($.browser.msie) {
+//        document.execCommand('ClearAuthenticationCache', 'false');
+////		$.ajax({
+////			url: restAddress + 'proasense_hella/kpi_formula',
+////			type: 'POST',
+////			data: '{"type":"LOGOUT","data":{}}',
+////			success: function(result) {
+////				if (debugMode) {
+////					console.log("Trying to logout in IE - EDGE = "+JSON.stringify(result));
+////				}
+////				if (result.succeeded) {
+////				} else {
+//////					$('html').unblock();
+////					$.notify('Formula update failed');
+////				}
+////			}
+////		});
+//    } else if ( ($.browser.gecko) || ($.browser.mozilla) || ($.browser.webkit) ){
+//        $.ajax({
+//            async: false,
+//            url: secUrl,
+//            type: 'GET',
+//            username: 'logout'
+//        });
+//	} else {
+//        alert("Logging out automatically is unsupported for " + $.browser.name
+//            + "\nYou must close the browser to log out.");
+//    }
+//    setTimeout(function () {
+////    	window.location.assign("<html><head></head><body></body></html>");
+//        window.location.href = redirUrl;
+//    }, 50);
+}
+
+
+function legendClick(legend){
+	var legendTmp = [];
+	for (var i=0; i<legend.length; i++) {
+		console.log("legend["+i+"]: "+legend[i]);
+		legendTmp[i] = "<span>"+legend[i]+"</span>";
+	}
+	return legendTmp;
+}
+
+
+function deleteHierarchy(){
+	
+	// recursively is child? then delete, no? go to next child.
+	
+	
+	
+}
+
+function getKpiInfoId(kpiIdToGet){
+	var result = null;
+	for (var index=0; index<this.kpiInfo.length;index++)
+		if (this.kpiInfo[index].id == kpiIdToGet) {
+			result = kpiInfo[index];
+			break;
+		} 
+	return result;
+}
+
+function numberOfZeros(zeroQty){
+	var zeros = "";
+	for (var k = 0; k<zeroQty; k++) {
+		zeros += "0";
+	}
+	return zeros;
 }

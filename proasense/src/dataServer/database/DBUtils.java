@@ -129,6 +129,13 @@ public class DBUtils {
 				_log.saveToFile("<DBUtils> connection opened during processQuery method</DBUtils>");
 			}
 			s = dbConnection.createStatement();
+			
+
+
+//			System.out.println("\n\n\n\n\n");
+//			System.out.println("Query : "+ query.toString());
+//			System.out.println("\n\n\n\n\n");
+			
 			r = s.executeQuery(query);
 			queryExecuting--;
 			_log.saveToFile("<DBUtils> query finished processing (#"+queryExecuting+" query(ies) executing)-> \n"+query+"</DBUtils>");

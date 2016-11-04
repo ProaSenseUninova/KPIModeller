@@ -5,6 +5,7 @@
             30
         </session-timeout>
     </session-config>
+<!--  
     <security-constraint>
         <display-name>AdminConstraint</display-name>
         <web-resource-collection>
@@ -24,7 +25,7 @@
         <description/>
         <role-name>AdminRole</role-name>
     </security-role>
-
+-->
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>

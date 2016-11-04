@@ -174,7 +174,7 @@ public class DatabaseAccessObject {
 		Object resultObject = null;
 		
 		String query = "";
-		if (!aggregation.equals("none")){
+		if (!aggregation.equals("NONE")){
 			query = heatMap.getHeatMapQueryString(aggregation);
 			heatMap = getHeatMapFromDb(query, heatMap, contextualInformation);
 			heatMap.setHeatMapValues();
@@ -265,14 +265,14 @@ public class DatabaseAccessObject {
 	}
 	
 	
-	public Object getData(Integer kpiId, TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime, Integer contextValueId, TableValueType secondContext){
+	public Object getData(Integer kpiId, TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime, Integer contextValueId, TableValueType secondContext, boolean includeGlobal){
 		Object data = null;
 		JSONParser parser = new JSONParser();
 		ArrayList<ResultTable> tempResultTable = null;
 
 		_valueRefQtyFlag = false;
 		
-		tempResultTable = getKpiValue(kpiId, contextualInformation, granularity, startTime, endTime, contextValueId, secondContext);
+		tempResultTable = getKpiValue(kpiId, contextualInformation, granularity, startTime, endTime, contextValueId, secondContext, includeGlobal);
 		
 		String legend = "";
 		String[] tempDataStr = new String[tempResultTable.size()];
@@ -308,9 +308,14 @@ public class DatabaseAccessObject {
 		return data;
 	}
 	
-	public ArrayList<ResultTable> getKpiValue(Integer kpi, TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime, Integer contextValueId, TableValueType secondContext){
+	public ArrayList<ResultTable> getKpiValue(Integer kpi, TableValueType contextualInformation, SamplingInterval granularity, Timestamp startTime, Timestamp endTime, Integer contextValueId, TableValueType secondContext, boolean includeGlobal){
 		ArrayList<ResultTable> alrt = new ArrayList<ResultTable>();
-		alrt.add(getOneKpiValue(kpi, startTime, endTime, granularity, true, TableValueType.GLOBAL, null, null, TableValueType.NONE));
+		ResultTable resTabTmp = getOneKpiValue(kpi, startTime, endTime, granularity, true, TableValueType.GLOBAL, null, null, TableValueType.NONE); 
+		
+		if (includeGlobal) {
+			alrt.add(resTabTmp);
+		}
+		
 		if (!contextualInformation.equals(TableValueType.GLOBAL)){
 			if ((contextValueId !=0 ) && (secondContext == TableValueType.NONE) ){
 				ResultTable tbResult = getOneKpiValue(kpi, startTime, endTime, granularity, false, contextualInformation, contextValueId, contextValueId, TableValueType.NONE);
@@ -418,30 +423,43 @@ public class DatabaseAccessObject {
 	
 	public String getLabelName(SamplingInterval granularity, String element, boolean heatMapTitle){
 		String labelName ="";
+		String labelNameTimeZone ="";
+		String format ="";
 		log.saveToFile("getLabelName method: element->"+element);
 		switch (granularity) {
 		case HOURLY:
-					String format = "";
+					format = "";
 					if (heatMapTitle) {
 						format = "HH'h'mm'm' dd'-'MMM";
 					}
 					else {
 						format = "HH'h' dd MMM";
 					}
+					log.saveToFile("getLabelName method: format->" + format + "<-");
 					labelName = (new SimpleDateFormat(format)).format(Timestamp.valueOf(element));
+					labelNameTimeZone = (new SimpleDateFormat(format.concat("'<TimeZones: ' Z'/' z'/' X'>'"))).format(Timestamp.valueOf(element));
 					break;
-		case DAILY: labelName = (new SimpleDateFormat("dd MMM ''yy")).format(Timestamp.valueOf(element)); //yyyy-mm-dd
+		case DAILY: format = "dd MMM ''yy";
+					labelName = (new SimpleDateFormat(format)).format(Timestamp.valueOf(element)); //yyyy-mm-dd
+					labelNameTimeZone = (new SimpleDateFormat(format.concat("'<TimeZones: ' Z'/' z'/' X'>'"))).format(Timestamp.valueOf(element));
 			break;
-		case MONTHLY: labelName = (new SimpleDateFormat("MMM ''yy")).format(Timestamp.valueOf(element)); // "April" 
+		case MONTHLY: format = "MMM ''yy";
+					  labelName = (new SimpleDateFormat(format)).format(Timestamp.valueOf(element)); // "April" 
+					  labelNameTimeZone = (new SimpleDateFormat(format.concat("'<TimeZones: ' Z'/' z'/' X'>'"))).format(Timestamp.valueOf(element));
 			break;
-		case WEEKLY: labelName = (new SimpleDateFormat("'W'ww ''yy")).format(Timestamp.valueOf(element));
+		case WEEKLY: format = "'W'ww ''yy";
+					 labelName = (new SimpleDateFormat(format)).format(Timestamp.valueOf(element));
+					 labelNameTimeZone = (new SimpleDateFormat("'W'ww ''yy".concat("'<TimeZones: ' Z'/' z'/' X'>'"))).format(Timestamp.valueOf(element));
 			break;
-		case YEARLY: labelName = (new SimpleDateFormat("yyyy")).format(Timestamp.valueOf(element));
+		case YEARLY: format = "yyyy";
+					 labelName = (new SimpleDateFormat(format)).format(Timestamp.valueOf(element));
+					 labelNameTimeZone = (new SimpleDateFormat("yyyy".concat("'<TimeZones: ' Z'/' z'/' X'>'"))).format(Timestamp.valueOf(element));
 			break;
 		default: labelName = "NO DATE-TIME FORMAT AVAILABLE";
 			break;
 		}
 		log.saveToFile("getLabelName method: labelName->"+labelName);
+		log.saveToFile("getLabelName method: labelNameTimeZone->"+labelNameTimeZone);
 		return labelName;
 		
 	}

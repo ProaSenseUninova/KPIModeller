@@ -81,11 +81,18 @@
 			<br>
 			<br>
 			<select id="granularityChart" class="box btn btn-primary form-control granularityBoxes">
-				<option value="hourly">Hourly</option>
-				<option value="daily">Daily</option>
-				<option value="weekly" style="display:none">Weekly</option>
-				<option selected value="monthly">Monthly</option>
+				<option id="4" value="hourly">Hourly</option>
+				<option id="3" value="daily">Daily</option>
+				<option id="2" value="weekly" style="display:none">Weekly</option>
+				<option id="1" selected value="monthly">Monthly</option>
 			</select>
+			<br>
+			<br>
+			<div id="GlobalIncludeIdDiv" class="checkbox disabled">
+				<label><input id="GlobalIncludeId" type="checkbox" value="GlobalInclude" disabled checked>Include Global</label>
+			</div>
+			<br>
+			<input id="predictionSwitch" type="checkbox" data-label-text="Prediction" data-size="small" data-toggle="toggle" data-on="Ready" data-off="Not Ready">
 		</td>
 	</tr>
 	<tr>
@@ -103,7 +110,7 @@
 		<td width="25%">&nbsp;</td>
 		<td  width="25%" style="text-align:center">
 			<b>Vertical set:&emsp;</b>
-			<select id="verticalSet" class="form-control form-control-custom"> 
+			<select id="verticalSet" class="form-control form-control-custom" onchange="selectDifferentOption(1)"> 
 				<option selected value="product">Product</option>
 				<option value="machine">Machine</option>
 				<option value="shift">Shift</option>
@@ -112,7 +119,7 @@
 		</td>
 		<td  width="25%" style="text-align:center">
 			<b>Horizontal set:&emsp;</b>
-			<select id="horizontalSet" class="form-control form-control-custom"> 
+			<select id="horizontalSet" class="form-control form-control-custom" onchange="selectDifferentOption(2)"> 
 				<option value="product">Product</option>
 				<option value="machine">Machine</option>
 				<option selected value="shift">Shift</option>

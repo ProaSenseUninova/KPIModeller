@@ -12,8 +12,6 @@ function elementInfo() {
 	this.loadedElement = "";
 }
 
-
-
 function getChildren(kpis) {
 	var kpiParents = [];
 	var kpiChildren = [];
@@ -54,7 +52,10 @@ function getChildren(kpis) {
 var kpiInfo = [];
 var kpiFormulas = [];
 var kpiTargets = [];
+var sensorEvents = [];
 var sensors = [];
+var aggTypes = [];
+var sampInt = [];
 var products = [];
 var shifts = [];
 var moulds = [];
@@ -62,6 +63,7 @@ var machines = [];
 var loadedKpi = "";
 var loadedKpiNumberFormat = "";
 var newParentId = null;
+var loadedTargetToEditId = null;
 
 function cloneKpis(kpis) {
 	var tmpKpis = [];
@@ -147,55 +149,80 @@ window.onload = function() {
 		restAddress = restAddress + '/';
 	}
 	$.ajax({
+		url: restAddress + 'proasense_hella/sensor/hella',
+		type: 'GET',
+		success: function(data) {
+			$("#companyContext").prop( "disabled", false);
+			sensors = data;
+			screen1.loadSensors();
+		}
+	});
+	
+	$.ajax({
+		url: restAddress + 'proasense_hella/kpi_agg_type',
+		type: 'GET',
+		success: function(data) {
+			aggTypes = data;
+		}
+	});
+	$.ajax({
+		url: restAddress + 'proasense_hella/granularity',
+		type: 'GET',
+		success: function(data) {
+			sampInt = data;
+		}
+	});
+	
+	$.ajax({
 		url: restAddress + 'proasense_hella/mould',
 		type: 'GET',
 //		xhrFields: {
 //		      withCredentials: true
 //		   },		
 		success: function(data) {
-			moulds = data
+			moulds = data;
 		}
 	});
 	$.ajax({
 		url: restAddress + 'proasense_hella/shift',
 		type: 'GET',
 		success: function(data) {
-			shifts = data
+			shifts = data;
 		}
 	});
 	$.ajax({
 		url: restAddress + 'proasense_hella/product',
 		type: 'GET',
 		success: function(data) {
-			products = data
+			products = data;
 		}
 	});
 	$.ajax({
 		url: restAddress + 'proasense_hella/machine',
 		type: 'GET',
 		success: function(data) {
-			machines = data
+			machines = data;
 		}
 	});
 	$.ajax({
 		url: restAddress + 'proasense_hella/kpi_formula',
 		type: 'GET',
 		success: function(data) {
-			kpiFormulas = data
+			kpiFormulas = data;
+		}
+	});
+	$.ajax({
+		url: restAddress + 'proasense_hella/sensorevent',
+		type: 'GET',
+		success: function(data) {
+			sensorEvents = data;
 		}
 	});
 	$.ajax({
 		url: restAddress + 'proasense_hella/kpi_target',
 		type: 'GET',
 		success: function(data) {
-			kpiTargets = data
-		}
-	});
-	$.ajax({
-		url: restAddress + 'proasense_hella/sensor',
-		type: 'GET',
-		success: function(data) {
-			sensors = data
+			kpiTargets = data;
 		}
 	});
 	$.ajax({
@@ -204,6 +231,7 @@ window.onload = function() {
 		success: function(data) {
 //			window.alert("sdsdsssds");
 			$('html').unblock();
+
 			kpiInfo = data;
 //			window.alert("AJAX:(proasense_hella/kpi) - data:"+JSON.stringify(data));
 //			window.alert("AJAX:(proasense_hella/kpi) - kpiInfo:"+JSON.stringify(kpiInfo));
@@ -225,9 +253,9 @@ window.onload = function() {
 					$('#KPITree').jstree().create_node(null, tmpKpiInfo[i]);
 				}
 			}
-
 		}
 	});
+	
 //	window.alert("After requests --------------- ");
 	
 	elInfo = new elementInfo();
@@ -259,8 +287,27 @@ window.onload = function() {
 			if (data.event.offsetX < ($('#' + data.node.id).find('a').width() - 47) && data.event.target.classList[0] != "glyphicon") {
 				loadedKpi = data.node.id;
 				loadedKpiNumberFormat = getKpiNumberSupportFormat(loadedKpi);
-				scrGraph.openScreen(data.node.id);
-//				document.getElementById("targetLinkId").onclick="openTarget();";
+				
+				var selectedElement = -1;
+				var vectorSize = $('.headerSelector a').length;
+				
+				for (var index=0; index<vectorSize;index++){
+					if (!$('.headerSelector a').eq(index).hasClass("notSelected")) {
+						selectedElement = index;
+						break;
+					}
+				}
+				
+				switch (selectedElement) {
+				case 0: // means KPI separator is selected
+						scrGraph.openScreen(data.node.id);
+						break;
+				case 1: // means Target separator is selected
+						screen2.openScreen(data.node.id);
+						break;
+				default: // means no separator is selected
+						break;
+				}
 			}
 		})
 		.on('create_node.jstree', function(e, data) {
@@ -365,7 +412,7 @@ function editEl() {
 	$('#KPITree').on('select_node.jstree', function(e, data) {
 		var tree = $("#KPITree").jstree(true);
 		var elName = data.node.text;
-		activeScreen.changeLoadedKpi(data.node.id)
+		activeScreen.changeLoadedKpi(data.node.id);
 		scrGraph.disconnect();
 		activeScreen.openScreen();
 		//tree.edit(data.node,elName.substring(0,elName.indexOf(delEditBtn)));

@@ -1,0 +1,3 @@
+storageURL:http://proasense.nissatech.com/api/kpis
+storageLocation:192.168.84.34
+storagePort:8080

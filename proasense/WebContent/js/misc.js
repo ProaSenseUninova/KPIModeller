@@ -60,6 +60,7 @@ Math.seed = 0;
  * 
  */
 Math.seededRandom = function(max, min) {
+	
 	max = max || 1;
 	min = min || 0;
 
@@ -70,6 +71,7 @@ Math.seededRandom = function(max, min) {
 }
 
 function closePane() {
+	
 	toClosePane = true;
 	var imgUrl = $('#arrow').attr("src");
 	$('#wrapper').css('paddingLeft', 0);
@@ -80,9 +82,11 @@ function closePane() {
 		scrGraph.adjustGraph();
 		scrGraph.adjustHeatMap();
 	}, 1000);
+
 }
 
 function openPane() {
+
 	toClosePane = false;
 	var imgUrl = $('#arrow').attr("src");
 	$('#wrapper').css('paddingLeft', 290);
@@ -187,7 +191,7 @@ function removeElement(delId) {
 		newParentId = null;
 		activeScreen.closeScreen();
 	}
-	if (!screen1.checkConstraints(delId)) {
+	if ( (!screen1.checkConstraints(delId)) && (!screen1.checkParentConstraints(delId)) ) {
 		$('html').block({
 			'message': null
 		});
@@ -198,100 +202,150 @@ function removeElement(delId) {
 				break;
 			}
 		}
-		var formulaId = "";
+		var iFormula = {};
 		for (var i = 0; i < kpiFormulas.length; i++) {
 			if (kpiFormulas[i].kpi_id == delId) {
-				formulaId = kpiFormulas[i].id;
+				iFormula = kpiFormulas[i];
 				break;
 			}
 		}
+		
+		//get sensor events to erase
+		var senEnvIds2Del = [];
+		if(iFormula.term1_sensor_id != null){
+			senEnvIds2Del.push(iFormula.term1_sensor_id);
+		}
+		if(iFormula.term2_sensor_id != null){
+			senEnvIds2Del.push(iFormula.term2_sensor_id);
+		}
+		if(iFormula.term3_sensor_id != null){
+			senEnvIds2Del.push(iFormula.term3_sensor_id);
+		}
+		
+		//inform storage to delete the KPI
 		$.ajax({
-			url: restAddress + 'proasense_hella/kpi_formula',
-			type: 'POST',
-			data: '{"type":"DELETE","data":[{"id":' + formulaId + '}]}',
-			success: function(result) {
-
+			url : restAddress
+					+ 'proasense_hella/delete',
+			type : 'POST',
+			data : '{"type":"INFORM","data":[{"id":'+delId+ '}]}',
+			success: function(result){
 				if (result.succeeded) {
 					$.ajax({
-						url: restAddress + 'proasense_hella/kpi',
+						url: restAddress + 'proasense_hella/kpi_formula',
 						type: 'POST',
-						data: '{"type":"DELETE","data":[{"id":' + delId + '}]}',
+						data: '{"type":"DELETE","data":[{"id":' + iFormula.id + '}]}',
 						success: function(result) {
-							$('html').unblock();
+
+							//delete sensor events
+							for(var i = 0; i < senEnvIds2Del.length; i++){
+								$.ajax({
+									url: restAddress + 'proasense_hella/sensorevent',
+									type: 'POST',
+									data: '{"type":"DELETE","data":[{"id":' + senEnvIds2Del[i] + '}]}',
+									async: false,
+									success: function(result) {
+
+										if (result.succeeded) {
+										
+										}else{
+											$('html').unblock();
+											$.notify('Error deleting sensor events');
+											return;
+										}
+									}
+										
+								});
+							}				
+							
 							if (result.succeeded) {
-								var tree = $('#KPITree').jstree();
-								$.notify('Kpi deleted', 'success');
-								$('#kpiList option[value=' + delId + ']').remove();
-								if (loadedKpi == delId) {
-									activeScreen.closeScreen();
-								}
-								var children = tree.get_node(delId).children;
-								tree.delete_node(delId);
-								var parentId = kpi.parent_id;
-								var parentKpi = null;
-								if (parentId != null) {
-									for (var i = 0; i < kpiInfo.length; i++) {
-										if (kpiInfo[i].id == parentId) {
-											parentKpi = kpiInfo[i];
-											break;
-										}
-									}
+								$.ajax({
+									url: restAddress + 'proasense_hella/kpi',
+									type: 'POST',
+									data: '{"type":"DELETE","data":[{"id":' + delId + '}]}',
+									success: function(result) {
+										$('html').unblock();
+										if (result.succeeded) {
+											
+											var tree = $('#KPITree').jstree();
+											$.notify('Kpi deleted', 'success');
+											$('#kpiList option[value=' + delId + ']').remove();
+											if (loadedKpi == delId) {
+												activeScreen.closeScreen();
+											}
+											var children = tree.get_node(delId).children;
+											tree.delete_node(delId);
+											var parentId = kpi.parent_id;
+											var parentKpi = null;
+											if (parentId != null) {
+												for (var i = 0; i < kpiInfo.length; i++) {
+													if (kpiInfo[i].id == parentId) {
+														parentKpi = kpiInfo[i];
+														break;
+													}
+												}
 
-									for (var i = 0; i < parentKpi.children.length; i++) {
-										if (parentKpi.children[i].id == delId) {
-											parentKpi.children.splice(i, 1);
-											break;
-										}
-									}
+												for (var i = 0; i < parentKpi.children.length; i++) {
+													if (parentKpi.children[i].id == delId) {
+														parentKpi.children.splice(i, 1);
+														break;
+													}
+												}
 
-								}
-								for (var i = 0; i < kpiInfo.length; i++) {
-									if (children.indexOf(kpiInfo[i].id.toString()) > -1) {
-										kpiInfo[i].parent_id = parentId;
-									}
-									if (kpiInfo[i].id == delId) {
-										kpiInfo.splice(i, 1);
-										i--;
-									}
-								}
-								var tmpKpiInfo = cloneKpis(kpiInfo);
-								for (var i = 0; i < kpiInfo.length; i++) {
-									if (children.indexOf(kpiInfo[i].id.toString()) > -1) {
-										tree.create_node(parentId, tmpKpiInfo[i]);
-										if (parentKpi != null) {
-											parentKpi.children.push(kpiInfo[i]);
-										}
-									}
-								}
-								screen1.loadKpis();
-								for (var i = 0; i < children.length; i++) {
-									$.ajax({
-										url: restAddress + 'proasense_hella/kpi',
-										type: 'POST',
-										data: '{"type":"UPDATE","data":{"id":' + children[i] + ',"parent_id":' + parentId + '}}',
-										success: function(result) {
+											}
+											for (var i = 0; i < kpiInfo.length; i++) {
+												if (children.indexOf(kpiInfo[i].id.toString()) > -1) {
+													kpiInfo[i].parent_id = parentId;
+												}
+												if (kpiInfo[i].id == delId) {
+													kpiInfo.splice(i, 1);
+													i--;
+												}
+											}
+											var tmpKpiInfo = cloneKpis(kpiInfo);
+											for (var i = 0; i < kpiInfo.length; i++) {
+												if (children.indexOf(kpiInfo[i].id.toString()) > -1) {
+													tree.create_node(parentId, tmpKpiInfo[i]);
+													if (parentKpi != null) {
+														parentKpi.children.push(kpiInfo[i]);
+													}
+												}
+											}
+											screen1.loadKpis();
+											for (var i = 0; i < children.length; i++) {
+												$.ajax({
+													url: restAddress + 'proasense_hella/kpi',
+													type: 'POST',
+													data: '{"type":"UPDATE","data":{"id":' + children[i] + ',"parent_id":' + parentId + '}}',
+													success: function(result) {
 
+													}
+												});
+											}
+										} else {
+											$.notify('Error deleting KPI');
 										}
-									});
+									}
+								})
+								for (var i = 0; i < kpiFormulas.length; i++) {
+									if (kpiFormulas[i].kpi_id == delId) {
+										kpiFormulas.splice(i, 1);
+										break;
+									}
 								}
 							} else {
-								$.notify('Error deleting KPI');
+								$('html').unblock();
+								$.notify('Error deleting formula');
 							}
 
+
 						}
-					})
-					for (var i = 0; i < kpiFormulas.length; i++) {
-						if (kpiFormulas[i].kpi_id == delId) {
-							kpiFormulas.splice(i, 1);
-							break;
-						}
-					}
-				} else {
+					});
+				
+				}else{
 					$('html').unblock();
-					$.notify('Error deleting formula');
+					$.notify('Error deleting kpi from storage');
+					return;
 				}
-
-
 			}
 		});
 	} else {
@@ -302,6 +356,7 @@ function removeElement(delId) {
 closeDtPickerOnEnter = function closeDtPickerOnEnter(event){
 	if (event.which == 13){
 		$('.datepicker').hide();
+		window.alert($(this).val());
 	} 
 }
 		

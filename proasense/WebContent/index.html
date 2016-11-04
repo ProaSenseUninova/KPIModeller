@@ -9,15 +9,18 @@
 
 	<link rel="stylesheet" href="lib/datepicker/jquery.simple-dtpicker.css" />
 	<link rel="stylesheet" href="lib/jstree-3.1.0/themes/default/style.css" />
-	<link rel="stylesheet" type="text/css" href="lib/bootstrap-3.3.4/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="lib/bootstrap-3.3.6/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="lib/bootstrap-3.3.6/css/bootstrap-switch.css">
 	<link rel="stylesheet" type="text/css" href="lib/jquery-ui-1.11.4/jquery-ui.css">
 	<link rel="stylesheet" type="text/css" href="css/sidebar.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 
 	<script type="text/javascript" src="lib/jquery-2.1.3/js/jquery-2.1.3.js"></script>
-	<script type="text/javascript" src="lib/bootstrap-3.3.4/js/bootstrap.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
 	<script type="text/javascript" src="lib/jquery-ui-1.11.4/jquery-ui.js"></script>
 	<script type="text/javascript" src="lib/jquery-blockui-2.70.0/jquery.blockui.js"></script>
+	<script type="text/javascript" src="lib/bootstrap-3.3.6/js/bootstrap-switch.js"></script>
+	<script type="text/javascript" src="lib/bootstrap-3.3.6/js/bootstrap.js"></script>
 	<script type="text/javascript" src="lib/jstree-3.1.0/jstree.js"></script>
 	<script type="text/javascript" src="lib/notify-0.3.1/notify.js"></script>
 	<script type="text/javascript" src="lib/justGage-1.0.1/resources/js/raphael.2.1.0.min.js"></script>
@@ -33,7 +36,7 @@
 </head>
 
 <body>
-
+	<iframe src="http://192.168.84.46/#/sso/kpimodeller" width="1" height="1"></iframe>
 	<div id="main-page-wrapper">
 		<div id="wrapper">
 			<!-- Sidebar -->
@@ -45,7 +48,8 @@
 							<tr>
 								<td width="33%"><a href="#" class="selected" onclick="openKPI()"><b>KPI</b></a></td>
 								<td width="33%"><a href="#" class="notSelected" onclick="openTarget()"><b>Targets</b></a></td>
-								<td><a href="#" class="notSelected" onclick="openQuery()"><b>Query</b></a></td>
+								<td width="10%"><a href="#" class="notSelected glyphicon glyphicon-log-out" onclick="logout()" aria-hidden="true"></a></td>
+								<!--  <td><a href="#" class="notSelected" onclick="openQuery()"><b>Query</b></a></td> -->
 							</tr>
 	
 	
