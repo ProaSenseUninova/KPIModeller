@@ -47,7 +47,7 @@ import org.codehaus.jackson.map.ObjectMapper;
  */
 public class StorageRESTClientManager {
 
-	private static String storageURL;// = "http://proasense.nissatech.com/api/kpis";
+	private static String StreamPipes;// = "http://proasense.nissatech.com/api/kpis";
     private static String storageLocation;// = "192.168.84.34"; NOVO ->192.168.84.41
     private static String storagePortRegistryC;// ="8080"; NOVO -> 8082
     private static String storageRegistryContext = "/storage-registry";
@@ -80,7 +80,7 @@ public class StorageRESTClientManager {
         queryString = null;
         
         //get storage IPs, URLs and Ports from environment variables
-		storageURL = System.getenv("StorageURL");
+		StreamPipes = System.getenv("StreamPipes");
 		storageLocation = System.getenv("StorageLocation");
 		storagePortReadC = System.getenv("StoragePortReadC");
 		storagePortRegistryC = System.getenv("StoragePortRegistryC");
@@ -207,7 +207,7 @@ public class StorageRESTClientManager {
         String body = null;
 
         try {
-            HttpPost query = new HttpPost(storageURL);
+            HttpPost query = new HttpPost(StreamPipes);
             query.setHeader("Content-type", "application/json");
             query.setEntity(new StringEntity(kpiInfo));
             
@@ -256,7 +256,7 @@ public class StorageRESTClientManager {
 
         try {
             HttpPost
-            query = new HttpPost(storageURL);
+            query = new HttpPost(StreamPipes);
             query.setHeader("Content-type", "application/json");
             query.setEntity(new StringEntity(kpiInfo));
             
@@ -299,7 +299,7 @@ public class StorageRESTClientManager {
         String body = null;
 
         try {
-        	HttpDelete query = new HttpDelete(storageURL.concat("/").concat(kpiID));
+        	HttpDelete query = new HttpDelete(StreamPipes.concat("/").concat(kpiID));
         	
         	
         	System.out.println("\n\n\n########################################################################################################\n\n\n");

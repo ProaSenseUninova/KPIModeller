@@ -60,7 +60,7 @@ public class Main extends HttpServlet {
 	// ################################################ variavel para
 	// utilizar storage ou valores de teste
 	// ###################################
-	boolean testing = false;
+	boolean testing = true;
 	// #################################################################################################################################################
 
 				
