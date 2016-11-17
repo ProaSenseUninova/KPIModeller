@@ -4098,8 +4098,10 @@ function kpiFormatValueString(kpiNumberSupportFormat, value, label, multiply100)
 			else
 				result = ""+value.toFixed(2)+"%";
 	} else if (kpiNumberSupportFormat == 'DECIMAL'){
-		if ( (eval(value)>0) && (eval(value)<1))
+		if (eval(value)%1 != 0)//(eval(value)>0) && (eval(value)<1))
 			result = ""+value.toFixed(3);
+		else if(!value)
+				result = "0";
 		else
 			result = ""+value;
 	}

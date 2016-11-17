@@ -60,7 +60,7 @@ public class Main extends HttpServlet {
 	// ################################################ variavel para
 	// utilizar storage ou valores de teste
 	// ###################################
-	boolean testing = false;
+	boolean testing = true;
 	// #################################################################################################################################################
 
 				
@@ -104,7 +104,7 @@ public class Main extends HttpServlet {
 					
 					// string de teste
 					if (testing)
-						responseStr = "[{\"id\":\"sensor_1_id\",\"name\":\"sensor 1\"},{\"id\":\"sensor_2_id\",\"name\":\"sensor 2\"}]";
+						responseStr = "[{\"id\":\"sensor1id\",\"name\":\"Quality\"},{\"id\":\"sensor2id\",\"name\":\"Count\"},{\"id\":\"sensor3id\",\"name\":\"Stock\"}]";
 					else
 						responseStr = this.getSensorIdsNameList(idReq);
 
@@ -121,8 +121,16 @@ public class Main extends HttpServlet {
 					//System.out.println("Contexto : "+context);
 					
 					// string de teste
-					if (testing)
-						responseStr = "[{\"name\":\"event 1\",\"type\":\"boolean\",\"partition\":\"true\"},{\"name\":\"event 2\",\"type\":\"string\",\"partition\":\"false\"},{\"name\":\"event 3\",\"type\":\"double\",\"partition\":\"true\"},{\"name\":\"event 4\",\"type\":\"long\",\"partition\":\"true\"}]";
+					if (testing){
+						if(reqId.equals("sensor1id"))
+							responseStr = "[{\"name\":\"Good\",\"type\":\"boolean\",\"partition\":\"true\"},{\"name\":\"Bad\",\"type\":\"string\",\"partition\":\"false\"}]";
+						else{
+							if(reqId.equals("sensor2id"))
+								responseStr = "[{\"name\":\"Total\",\"type\":\"boolean\",\"partition\":\"false\"},{\"name\":\"Finished\",\"type\":\"string\",\"partition\":\"false\"},{\"name\":\"Manufacturing\",\"type\":\"boolean\",\"partition\":\"true\"}]";
+							else
+								responseStr = "[{\"name\":\"Finished products\",\"type\":\"string\",\"partition\":\"false\"},{\"name\":\"Feedstock\",\"type\":\"boolean\",\"partition\":\"false\"}]";
+						}
+					}
 					else
 						responseStr = this.getSensorPropertiesList(reqId,context);
 
@@ -503,13 +511,27 @@ public class Main extends HttpServlet {
 			JSONArray pred = new JSONArray();
 			String predEnable = requestData.get("withPrediction");
 			
+			JSONArray dataArray = (JSONArray)data;
+			int linesNR = ((JSONArray)data).size();
+			int valuesNR = ((JSONArray)labelsTimeStamp).size();
+			
+			for(int j=0; j< ((JSONArray)data).size();j++)
+			{
+				for(int i=0; i<valuesNR;i++){
+					if(((JSONArray)dataArray.get(j)).get(i) == null){
+						((JSONArray)dataArray.get(j)).set(i, 0.0);
+					}
+				}
+			}
+			
 			if(predEnable.equals("true")){
 				
 				//calculation of forecasts
-				JSONArray kValues = (JSONArray)data;
+				JSONArray kValues = (JSONArray)dataArray;
 				JSONArray timestamps = (JSONArray)labelsTimeStamp;
 				int nrOfLines = kValues.size();
 				int nrOfValues = timestamps.size();
+				
 				int granularity = Integer.parseInt((requestData.get("granularityID")).toString());
 				
 						
@@ -521,7 +543,6 @@ public class Main extends HttpServlet {
 				{	
 					numb = 0;
 					for( int ind = 0; ind < nrOfValues; ind++ )
-						if(((JSONArray)kValues.get(j)).get(ind) != null)
 							numb++;
 					
 					//if(numb>0)
@@ -532,8 +553,11 @@ public class Main extends HttpServlet {
 						//problema em calular aqui!! prende no null
 						if(((JSONArray)kValues.get(j)).get(i) != null){
 							points[pointInd] = new myPoint(Double.parseDouble(timestamps.get(i).toString()),Double.parseDouble(((JSONArray)kValues.get(j)).get(i).toString()));
-							pointInd++;
+						}else{
+							//((JSONArray)kValues.get(j)).set(i, 0.0);
+							//points[pointInd] = new myPoint(Double.parseDouble(timestamps.get(i).toString()),0);
 						}
+						pointInd++;
 					}
 					datasets[j]= new myDataset(points);
 				}
@@ -612,14 +636,14 @@ public class Main extends HttpServlet {
 			}
 			
 			writeLogMsg("--------------- GRAPH DATA ----------------------------");
-			writeLogMsg("Data: " + data.toString());
+			writeLogMsg("Data: " + dataArray.toString());
 			writeLogMsg("Pred: " +pred.toString());
 			writeLogMsg("Labels: " + labels.toString());
 			writeLogMsg("Labels Time Stamp: " + labelsTimeStamp.toString());
 			writeLogMsg("Title: " + title.toString());
 			writeLogMsg("--------------- END GRAPH DATA ------------------------");
 
-			obj.put("data", data);
+			obj.put("data", dataArray);
 			obj.put("predictions", pred);
 			obj.put("legend", legend);
 			obj.put("labels", labels);
